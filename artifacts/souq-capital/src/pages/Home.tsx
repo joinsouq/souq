@@ -33,33 +33,24 @@ const STEPS = [
 const REVIEWS = [
   {
     quote: "Souq helped us scale inventory without selling equity or stressing over interest payments.",
-    story:
-      "Fith, a fast-growing fitness brand, used Souq funding to restock and launch new products with no debt, no dilution. Result: 3× revenue in 6 months.",
     company: "Fith",
     founder: "Rahim (Founder)",
     img: "https://framerusercontent.com/images/TKszLlD36vsYRwdnpx3i3GZrv0.png",
   },
   {
     quote: "We were able to fund our largest seasonal drop, ethically.",
-    story:
-      "5Pillars used Souq to finance a major Ramadan inventory run. The funding arrived fast and flexibly, helping them meet record demand while staying true to their values.",
     company: "5Pillars",
     founder: "Faruq (Founder)",
     img: "https://framerusercontent.com/images/0iklr3XneSnBaWuXShym3sAG5gA.jpeg",
   },
   {
-    quote:
-      "Working with Souq Capital has been one of the most transformative partnerships we've had.",
-    story:
-      "Souq helped Noun Naturals scale inventory for Q4 and stay true to their values — leading to 3x growth without financial strain.",
+    quote: "Working with Souq Capital has been one of the most transformative partnerships we've had.",
     company: "Noun Naturals",
     founder: "Khaled (Founder)",
     img: "https://framerusercontent.com/images/TFkq9ylYIoCIrrstmwA8tANps.png",
   },
   {
     quote: "Souq gave us the confidence to say yes to a $100K+ contract.",
-    story:
-      "Skyward needed upfront funds to launch a big contract. Souq stepped in with stress-free, non-collateral capital — the project was won and delivered with ease.",
     company: "Skyward Building Services",
     founder: "Rudwan (President)",
     img: "https://framerusercontent.com/images/jgskvYZ0Y28pOB26fBlltLNY.png",
@@ -122,6 +113,22 @@ const PORTFOLIO_LOGOS = [
   "https://framerusercontent.com/images/WV5asNZ4yoIR2gVJUToJbado0.svg",
 ];
 
+const COMPARE_FEATURES = [
+  { label: "Interest-free",        souq: true,  bank: false, vc: false, rbf: false, cc: false },
+  { label: "No equity taken",      souq: true,  bank: true,  vc: false, rbf: true,  cc: true  },
+  { label: "Pay only when sold",   souq: true,  bank: false, vc: false, rbf: false, cc: false },
+  { label: "No collateral",        souq: true,  bank: false, vc: true,  rbf: true,  cc: true  },
+  { label: "Halal-aligned",        souq: true,  bank: false, vc: false, rbf: false, cc: false },
+];
+
+function Check({ yes }: { yes: boolean }) {
+  return yes ? (
+    <span className="text-green-500 font-bold text-base">✓</span>
+  ) : (
+    <span className="text-black/20 font-bold text-base">✗</span>
+  );
+}
+
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -146,7 +153,6 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function Home() {
   const [activeReview, setActiveReview] = useState(0);
 
-  // Auto-advance review carousel
   useEffect(() => {
     const t = setInterval(() => {
       setActiveReview((prev) => (prev + 1) % REVIEWS.length);
@@ -161,10 +167,10 @@ export default function Home() {
       {/* ── HERO ── */}
       <section
         id="hero"
-        className="relative min-h-screen grid-lines pt-20 overflow-hidden flex flex-col"
+        className="relative grid-lines pt-20 overflow-hidden flex flex-col"
+        style={{ minHeight: "100vh" }}
         data-testid="hero-section"
       >
-        {/* Grid dividers (mimicking Framer's column grid) */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="max-w-7xl mx-auto h-full relative px-6">
             <div className="absolute left-[33.3%] top-0 bottom-0 w-px bg-black/6" />
@@ -172,11 +178,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Hero content */}
         <div className="flex-1 flex flex-col justify-end pb-16 px-6">
           <div className="max-w-7xl mx-auto w-full">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
-              {/* Big word */}
               <div className="md:col-span-1 flex items-end">
                 <h1
                   className="font-sans text-[#14181A] leading-none select-none hero-title"
@@ -186,7 +190,6 @@ export default function Home() {
                 </h1>
               </div>
 
-              {/* Tagline */}
               <div className="md:col-span-2 flex flex-col justify-end pb-4 md:pl-12">
                 <p className="font-sans font-semibold leading-snug mb-2 hero-tagline">
                   Fuel your growth, without debt or dilution.
@@ -206,7 +209,7 @@ export default function Home() {
                     }}
                     className="text-sm text-[#14181A]/60 hover:text-[#14181A] transition-colors flex items-center gap-1"
                   >
-                    Scroll to learn more ↓
+                    Learn more ↓
                   </button>
                 </div>
               </div>
@@ -229,46 +232,34 @@ export default function Home() {
       {/* ── ABOUT ── */}
       <section id="about" className="py-24 px-6 border-b border-black/8" data-testid="about-section">
         <div className="max-w-7xl mx-auto">
-          <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-12">About</p>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
             <ScrollReveal>
-              <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">What we do for you</p>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold leading-snug text-[#14181A] mb-6">
-                  Capital built to move your business forward.
-                </h2>
-                <p className="text-[#14181A]/70 leading-relaxed">
-                  Souq Capital partners with you by funding inventory and service contracts — unlocking cash flow so you can invest in marketing, operations, and scale your business with confidence.
-                </p>
-              </div>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mb-6">About</p>
+              <h2 className="section-heading text-[#14181A] mb-0">
+                We fund what moves your business.
+              </h2>
             </ScrollReveal>
 
-            <ScrollReveal delay={150}>
-              <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Why we do it</p>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold leading-snug text-[#14181A] mb-6">
-                  The funding world is broken.
-                </h2>
-                <ul className="space-y-3 text-[#14181A]/70 leading-relaxed">
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    Banks offer rigid loans with collateral
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    VCs take ownership and control
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    "Revenue-based" lenders still charge interest and expect fixed payments — even when you haven't been paid yet.
-                  </li>
-                </ul>
-                <p className="text-[#14181A]/70 leading-relaxed mt-4">
-                  We built Souq to match capital to revenue — with funding that moves at the speed of your business, not someone else's schedule.
+            <ScrollReveal delay={100}>
+              <div className="flex flex-col justify-center h-full">
+                <p className="text-[#14181A]/70 leading-relaxed mb-8">
+                  Souq Capital partners with growing businesses by funding inventory and service contracts — so you can say yes to bigger orders, land larger contracts, and scale without selling equity or paying interest.
                 </p>
+                <ul className="space-y-4">
+                  {[
+                    { label: "Interest-free", desc: "We share in profit — never charge interest." },
+                    { label: "No equity", desc: "You keep 100% of your company." },
+                    { label: "Aligned incentives", desc: "We only win when you win." },
+                  ].map((item) => (
+                    <li key={item.label} className="flex gap-4">
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#14181A] flex-shrink-0" style={{ marginTop: "8px" }} />
+                      <div>
+                        <span className="font-semibold text-[#14181A] text-sm">{item.label} </span>
+                        <span className="text-[#14181A]/60 text-sm">{item.desc}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </ScrollReveal>
           </div>
@@ -280,8 +271,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">How it works</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">3 Easy Steps</h2>
-            <p className="text-muted-foreground mb-16">A smarter way to fund your business's growth.</p>
+            <h2 className="section-heading text-[#14181A] mb-3">Simple from day one.</h2>
+            <p className="text-muted-foreground mb-16 max-w-lg">Apply in minutes. Get funded fast. Repay only as you sell.</p>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border border-black/8 rounded-2xl overflow-hidden">
@@ -290,17 +281,16 @@ export default function Home() {
                 <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center text-xs font-bold text-[#14181A] mb-6">
                   {step.num}
                 </div>
-                <h3 className="font-heading font-bold text-xl text-[#14181A] mb-1">{step.title}</h3>
+                <h3 className="section-subheading text-[#14181A] mb-1">{step.title}</h3>
                 <p className="text-xs text-muted-foreground font-medium mb-3">{step.sub}</p>
                 <p className="text-sm text-[#14181A]/70 leading-relaxed">{step.desc}</p>
               </ScrollReveal>
             ))}
-            {/* Repay step */}
             <ScrollReveal delay={300} className="p-8 bg-[#14181A] text-white">
               <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs font-bold mb-6">
                 ↩
               </div>
-              <h3 className="font-heading font-bold text-xl mb-1">Repay Souq</h3>
+              <h3 className="section-subheading text-white mb-1">Repay Souq</h3>
               <p className="text-xs text-white/50 font-medium mb-3">Shared profit as you sell</p>
               <p className="text-sm text-white/70 leading-relaxed">
                 Only pay when product sells. A monthly invoice for a small percentage of profit on Souq inventory.
@@ -312,59 +302,38 @@ export default function Home() {
 
       {/* ── COMPARE ── */}
       <section className="py-24 px-6 border-b border-black/8" data-testid="compare-section">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Compare</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Compare Your Options
-            </h2>
-            <p className="text-muted-foreground mb-16">
-              Two ways to fund your business. Only one moves you forward.
-            </p>
+            <h2 className="section-heading text-[#14181A] mb-3">See how we stack up.</h2>
+            <p className="text-muted-foreground mb-16">Two ways to fund your business. Only one moves you forward.</p>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Souq */}
-            <ScrollReveal>
-              <div className="bg-[#14181A] text-white rounded-2xl p-8 h-full">
-                <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 text-xs font-medium mb-6">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                  Souq Capital
-                </div>
-                <ul className="space-y-3">
-                  {["Interest Free", "Equity Free", "Payback when you sell", "Flexible Use (Goods & Services)", "Aligned Incentives"].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm">
-                      <span className="w-4 h-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs flex-shrink-0">✓</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+          <ScrollReveal>
+            <div className="border border-black/8 rounded-2xl overflow-hidden">
+              {/* Header row */}
+              <div className="grid grid-cols-6 bg-[#fafafa] border-b border-black/8">
+                <div className="col-span-2 px-6 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Feature</div>
+                <div className="px-4 py-4 text-xs font-semibold text-center text-[#14181A]">Souq</div>
+                <div className="px-4 py-4 text-xs font-medium text-center text-muted-foreground">Bank</div>
+                <div className="px-4 py-4 text-xs font-medium text-center text-muted-foreground">VC</div>
+                <div className="px-4 py-4 text-xs font-medium text-center text-muted-foreground">RBF</div>
               </div>
-            </ScrollReveal>
-
-            {/* Traditional */}
-            <ScrollReveal delay={100}>
-              <div className="border border-black/8 rounded-2xl p-8 bg-white h-full">
-                <div className="inline-flex items-center gap-2 bg-black/5 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground mb-6">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                  Traditional Funding
+              {/* Feature rows */}
+              {COMPARE_FEATURES.map((row, i) => (
+                <div
+                  key={row.label}
+                  className={`grid grid-cols-6 border-b border-black/8 last:border-b-0 ${i % 2 === 0 ? "bg-white" : "bg-[#fafafa]"}`}
+                >
+                  <div className="col-span-2 px-6 py-4 text-sm font-medium text-[#14181A]">{row.label}</div>
+                  <div className="px-4 py-4 flex justify-center items-center bg-[#14181A]/[0.03]"><Check yes={row.souq} /></div>
+                  <div className="px-4 py-4 flex justify-center items-center"><Check yes={row.bank} /></div>
+                  <div className="px-4 py-4 flex justify-center items-center"><Check yes={row.vc} /></div>
+                  <div className="px-4 py-4 flex justify-center items-center"><Check yes={row.rbf} /></div>
                 </div>
-                <ul className="space-y-5">
-                  {[
-                    { name: "Bank Loans", issues: "High interest rates, Conflicts of interest" },
-                    { name: "Venture Capital", issues: "Debt-ridden, Variable payback, Conflicts of interest" },
-                    { name: "RBF / Lending Platforms", issues: "High interest rates, Rigid use, Misaligned Values" },
-                    { name: "Credit Cards / LOC", issues: "High interest rates, Variable payback, Rigid use" },
-                  ].map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <p className="font-semibold text-[#14181A]">{item.name}</p>
-                      <p className="text-muted-foreground text-xs mt-0.5">{item.issues}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </ScrollReveal>
-          </div>
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -398,12 +367,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Brand Stories</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Client Reviews
-            </h2>
-            <p className="text-muted-foreground mb-12">
-              See what some of our partners say about Souq.
-            </p>
+            <h2 className="section-heading text-[#14181A] mb-16">What our partners say.</h2>
           </ScrollReveal>
 
           {/* Desktop grid */}
@@ -411,14 +375,13 @@ export default function Home() {
             {REVIEWS.map((review, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div
-                  className="border border-black/8 rounded-2xl p-8 bg-white hover:shadow-md transition-shadow duration-300 flex flex-col gap-4"
+                  className="border border-black/8 rounded-2xl p-8 bg-white hover:shadow-md transition-shadow duration-300 flex flex-col gap-6"
                   data-testid={`review-card-${i}`}
                 >
-                  <p className="text-[#14181A] font-medium text-base leading-snug">
+                  <p className="text-[#14181A] font-medium text-lg leading-snug flex-1">
                     "{review.quote}"
                   </p>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{review.story}</p>
-                  <div className="flex items-center gap-3 mt-auto pt-4 border-t border-black/6">
+                  <div className="flex items-center gap-3 pt-4 border-t border-black/6">
                     <img
                       src={review.img}
                       alt={review.company}
@@ -436,15 +399,9 @@ export default function Home() {
 
           {/* Mobile carousel */}
           <div className="md:hidden">
-            <div
-              className="border border-black/8 rounded-2xl p-6 bg-white"
-              data-testid="review-mobile-card"
-            >
-              <p className="text-[#14181A] font-medium text-base leading-snug mb-3">
+            <div className="border border-black/8 rounded-2xl p-6 bg-white" data-testid="review-mobile-card">
+              <p className="text-[#14181A] font-medium text-base leading-snug mb-6">
                 "{REVIEWS[activeReview].quote}"
-              </p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                {REVIEWS[activeReview].story}
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-black/6">
                 <img
@@ -458,7 +415,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            {/* Dots */}
             <div className="flex justify-center gap-2 mt-4">
               {REVIEWS.map((_, i) => (
                 <button
@@ -477,9 +433,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Team</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Meet Our Team
-            </h2>
+            <h2 className="section-heading text-[#14181A] mb-3">Meet our team.</h2>
             <p className="text-muted-foreground mb-16">
               10+ years experience · 10 investment funds · 6 completed · $40M+ raised · 300+ investors
             </p>
@@ -499,7 +453,7 @@ export default function Home() {
                   <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
                     {member.role}
                   </p>
-                  <h3 className="font-heading font-bold text-[#14181A]">{member.name}</h3>
+                  <h3 className="font-semibold text-[#14181A]">{member.name}</h3>
                 </div>
               </ScrollReveal>
             ))}
@@ -512,11 +466,9 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">FAQs</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Frequently Asked Questions
-            </h2>
+            <h2 className="section-heading text-[#14181A] mb-3">Common questions.</h2>
             <p className="text-muted-foreground mb-12">
-              Find answers to common questions about our services, process, and how Souq can help you achieve your goals.
+              Find answers to common questions about our services, process, and how Souq can help your business grow.
             </p>
           </ScrollReveal>
 
@@ -533,12 +485,9 @@ export default function Home() {
         <div className="max-w-3xl mx-auto text-center">
           <ScrollReveal>
             <p className="text-xs uppercase tracking-widest text-white/40 mb-6">Work With Us</p>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 leading-tight">
-              Ready to grow your business with Souq?
-              <span className="block text-white/50">Apply today.</span>
-            </h2>
-            <p className="text-white/60 text-base mb-10 max-w-xl mx-auto leading-relaxed">
-              Souq helps founders unlock growth without losing ownership or taking on risky loans.
+            <h2 className="cta-heading text-white mb-4">Apply today.</h2>
+            <p className="text-white/60 text-base mb-10 max-w-md mx-auto leading-relaxed">
+              Join the businesses Souq has already funded — interest-free, equity-free, and on your terms.
             </p>
             <Link href="/apply" data-testid="cta-apply-btn">
               <button className="bg-white text-[#14181A] font-semibold px-8 py-4 rounded-xl hover:bg-white/90 transition-all duration-200 text-base">
