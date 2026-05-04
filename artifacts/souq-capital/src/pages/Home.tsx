@@ -179,8 +179,8 @@ export default function Home() {
               {/* Big word */}
               <div className="md:col-span-1 flex items-end">
                 <h1
-                  className="font-heading font-bold text-[#14181A] leading-none select-none"
-                  style={{ fontSize: "clamp(80px, 14vw, 200px)" }}
+                  className="font-sans text-[#14181A] leading-none select-none"
+                  style={{ fontSize: "clamp(80px, 14vw, 200px)", fontWeight: 900, letterSpacing: "-0.02em" }}
                   data-testid="hero-title"
                 >
                   Souq
@@ -189,7 +189,7 @@ export default function Home() {
 
               {/* Tagline */}
               <div className="md:col-span-2 flex flex-col justify-end pb-4 md:pl-12">
-                <p className="font-heading text-xl md:text-2xl font-semibold leading-snug mb-2">
+                <p className="font-sans text-xl md:text-2xl font-bold leading-snug mb-2" style={{ letterSpacing: "-0.01em" }}>
                   Fuel your growth, without debt or dilution.
                 </p>
                 <p className="text-base text-[#14181A]/70 leading-relaxed max-w-lg">
