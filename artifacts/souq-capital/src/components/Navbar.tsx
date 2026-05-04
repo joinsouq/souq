@@ -44,21 +44,24 @@ export default function Navbar() {
           <button
             onClick={() => scrollTo("about")}
             data-testid="nav-about"
-            className="text-sm text-[#14181A] hover:text-black transition-colors font-normal"
+            className="text-[#666666] hover:text-black transition-colors"
+            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
           >
             About
           </button>
           <button
             onClick={() => scrollTo("how-it-works")}
             data-testid="nav-how-it-works"
-            className="text-sm text-[#14181A] hover:text-black transition-colors font-normal"
+            className="text-[#666666] hover:text-black transition-colors"
+            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
           >
             How it works
           </button>
           <button
             onClick={() => scrollTo("team")}
             data-testid="nav-team"
-            className="text-sm text-[#14181A] hover:text-black transition-colors font-normal"
+            className="text-[#666666] hover:text-black transition-colors"
+            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
           >
             Team
           </button>

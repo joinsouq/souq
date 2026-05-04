@@ -76,16 +76,60 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 }
 
 @layer utilities {
   .font-heading {
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   .font-sans {
     font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Hero h1 — exact Framer values */
+.hero-title {
+  font-size: 160px;
+  font-weight: 600;
+  letter-spacing: -9.5px;
+  line-height: 1em;
+  font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+}
+
+@media (max-width: 1199px) and (min-width: 810px) {
+  .hero-title {
+    font-size: 110px;
+    letter-spacing: -9.5px;
+  }
+}
+
+@media (max-width: 809px) {
+  .hero-title {
+    font-size: 64px;
+    letter-spacing: -4.8px;
+  }
+}
+
+/* Hero tagline — exact Framer values */
+.hero-tagline {
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -1.2px;
+  line-height: 1.4em;
+  font-feature-settings: normal;
+}
+
+@media (max-width: 1199px) and (min-width: 810px) {
+  .hero-tagline {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 809px) {
+  .hero-tagline {
+    font-size: 24px;
   }
 }
 
