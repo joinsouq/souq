@@ -222,16 +222,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Ticker */}
-        <div className="border-t border-b border-black/8 bg-[#14181A] overflow-hidden py-3">
-          <div className="flex animate-ticker whitespace-nowrap" style={{ width: "max-content" }}>
-            {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-              <span key={i} className="text-white text-xs font-medium tracking-widest uppercase px-8">
-                {item} <span className="text-white/30 mx-2">·</span>
-              </span>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ── ABOUT ── */}
