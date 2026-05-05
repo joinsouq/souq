@@ -40,7 +40,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden md:flex items-center gap-[84px]">
           <button
             onClick={() => scrollTo("about")}
             data-testid="nav-about"

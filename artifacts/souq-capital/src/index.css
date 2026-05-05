@@ -112,25 +112,93 @@
   }
 }
 
-/* Hero tagline — exact Framer values */
-.hero-tagline {
-  font-size: 36px;
-  font-weight: 600;
+/* h3 body/hero preset-2d4e8e — 28px/500, bold=700 */
+.body-h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  font-weight: 500;
   letter-spacing: -1.2px;
   line-height: 1.4em;
-  font-feature-settings: normal;
+  font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+  color: #14181A;
+}
+.body-h3 strong { font-weight: 700; }
+
+@media (max-width: 1199px) {
+  .body-h3 { font-size: 24px; }
+}
+
+/* h2 section heading preset-4trhzq — 56px/600/-1.7px */
+.section-h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -1.7px;
+  line-height: 1.4em;
+  font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+  color: #000;
 }
 
 @media (max-width: 1199px) and (min-width: 810px) {
-  .hero-tagline {
-    font-size: 32px;
-  }
+  .section-h2 { font-size: 44px; }
 }
 
 @media (max-width: 809px) {
-  .hero-tagline {
-    font-size: 24px;
-  }
+  .section-h2 { font-size: 36px; }
+}
+
+/* p large heading preset-dtjgbg — 36px/600, strong=700 */
+.about-heading {
+  font-family: 'Inter', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.4em;
+  font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+  color: #14181A;
+}
+
+@media (max-width: 1199px) {
+  .about-heading { font-size: 28px; }
+}
+
+@media (max-width: 809px) {
+  .about-heading { font-size: 24px; }
+}
+
+/* h4 step label preset-9eiyws — 24px/600/-1.1px */
+.step-h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -1.1px;
+  line-height: 1.4em;
+  font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on;
+  color: #000;
+}
+
+@media (max-width: 1199px) {
+  .step-h4 { font-size: 20px; }
+}
+
+/* p body text preset-xkgxd0 — 18px/400/-1.1px/#666 */
+.body-p {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -1.1px;
+  line-height: 1.6em;
+  color: #666;
+}
+
+/* Section label — small gray with brackets */
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #787777;
+  line-height: 2em;
 }
 
 /* Ticker animation */
@@ -155,10 +223,5 @@
   transform: translateY(0);
 }
 
-/* Grid lines */
-.grid-lines {
-  background-image:
-    linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 250px 250px;
-}
+/* Grid lines — removed in favour of per-element dividers */
+.grid-lines {}

@@ -129,15 +129,15 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       <button
         onClick={() => setOpen(!open)}
         data-testid={`faq-${q.slice(0, 20).replace(/\s+/g, "-").toLowerCase()}`}
-        className="w-full flex items-center justify-between py-5 text-left group"
+        className="w-full flex items-center justify-between py-6 text-left group"
       >
-        <span className="font-medium text-[#14181A] text-base pr-4">{q}</span>
-        <span className="text-2xl text-muted-foreground group-hover:text-[#14181A] transition-colors flex-shrink-0">
+        <span className="step-h4 text-[#14181A] pr-4">{q}</span>
+        <span className="text-2xl text-[#787777] group-hover:text-[#14181A] transition-colors flex-shrink-0">
           {open ? "−" : "+"}
         </span>
       </button>
       {open && (
-        <p className="pb-5 text-muted-foreground leading-relaxed text-sm">{a}</p>
+        <p className="pb-6 body-p">{a}</p>
       )}
     </div>
   );
@@ -161,23 +161,28 @@ export default function Home() {
       {/* ── HERO ── */}
       <section
         id="hero"
-        className="relative min-h-screen grid-lines pt-20 overflow-hidden flex flex-col"
+        className="relative overflow-hidden flex flex-col"
+        style={{ height: "100vh", paddingTop: "0" }}
         data-testid="hero-section"
       >
-        {/* Grid dividers (mimicking Framer's column grid) */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="max-w-7xl mx-auto h-full relative px-6">
-            <div className="absolute left-[33.3%] top-0 bottom-0 w-px bg-black/6" />
-            <div className="absolute left-[66.6%] top-0 bottom-0 w-px bg-black/6" />
+        {/* Grid dividers — 5 dividers (space-between) at 0%,25%,50%,75%,100% within max-width 1320px */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-stretch" style={{ padding: "0 50px" }}>
+          <div className="flex-1 flex items-stretch" style={{ maxWidth: "1320px", margin: "0 auto", width: "100%" }}>
+            <div className="absolute left-0 right-0" style={{ top: "33.33%", height: "1px", backgroundColor: "rgba(204,204,204,0.7)", left: "50px", right: "50px" }} />
+            <div className="absolute left-0 right-0" style={{ top: "66.66%", height: "1px", backgroundColor: "rgba(204,204,204,0.7)", left: "50px", right: "50px" }} />
+            <div style={{ position: "absolute", top: 0, bottom: 0, width: "1px", backgroundColor: "rgba(204,204,204,0.7)", left: "calc(50px + 25%)" }} />
+            <div style={{ position: "absolute", top: 0, bottom: 0, width: "1px", backgroundColor: "rgba(204,204,204,0.7)", left: "calc(50px + 50%)" }} />
+            <div style={{ position: "absolute", top: 0, bottom: 0, width: "1px", backgroundColor: "rgba(204,204,204,0.7)", left: "calc(50px + 75%)" }} />
           </div>
         </div>
 
-        {/* Hero content */}
-        <div className="flex-1 flex flex-col justify-end pb-16 px-6">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
-              {/* Big word */}
-              <div className="md:col-span-1 flex items-end">
+        {/* Hero content — pushed to bottom, matching Framer's flex-end alignment */}
+        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 24px", zIndex: 2 }}>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "48px" }}>
+            {/* Souq + tagline row — space-between */}
+            <div style={{ display: "flex", flexFlow: "row", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
+              {/* Big word — fixed 372px */}
+              <div style={{ flex: "none", width: "372px", overflow: "hidden" }}>
                 <h1
                   className="font-sans text-[#14181A] leading-none select-none hero-title"
                   data-testid="hero-title"
@@ -186,30 +191,33 @@ export default function Home() {
                 </h1>
               </div>
 
-              {/* Tagline */}
-              <div className="md:col-span-2 flex flex-col justify-end pb-4 md:pl-12">
-                <p className="font-sans font-semibold leading-snug mb-2 hero-tagline">
-                  Fuel your growth, without debt or dilution.
-                </p>
-                <p className="text-base text-[#14181A]/70 leading-relaxed max-w-lg">
+              {/* Tagline — max 49% */}
+              <div style={{ flex: "none", maxWidth: "49%", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                <p className="body-h3 mb-6">
+                  <strong>Fuel your growth, without debt or dilution.</strong>
+                  <br />
                   We fund what drives your business — and only win when you do.
                 </p>
-                <div className="mt-6 flex items-center gap-4">
-                  <Link href="/apply" data-testid="hero-apply-btn">
-                    <button className="bg-[#14181A] text-white font-medium px-6 py-3 rounded-lg hover:bg-black/80 transition-all duration-200 text-sm">
-                      Apply Now
-                    </button>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="text-sm text-[#14181A]/60 hover:text-[#14181A] transition-colors flex items-center gap-1"
-                  >
-                    Scroll to learn more ↓
-                  </button>
-                </div>
               </div>
+            </div>
+
+            {/* CTA row */}
+            <div style={{ display: "flex", flexFlow: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                <Link href="/apply" data-testid="hero-apply-btn">
+                  <button className="bg-[#14181A] text-white font-medium px-6 py-3 rounded-lg hover:bg-black/80 transition-all duration-200 text-base">
+                    Apply Now
+                  </button>
+                </Link>
+              </div>
+              <button
+                onClick={() => {
+                  document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="section-label hover:text-[#14181A] transition-colors"
+              >
+                [ Scroll to learn more ]
+              </button>
             </div>
           </div>
         </div>
@@ -227,46 +235,37 @@ export default function Home() {
       </section>
 
       {/* ── ABOUT ── */}
-      <section id="about" className="py-24 px-6 border-b border-black/8" data-testid="about-section">
-        <div className="max-w-7xl mx-auto">
+      <section id="about" className="border-b border-black/8" style={{ padding: "49px 50px 30px" }} data-testid="about-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "80px" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-12">About</p>
+            <p className="section-label">[ About ]</p>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            <ScrollReveal>
+          <div style={{ display: "flex", flexFlow: "row", gap: "64px", width: "100%", alignItems: "flex-start" }} className="flex-col md:flex-row">
+            <ScrollReveal style={{ flex: "0.6 0 0", minWidth: 0, display: "flex", flexDirection: "column", gap: "24px" }}>
               <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">What we do for you</p>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold leading-snug text-[#14181A] mb-6">
+                <p className="step-h4 mb-6">What we do for you</p>
+                <p className="about-heading mb-6">
                   Capital built to move your business forward.
-                </h2>
-                <p className="text-[#14181A]/70 leading-relaxed">
+                </p>
+                <p className="body-p">
                   Souq Capital partners with you by funding inventory and service contracts — unlocking cash flow so you can invest in marketing, operations, and scale your business with confidence.
                 </p>
               </div>
             </ScrollReveal>
 
-            <ScrollReveal delay={150}>
+            <ScrollReveal delay={150} style={{ flex: "1 0 0", minWidth: 0, display: "flex", flexDirection: "column", gap: "25px" }}>
               <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Why we do it</p>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold leading-snug text-[#14181A] mb-6">
+                <p className="step-h4 mb-6">Why we do it</p>
+                <p className="about-heading mb-6">
                   The funding world is broken.
-                </h2>
-                <ul className="space-y-3 text-[#14181A]/70 leading-relaxed">
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    Banks offer rigid loans with collateral
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    VCs take ownership and control
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-1 w-1 h-1 rounded-full bg-[#14181A]/30 flex-shrink-0 mt-2" />
-                    "Revenue-based" lenders still charge interest and expect fixed payments — even when you haven't been paid yet.
-                  </li>
-                </ul>
-                <p className="text-[#14181A]/70 leading-relaxed mt-4">
+                </p>
+                <p className="body-h3 mb-4">
+                  Banks offer rigid loans with collateral
+                  <br />VCs take ownership and control
+                  <br />"Revenue-based" lenders still charge interest and expect fixed payments — even when you haven't been paid yet.
+                </p>
+                <p className="body-h3">
                   We built Souq to match capital to revenue — with funding that moves at the speed of your business, not someone else's schedule.
                 </p>
               </div>
@@ -276,12 +275,12 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-24 px-6 border-b border-black/8 bg-[#fafafa]" data-testid="how-it-works-section">
-        <div className="max-w-7xl mx-auto">
+      <section id="how-it-works" className="border-b border-black/8 bg-[#fafafa]" style={{ padding: "50px 50px 100px" }} data-testid="how-it-works-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">How it works</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">3 Easy Steps</h2>
-            <p className="text-muted-foreground mb-16">A smarter way to fund your business's growth.</p>
+            <p className="section-label mb-4">[ How it works ]</p>
+            <h2 className="section-h2 mb-4">3 Easy Steps</h2>
+            <p className="body-p mb-16">A smarter way to fund your business's growth.</p>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border border-black/8 rounded-2xl overflow-hidden">
@@ -290,9 +289,9 @@ export default function Home() {
                 <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center text-xs font-bold text-[#14181A] mb-6">
                   {step.num}
                 </div>
-                <h3 className="font-heading font-bold text-xl text-[#14181A] mb-1">{step.title}</h3>
-                <p className="text-xs text-muted-foreground font-medium mb-3">{step.sub}</p>
-                <p className="text-sm text-[#14181A]/70 leading-relaxed">{step.desc}</p>
+                <p className="step-h4 mb-1">{step.title}</p>
+                <p className="section-label mb-3">{step.sub}</p>
+                <p className="body-p">{step.desc}</p>
               </ScrollReveal>
             ))}
             {/* Repay step */}
@@ -300,9 +299,9 @@ export default function Home() {
               <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs font-bold mb-6">
                 ↩
               </div>
-              <h3 className="font-heading font-bold text-xl mb-1">Repay Souq</h3>
-              <p className="text-xs text-white/50 font-medium mb-3">Shared profit as you sell</p>
-              <p className="text-sm text-white/70 leading-relaxed">
+              <p className="step-h4 text-white mb-1">Repay Souq</p>
+              <p className="section-label text-white/50 mb-3">Shared profit as you sell</p>
+              <p className="body-p text-white/70">
                 Only pay when product sells. A monthly invoice for a small percentage of profit on Souq inventory.
               </p>
             </ScrollReveal>
@@ -311,31 +310,27 @@ export default function Home() {
       </section>
 
       {/* ── COMPARE ── */}
-      <section className="py-24 px-6 border-b border-black/8" data-testid="compare-section">
-        <div className="max-w-7xl mx-auto">
+      <section className="border-b border-black/8" style={{ padding: "100px 50px" }} data-testid="compare-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "64px" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Compare</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Compare Your Options
-            </h2>
-            <p className="text-muted-foreground mb-16">
-              Two ways to fund your business. Only one moves you forward.
-            </p>
+            <p className="section-label mb-4">[ Compare ]</p>
+            <h2 className="section-h2 mb-4">Compare Your Options</h2>
+            <p className="body-p">Two ways to fund your business. Only one moves you forward.</p>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Souq */}
             <ScrollReveal>
               <div className="bg-[#14181A] text-white rounded-2xl p-8 h-full">
-                <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 text-xs font-medium mb-6">
+                <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 text-sm font-medium mb-8">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
                   Souq Capital
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {["Interest Free", "Equity Free", "Payback when you sell", "Flexible Use (Goods & Services)", "Aligned Incentives"].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm">
-                      <span className="w-4 h-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs flex-shrink-0">✓</span>
-                      {item}
+                    <li key={item} className="flex items-center gap-3">
+                      <span className="w-5 h-5 rounded-full bg-green-400/20 flex items-center justify-center text-green-400 text-xs flex-shrink-0">✓</span>
+                      <span className="body-p text-white/80">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -345,20 +340,20 @@ export default function Home() {
             {/* Traditional */}
             <ScrollReveal delay={100}>
               <div className="border border-black/8 rounded-2xl p-8 bg-white h-full">
-                <div className="inline-flex items-center gap-2 bg-black/5 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground mb-6">
+                <div className="inline-flex items-center gap-2 bg-black/5 rounded-full px-3 py-1 text-sm font-medium text-[#787777] mb-8">
                   <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                  Traditional Funding
+                  Traditional Funding Types
                 </div>
-                <ul className="space-y-5">
+                <ul className="space-y-6">
                   {[
                     { name: "Bank Loans", issues: "High interest rates, Conflicts of interest" },
                     { name: "Venture Capital", issues: "Debt-ridden, Variable payback, Conflicts of interest" },
-                    { name: "RBF / Lending Platforms", issues: "High interest rates, Rigid use, Misaligned Values" },
-                    { name: "Credit Cards / LOC", issues: "High interest rates, Variable payback, Rigid use" },
+                    { name: "RBF / Lending Platforms", issues: "High interest rates, Rigid use (mostly inventory), Misaligned Values" },
+                    { name: "Credit Cards / LOC", issues: "High interest rates, Variable payback, Rigid use, Conflicts of interest" },
                   ].map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <p className="font-semibold text-[#14181A]">{item.name}</p>
-                      <p className="text-muted-foreground text-xs mt-0.5">{item.issues}</p>
+                    <li key={item.name}>
+                      <p className="step-h4 text-[#14181A]">{item.name}</p>
+                      <p className="body-p mt-1">{item.issues}</p>
                     </li>
                   ))}
                 </ul>
@@ -369,11 +364,11 @@ export default function Home() {
       </section>
 
       {/* ── PORTFOLIO LOGOS ── */}
-      <section className="py-16 px-6 border-b border-black/8 bg-[#fafafa]" data-testid="portfolio-section">
-        <div className="max-w-7xl mx-auto">
+      <section className="border-b border-black/8 bg-[#fafafa]" style={{ padding: "50px 50px" }} data-testid="portfolio-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2 text-center">Portfolio</p>
-            <p className="text-center text-sm font-semibold text-[#14181A] mb-10">
+            <p className="section-label text-center mb-2">[ Portfolio ]</p>
+            <p className="text-center step-h4 text-[#14181A] mb-10">
               $5M Invested · 13 Companies · 17 Investments
             </p>
           </ScrollReveal>
@@ -394,16 +389,12 @@ export default function Home() {
       </section>
 
       {/* ── CLIENT REVIEWS ── */}
-      <section className="py-24 px-6 border-b border-black/8" data-testid="reviews-section">
-        <div className="max-w-7xl mx-auto">
+      <section className="border-b border-black/8" style={{ padding: "100px 50px" }} data-testid="reviews-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "64px" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Brand Stories</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Client Reviews
-            </h2>
-            <p className="text-muted-foreground mb-12">
-              See what some of our partners say about Souq.
-            </p>
+            <p className="section-label mb-4">[ Brand Stories ]</p>
+            <h2 className="section-h2 mb-4">Client Reviews</h2>
+            <p className="body-p">See what some of our partners say about Souq.</p>
           </ScrollReveal>
 
           {/* Desktop grid */}
@@ -414,10 +405,10 @@ export default function Home() {
                   className="border border-black/8 rounded-2xl p-8 bg-white hover:shadow-md transition-shadow duration-300 flex flex-col gap-4"
                   data-testid={`review-card-${i}`}
                 >
-                  <p className="text-[#14181A] font-medium text-base leading-snug">
+                  <p className="body-h3 text-[#14181A]">
                     "{review.quote}"
                   </p>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{review.story}</p>
+                  <p className="body-p">{review.story}</p>
                   <div className="flex items-center gap-3 mt-auto pt-4 border-t border-black/6">
                     <img
                       src={review.img}
@@ -426,7 +417,7 @@ export default function Home() {
                     />
                     <div>
                       <p className="font-semibold text-sm text-[#14181A]">{review.company}</p>
-                      <p className="text-xs text-muted-foreground">{review.founder}</p>
+                      <p className="text-xs text-[#787777]">{review.founder}</p>
                     </div>
                   </div>
                 </div>
@@ -440,12 +431,10 @@ export default function Home() {
               className="border border-black/8 rounded-2xl p-6 bg-white"
               data-testid="review-mobile-card"
             >
-              <p className="text-[#14181A] font-medium text-base leading-snug mb-3">
+              <p className="body-h3 text-[#14181A] mb-3">
                 "{REVIEWS[activeReview].quote}"
               </p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                {REVIEWS[activeReview].story}
-              </p>
+              <p className="body-p mb-4">{REVIEWS[activeReview].story}</p>
               <div className="flex items-center gap-3 pt-4 border-t border-black/6">
                 <img
                   src={REVIEWS[activeReview].img}
@@ -454,7 +443,7 @@ export default function Home() {
                 />
                 <div>
                   <p className="font-semibold text-sm text-[#14181A]">{REVIEWS[activeReview].company}</p>
-                  <p className="text-xs text-muted-foreground">{REVIEWS[activeReview].founder}</p>
+                  <p className="text-xs text-[#787777]">{REVIEWS[activeReview].founder}</p>
                 </div>
               </div>
             </div>
@@ -473,14 +462,12 @@ export default function Home() {
       </section>
 
       {/* ── TEAM ── */}
-      <section id="team" className="py-24 px-6 border-b border-black/8 bg-[#fafafa]" data-testid="team-section">
-        <div className="max-w-7xl mx-auto">
+      <section id="team" className="border-b border-black/8 bg-[#fafafa]" style={{ padding: "100px 50px" }} data-testid="team-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "64px" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Team</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-muted-foreground mb-16">
+            <p className="section-label mb-4">[ Team ]</p>
+            <h2 className="section-h2 mb-4">Meet Our Team</h2>
+            <p className="body-p">
               10+ years experience · 10 investment funds · 6 completed · $40M+ raised · 300+ investors
             </p>
           </ScrollReveal>
@@ -496,10 +483,8 @@ export default function Home() {
                       className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
-                    {member.role}
-                  </p>
-                  <h3 className="font-heading font-bold text-[#14181A]">{member.name}</h3>
+                  <p className="section-label mb-1">{member.role}</p>
+                  <p className="step-h4 text-[#14181A]">{member.name}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -508,14 +493,12 @@ export default function Home() {
       </section>
 
       {/* ── FAQs ── */}
-      <section className="py-24 px-6 border-b border-black/8" data-testid="faq-section">
-        <div className="max-w-3xl mx-auto">
+      <section className="border-b border-black/8" style={{ padding: "100px 50px" }} data-testid="faq-section">
+        <div style={{ maxWidth: "800px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "48px" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">FAQs</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-muted-foreground mb-12">
+            <p className="section-label mb-4">[ FAQs ]</p>
+            <h2 className="section-h2 mb-4">Frequently Asked Questions</h2>
+            <p className="body-p">
               Find answers to common questions about our services, process, and how Souq can help you achieve your goals.
             </p>
           </ScrollReveal>
@@ -529,15 +512,15 @@ export default function Home() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-28 px-6 bg-[#14181A] text-white" data-testid="cta-section">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="bg-[#14181A] text-white" style={{ padding: "100px 50px" }} data-testid="cta-section">
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "48px", alignItems: "center", textAlign: "center" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-white/40 mb-6">Work With Us</p>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 leading-tight">
+            <p className="section-label text-white/40 mb-6">[ Work With Us ]</p>
+            <h2 className="section-h2 text-white mb-6">
               Ready to grow your business with Souq?
               <span className="block text-white/50">Apply today.</span>
             </h2>
-            <p className="text-white/60 text-base mb-10 max-w-xl mx-auto leading-relaxed">
+            <p className="body-p text-white/60 mb-10" style={{ maxWidth: "600px", margin: "0 auto 40px" }}>
               Souq helps founders unlock growth without losing ownership or taking on risky loans.
             </p>
             <Link href="/apply" data-testid="cta-apply-btn">
