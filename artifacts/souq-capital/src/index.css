@@ -133,46 +133,6 @@
   }
 }
 
-/* Section headings — exact Framer h2/h3 presets */
-.section-heading {
-  font-family: 'Inter', sans-serif;
-  font-size: 44px;
-  font-weight: 600;
-  letter-spacing: -1.7px;
-  line-height: 1.15em;
-}
-
-@media (max-width: 809px) {
-  .section-heading {
-    font-size: 32px;
-    letter-spacing: -1.2px;
-  }
-}
-
-.section-subheading {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.6px;
-  line-height: 1.3em;
-}
-
-/* CTA heading — larger, more impact */
-.cta-heading {
-  font-family: 'Inter', sans-serif;
-  font-size: 72px;
-  font-weight: 600;
-  letter-spacing: -3px;
-  line-height: 1.05em;
-}
-
-@media (max-width: 809px) {
-  .cta-heading {
-    font-size: 48px;
-    letter-spacing: -2px;
-  }
-}
-
 /* Ticker animation */
 @keyframes ticker {
   0% { transform: translateX(0); }
