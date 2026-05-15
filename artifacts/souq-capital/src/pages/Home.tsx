@@ -8,26 +8,26 @@ const STEPS = [
   {
     num: "1",
     title: "Apply",
-    sub: "Tell us your story",
-    desc: "Share what your business does, what you're working toward, and how you plan to use the capital.",
+    sub: "Apply in Minutes",
+    desc: "Tell us about your revenue, cash cycle, and use of funds — inventory, services, or contract fulfillment.",
   },
   {
     num: "2",
     title: "Review",
-    sub: "We evaluate & align",
-    desc: "We look at your trajectory and potential — then put together an offer built around your business.",
+    sub: "We Evaluate & Offer Terms",
+    desc: "We review performance and approve capital for high-potential brands.",
   },
   {
     num: "3",
-    title: "Grow",
-    sub: "Capital, deployed",
-    desc: "Funds go directly to your vendor, contractor, or business — quickly and without friction.",
+    title: "Grow Freely",
+    sub: "You Get Funded",
+    desc: "Funds are delivered to your vendor, contractor, or directly to your business — fast.",
   },
 ];
 
 const REVIEWS = [
   {
-    quote: "Souq helped us scale without slowing down.",
+    quote: "Souq helped us scale inventory without selling equity or stressing over interest payments.",
     story:
       "Fith, a fast-growing fitness brand, used Souq to restock and launch new products — keeping full ownership throughout. Result: 3× revenue in 6 months.",
     company: "Fith",
@@ -37,7 +37,7 @@ const REVIEWS = [
   {
     quote: "We were able to fund our largest seasonal drop, on our terms.",
     story:
-      "5Pillars used Souq to power a major Ramadan inventory run. The funding arrived fast and flexibly, helping them meet record demand while staying true to their values.",
+      "5Pillars used Souq to finance a major Ramadan inventory run. The funding arrived fast and flexibly, helping them meet record demand while staying true to their values.",
     company: "5Pillars",
     founder: "Faruq (Founder)",
     img: "https://framerusercontent.com/images/0iklr3XneSnBaWuXShym3sAG5gA.jpeg",
@@ -46,7 +46,7 @@ const REVIEWS = [
     quote:
       "Working with Souq Capital has been one of the most transformative partnerships we've had.",
     story:
-      "Souq helped Noun Naturals scale inventory for Q4 and stay true to their values — leading to 3× growth with confidence.",
+      "They provided over 6 figures at a critical moment. That funding helped us refresh our inventory, strengthen our operations, and bring new life into the brand. Halal funding, built on trust.",
     company: "Noun Naturals",
     founder: "Khaled (Founder)",
     img: "https://framerusercontent.com/images/TFkq9ylYIoCIrrstmwA8tANps.png",
@@ -54,7 +54,7 @@ const REVIEWS = [
   {
     quote: "Souq gave us the confidence to say yes to a $100K+ contract.",
     story:
-      "Skyward needed upfront capital to launch a major contract. Souq stepped in — the project was won, delivered, and everyone came out ahead.",
+      "Skyward needed upfront funds to launch a big contract. Souq stepped in with stress-free, non-collateral capital — the project was won and delivered with ease.",
     company: "Skyward Building Services",
     founder: "Rudwan (President)",
     img: "https://framerusercontent.com/images/jgskvYZ0Y28pOB26fBlltLNY.png",
@@ -86,24 +86,24 @@ const TEAM = [
 
 const FAQS = [
   {
-    q: "What kinds of businesses do you work with?",
-    a: "We partner with product-based businesses and service businesses with contracts. If you have a clear path to revenue and need capital to move faster, we want to hear from you.",
+    q: "What kinds of capital do you offer?",
+    a: "We offer inventory financing and service contract funding. We pay your suppliers upfront on your behalf, and you pay us back as you sell — with a shared percentage of profit. No fixed payments, no interest.",
   },
   {
-    q: "How does Souq make money?",
-    a: "We share in the profit when you sell — not before. We fund your inventory or contracts upfront, and we only get paid as your business earns.",
+    q: "Is this a loan?",
+    a: "No. Souq Capital provides non-debt working capital through a profit-sharing model. We only get repaid as you sell, and only take a percentage of profit on Souq inventory — never a fixed payment or interest rate.",
   },
   {
     q: "Do you take equity?",
-    a: "No. You keep full ownership of your business. Always.",
+    a: "No. You keep 100% ownership of your business. Souq Capital is not an investor — we're a capital partner.",
   },
   {
-    q: "Is this halal?",
-    a: "Yes. Our model is built on profit-sharing — not interest. We're committed to funding that aligns with your values.",
+    q: "Is it halal?",
+    a: "Yes. Our model is Sharia-compliant. We operate on a profit-sharing basis, not interest. No riba.",
   },
   {
-    q: "How fast can I get funded?",
-    a: "Once we've reviewed your application and agreed on terms, we move quickly. Most partners receive their capital within days, not weeks.",
+    q: "What kind of businesses do you fund?",
+    a: "We fund product-based businesses that need inventory capital, and service businesses with confirmed contracts. If you have a revenue cycle and a need for working capital, apply and let's talk.",
   },
 ];
 
@@ -155,120 +155,153 @@ export default function Home() {
       {/* ── HERO ── */}
       <section
         id="hero"
-        className="relative min-h-screen grid-lines pt-20 overflow-hidden flex flex-col"
         data-testid="hero-section"
+        className="relative overflow-hidden flex flex-col"
+        style={{ height: "100vh" }}
       >
-        {/* Grid dividers */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="max-w-7xl mx-auto h-full relative px-6">
-            <div className="absolute left-[33.3%] top-0 bottom-0 w-px bg-black/6" />
-            <div className="absolute left-[66.6%] top-0 bottom-0 w-px bg-black/6" />
+        {/* Grid background lines */}
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+          <div className="absolute inset-0" style={{ maxWidth: "1320px", left: "50%", transform: "translateX(-50%)", position: "absolute" }}>
+            <div className="absolute top-0 bottom-0 w-px" style={{ left: "25%", backgroundColor: "rgba(204,204,204,0.7)" }} />
+            <div className="absolute top-0 bottom-0 w-px" style={{ left: "50%", backgroundColor: "rgba(204,204,204,0.7)" }} />
+            <div className="absolute top-0 bottom-0 w-px" style={{ left: "75%", backgroundColor: "rgba(204,204,204,0.7)" }} />
           </div>
+          <div className="absolute left-0 right-0 h-px" style={{ top: "33%", backgroundColor: "rgba(204,204,204,0.7)" }} />
+          <div className="absolute left-0 right-0 h-px" style={{ top: "66%", backgroundColor: "rgba(204,204,204,0.7)" }} />
         </div>
 
         {/* Hero content */}
-        <div className="flex-1 flex flex-col justify-end pb-24 px-6">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
-              {/* Big word */}
-              <div className="md:col-span-1 flex items-end">
-                <h1
-                  className="font-sans text-[#14181A] leading-none select-none hero-title"
-                  data-testid="hero-title"
-                >
-                  Souq
-                </h1>
-              </div>
+        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 24px", zIndex: 2 }}>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
+            {/* Souq title — fixed 372px */}
+            <div style={{ width: "372px", flexShrink: 0 }}>
+              <h1
+                className="hero-title text-[#14181A] leading-none select-none"
+                data-testid="hero-title"
+              >
+                Souq
+              </h1>
+            </div>
 
-              {/* Tagline */}
-              <div className="md:col-span-2 flex flex-col justify-end pb-4 md:pl-12">
-                <p className="font-sans font-semibold leading-snug mb-3 hero-tagline">
-                  Capital that moves at the speed of your ambition.
-                </p>
-                <p className="text-base text-[#14181A]/70 leading-relaxed max-w-lg">
-                  We back founders who are building something worth backing — and we only win when you do.
-                </p>
-                <div className="mt-8 flex items-center gap-4">
-                  <Link href="/apply" data-testid="hero-apply-btn">
-                    <button className="bg-[#14181A] text-white font-medium px-6 py-3 rounded-lg hover:bg-black/80 transition-all duration-200 text-sm">
-                      Apply Now
-                    </button>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="text-sm text-[#14181A]/60 hover:text-[#14181A] transition-colors flex items-center gap-1"
-                  >
-                    Learn more ↓
-                  </button>
-                </div>
-              </div>
+            {/* Tagline — max 49% */}
+            <div style={{ maxWidth: "49%" }} className="flex flex-col gap-2 pb-1">
+              <p className="body-h3 font-semibold text-[#14181A]">
+                <strong>Fuel your growth, without debt or dilution.</strong>
+                <br />
+                We fund what drives your business — and only win when you do.
+              </p>
             </div>
           </div>
-        </div>
 
-        {/* Brand statement strip — replaces ticker */}
-        <div className="border-t border-black/8 py-5 px-6">
-          <div className="max-w-7xl mx-auto flex flex-wrap gap-x-12 gap-y-2 items-center">
-            {["Built for founders", "Halal by design", "No equity taken", "Aligned incentives"].map((item, i) => (
-              <span key={i} className="text-xs font-medium tracking-widest uppercase text-[#14181A]/40">
-                {item}
-              </span>
-            ))}
+          {/* CTA row */}
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: "24px" }}>
+            <Link href="/apply" data-testid="hero-apply-btn">
+              <button className="bg-[#14181A] text-white font-medium px-6 py-3 rounded-lg hover:bg-black/80 transition-all duration-200 text-sm">
+                Apply Now
+              </button>
+            </Link>
+            <button
+              onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+              className="section-label text-[#14181A]/60 hover:text-[#14181A] transition-colors"
+            >
+              [ Scroll to learn more ]
+            </button>
           </div>
         </div>
       </section>
 
-      {/* ── ABOUT ── */}
-      <section id="about" className="py-32 px-6 border-b border-black/8" data-testid="about-section">
-        <div className="max-w-7xl mx-auto">
-          <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-16">About</p>
+      {/* ── ABOUT — What we do ── */}
+      <section
+        id="about"
+        data-testid="about-section"
+        className="border-b border-black/8"
+        style={{ padding: "49px 50px 30px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "row", gap: "80px", alignItems: "flex-start" }}>
+          <ScrollReveal style={{ flex: "0.6 0 0" }}>
+            <div className="flex flex-col gap-3">
+              <p className="section-label text-[#787777]">[ About ]</p>
+              <h4 className="about-heading text-[#14181A]">What we do for you</h4>
+            </div>
           </ScrollReveal>
+          <ScrollReveal delay={100} style={{ flex: "1 0 0" }}>
+            <div className="flex flex-col gap-4">
+              <p className="body-h3 font-bold text-[#14181A]">Capital built to move your business forward.</p>
+              <h3 className="body-h3 text-[#14181A]">Souq Capital partners with you by funding inventory and service contracts.</h3>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
 
-          <ScrollReveal delay={100}>
-            <div className="max-w-3xl">
-              <h2 className="font-heading text-3xl md:text-5xl font-bold leading-tight text-[#14181A] mb-8">
-                We partner with ambitious founders — and put our capital behind their vision.
-              </h2>
-              <p className="text-[#14181A]/60 text-lg leading-relaxed">
-                Souq backs product and service businesses by funding what they need to grow. We move when you're ready, and we share in your success — not your stress.
-              </p>
+      {/* ── ABOUT — Why we do it ── */}
+      <section
+        id="why-we-do-it"
+        className="border-b border-black/8"
+        style={{ padding: "49px 50px 30px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "row", gap: "80px", alignItems: "flex-start" }}>
+          <ScrollReveal style={{ flex: "0.6 0 0" }}>
+            <h4 className="about-heading text-[#14181A]">Why we do it </h4>
+          </ScrollReveal>
+          <ScrollReveal delay={100} style={{ flex: "1 0 0" }}>
+            <div className="flex flex-col gap-4">
+              <p className="body-h3 font-bold text-[#14181A]">The funding world is broken.</p>
+              <ul className="flex flex-col gap-2 list-none p-0 m-0">
+                <li>
+                  <h3 className="body-h3 text-[#14181A]">Banks offer rigid loans with collateral</h3>
+                </li>
+                <li>
+                  <p className="body-p text-[#14181A]">VCs take ownership and control</p>
+                </li>
+                <li>
+                  <p className="body-p text-[#14181A]">"Revenue-based" lenders are misaligned with your values</p>
+                </li>
+              </ul>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-32 px-6 border-b border-black/8 bg-[#fafafa]" data-testid="how-it-works-section">
-        <div className="max-w-7xl mx-auto">
+      <section
+        id="how-it-works"
+        data-testid="how-it-works-section"
+        className="border-b border-black/8"
+        style={{ padding: "50px 50px 100px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">How it works</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">Simple by design.</h2>
-            <p className="text-muted-foreground mb-20 max-w-md">Three steps from application to funded — with no surprises in between.</p>
+            <div className="flex flex-col gap-2 mb-12">
+              <p className="section-label text-[#787777]">[ How it works ]</p>
+              <h2 className="section-h2 text-[#14181A]">3 Easy Steps</h2>
+            </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border border-black/8 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-black/8">
             {STEPS.map((step, i) => (
-              <ScrollReveal key={i} delay={i * 100} className="border-b md:border-b-0 md:border-r border-black/8 last:border-r-0 p-10 bg-white">
-                <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center text-xs font-bold text-[#14181A] mb-8">
-                  {step.num}
+              <ScrollReveal
+                key={i}
+                delay={i * 80}
+                className="border-b border-r border-black/8 p-8 flex flex-col gap-6 bg-white"
+              >
+                <p className="section-label text-[#787777]">[ {step.num} ]</p>
+                <div className="flex flex-col gap-1">
+                  <h3 className="body-h3 text-[#14181A]">{step.title}</h3>
+                  <h4 className="step-h4 text-[#14181A]">{step.sub}</h4>
                 </div>
-                <h3 className="font-heading font-bold text-xl text-[#14181A] mb-2">{step.title}</h3>
-                <p className="text-xs text-muted-foreground font-medium mb-4">{step.sub}</p>
-                <p className="text-sm text-[#14181A]/70 leading-relaxed">{step.desc}</p>
+                <p className="body-p text-[#666]">{step.desc}</p>
               </ScrollReveal>
             ))}
-            {/* Shared success step */}
-            <ScrollReveal delay={300} className="p-10 bg-[#14181A] text-white">
-              <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs font-bold mb-8">
-                ↗
+
+            {/* Dark repay card */}
+            <ScrollReveal delay={240} className="border-b border-r border-black/8 p-8 flex flex-col gap-6 bg-[#14181A]">
+              <p className="section-label text-white/50">[ Repay ]</p>
+              <div className="flex flex-col gap-1">
+                <h3 className="body-h3 text-white">Repay Souq</h3>
+                <h4 className="step-h4 text-white/70">Shared profit as you sell</h4>
               </div>
-              <h3 className="font-heading font-bold text-xl mb-2">We grow together</h3>
-              <p className="text-xs text-white/50 font-medium mb-4">Shared success, no surprises</p>
-              <p className="text-sm text-white/70 leading-relaxed">
-                We earn a share of the upside as you sell — kept simple, transparent, and tied to your results.
+              <p className="body-p text-white/60">
+                Only pay when product sells. A monthly invoice for a small percentage of profit on Souq inventory.
               </p>
             </ScrollReveal>
           </div>
@@ -276,18 +309,21 @@ export default function Home() {
       </section>
 
       {/* ── PORTFOLIO LOGOS ── */}
-      <section className="py-20 px-6 border-b border-black/8 bg-white" data-testid="portfolio-section">
-        <div className="max-w-7xl mx-auto">
+      <section
+        className="border-b border-black/8"
+        data-testid="portfolio-section"
+        style={{ padding: "100px 50px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2 text-center">Portfolio</p>
-            <p className="text-center text-sm font-semibold text-[#14181A] mb-14">
-              $5M Deployed · 13 Companies · Counting
+            <p className="section-label text-[#787777] text-center mb-4">Portfolio</p>
+            <p className="step-h4 text-[#14181A] text-center mb-16">
+              $5M Invested | 13 Companies | 17 Investments
             </p>
           </ScrollReveal>
-
           <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
             {PORTFOLIO_LOGOS.map((src, i) => (
-              <ScrollReveal key={i} delay={i * 60}>
+              <ScrollReveal key={i} delay={i * 50}>
                 <img
                   src={src}
                   alt={`Portfolio company ${i + 1}`}
@@ -301,19 +337,20 @@ export default function Home() {
       </section>
 
       {/* ── CLIENT REVIEWS ── */}
-      <section className="py-32 px-6 border-b border-black/8" data-testid="reviews-section">
-        <div className="max-w-7xl mx-auto">
+      <section
+        className="border-b border-black/8"
+        data-testid="reviews-section"
+        style={{ padding: "100px 50px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Brand Stories</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              From the founders we back.
-            </h2>
-            <p className="text-muted-foreground mb-16">
-              Real businesses. Real results.
-            </p>
+            <div className="flex flex-col gap-2 mb-12">
+              <p className="section-label text-[#787777]">[ Client Reviews ]</p>
+              <h2 className="section-h2 text-[#14181A]">Client Reviews</h2>
+            </div>
           </ScrollReveal>
 
-          {/* Desktop grid */}
+          {/* Desktop 2×2 grid */}
           <div className="hidden md:grid grid-cols-2 gap-6">
             {REVIEWS.map((review, i) => (
               <ScrollReveal key={i} delay={i * 80}>
@@ -321,10 +358,10 @@ export default function Home() {
                   className="border border-black/8 rounded-2xl p-10 bg-white hover:shadow-md transition-shadow duration-300 flex flex-col gap-4"
                   data-testid={`review-card-${i}`}
                 >
-                  <p className="text-[#14181A] font-medium text-base leading-snug">
+                  <p className="body-h3 font-medium text-[#14181A] leading-snug">
                     "{review.quote}"
                   </p>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{review.story}</p>
+                  <p className="body-p text-[#666] leading-relaxed">{review.story}</p>
                   <div className="flex items-center gap-3 mt-auto pt-6 border-t border-black/6">
                     <img
                       src={review.img}
@@ -332,8 +369,8 @@ export default function Home() {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div>
-                      <p className="font-semibold text-sm text-[#14181A]">{review.company}</p>
-                      <p className="text-xs text-muted-foreground">{review.founder}</p>
+                      <p className="section-label font-semibold text-[#14181A]">{review.company}</p>
+                      <p className="section-label text-[#787777]">{review.founder}</p>
                     </div>
                   </div>
                 </div>
@@ -347,10 +384,10 @@ export default function Home() {
               className="border border-black/8 rounded-2xl p-8 bg-white"
               data-testid="review-mobile-card"
             >
-              <p className="text-[#14181A] font-medium text-base leading-snug mb-3">
+              <p className="body-p font-medium text-[#14181A] leading-snug mb-3">
                 "{REVIEWS[activeReview].quote}"
               </p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+              <p className="body-p text-[#666] leading-relaxed mb-4">
                 {REVIEWS[activeReview].story}
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-black/6">
@@ -360,8 +397,8 @@ export default function Home() {
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div>
-                  <p className="font-semibold text-sm text-[#14181A]">{REVIEWS[activeReview].company}</p>
-                  <p className="text-xs text-muted-foreground">{REVIEWS[activeReview].founder}</p>
+                  <p className="section-label font-semibold text-[#14181A]">{REVIEWS[activeReview].company}</p>
+                  <p className="section-label text-[#787777]">{REVIEWS[activeReview].founder}</p>
                 </div>
               </div>
             </div>
@@ -379,16 +416,21 @@ export default function Home() {
       </section>
 
       {/* ── TEAM ── */}
-      <section id="team" className="py-32 px-6 border-b border-black/8 bg-[#fafafa]" data-testid="team-section">
-        <div className="max-w-7xl mx-auto">
+      <section
+        id="team"
+        data-testid="team-section"
+        className="border-b border-black/8"
+        style={{ padding: "100px 50px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Team</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              The people behind Souq.
-            </h2>
-            <p className="text-muted-foreground mb-20">
-              10+ years experience · $40M+ raised · 300+ backers · 6 completed funds
-            </p>
+            <div className="flex flex-col gap-2 mb-16">
+              <p className="section-label text-[#787777]">[ Team ]</p>
+              <h2 className="section-h2 text-[#14181A]">The team behind Souq</h2>
+              <p className="body-p text-[#666]">
+                10+ years experience | 10 investment funds | 6 completed | $40M+ raised | 300+ investors
+              </p>
+            </div>
           </ScrollReveal>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -402,10 +444,8 @@ export default function Home() {
                       className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
-                    {member.role}
-                  </p>
-                  <h3 className="font-heading font-bold text-[#14181A]">{member.name}</h3>
+                  <p className="section-label text-[#787777] mb-1">{member.role}</p>
+                  <h3 className="step-h4 text-[#14181A]">{member.name}</h3>
                 </div>
               </ScrollReveal>
             ))}
@@ -414,19 +454,23 @@ export default function Home() {
       </section>
 
       {/* ── FAQs ── */}
-      <section className="py-32 px-6 border-b border-black/8" data-testid="faq-section">
-        <div className="max-w-3xl mx-auto">
+      <section
+        data-testid="faq-section"
+        className="border-b border-black/8"
+        style={{ padding: "100px 50px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">FAQs</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#14181A] mb-4">
-              Common questions.
-            </h2>
-            <p className="text-muted-foreground mb-16">
-              Straightforward answers to what founders ask us most.
-            </p>
+            <div className="flex flex-col gap-2 mb-12">
+              <p className="section-label text-[#787777]">[ FAQs ]</p>
+              <h2 className="section-h2 text-[#14181A]">Frequently Ask Questions</h2>
+              <p className="body-p text-[#666]">
+                Find answers to common questions about our services, process, and how Souq can help you achieve your goals.
+              </p>
+            </div>
           </ScrollReveal>
 
-          <div className="border-t border-black/8">
+          <div className="border-t border-black/8 max-w-3xl">
             {FAQS.map((faq, i) => (
               <FaqItem key={i} q={faq.q} a={faq.a} />
             ))}
@@ -435,18 +479,27 @@ export default function Home() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-36 px-6 bg-[#14181A] text-white" data-testid="cta-section">
-        <div className="max-w-3xl mx-auto text-center">
+      <section
+        data-testid="cta-section"
+        style={{ padding: "100px 50px" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="text-xs uppercase tracking-widest text-white/40 mb-8">Work With Us</p>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold mb-10 leading-tight">
-              Ready to build something bigger?
-            </h2>
-            <Link href="/apply" data-testid="cta-apply-btn">
-              <button className="bg-white text-[#14181A] font-semibold px-10 py-4 rounded-xl hover:bg-white/90 transition-all duration-200 text-base">
-                Apply Now
-              </button>
-            </Link>
+            <div
+              className="rounded-[40px] bg-white border border-black/8 flex flex-col items-start gap-6 p-16"
+              style={{ backgroundImage: "url(https://framerusercontent.com/images/PyLlmV1BoQoNCsiIPcTDPuDRja8.jpeg)", backgroundSize: "cover", backgroundPosition: "center" }}
+            >
+              <p className="section-label" style={{ color: "rgb(48,48,48)" }}>[ WORK WITH US ]</p>
+              <div className="bg-white rounded-[40px] p-12 flex flex-col gap-6 max-w-xl">
+                <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
+                <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
+                <Link href="/apply" data-testid="cta-apply-btn">
+                  <button className="border-2 border-[#222] text-[#14181A] font-medium px-6 py-3 rounded-lg hover:bg-[#14181A] hover:text-white transition-all duration-200 text-sm">
+                    Apply
+                  </button>
+                </Link>
+              </div>
+            </div>
           </ScrollReveal>
         </div>
       </section>
