@@ -1,204 +1,459 @@
+import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
-import ScrollReveal from "@/components/ScrollReveal";
 
-const PILLARS = [
-  {
-    tag: "Working Capital",
-    name: "Capital",
-    description:
-      "Fuel your growth, without debt or dilution.\nWe fund what drives your business — and only win when you do.",
-    href: "/capital",
-    cta: "Apply for capital",
-  },
-  {
-    tag: "Growth Program",
-    name: "Accelerator",
-    description:
-      "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
-    href: "/accelerator",
-    cta: "Learn more",
-  },
-  {
-    tag: "Fulfillment",
-    name: "3PL",
-    description:
-      "Fulfillment run by operators, not middlemen. 1.2M+ orders shipped per year. Same-day by 12pm ET. Built for DTC brands in fashion, supplements, and beverage.",
-    href: "mailto:yaser@joinsouq.com",
-    cta: "Get a quote",
-    external: true,
-  },
+const WORDS = [
+  "beauty", "fashion", "food", "skincare", "fragrance",
+  "coffee", "home", "wellness", "jewelry", "fitness",
+];
+
+const TRIAD = [
+  { idx: "01", label: "Capital",             href: "/capital" },
+  { idx: "02", label: "The operating stack", href: "/accelerator" },
+  { idx: "03", label: "Fulfillment",         href: "mailto:yaser@joinsouq.com" },
 ];
 
 export default function Umbrella() {
+  const [ready,     setReady]     = useState(false);
+  const [wordIdx,   setWordIdx]   = useState(0);
+  const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
+  const [email,     setEmail]     = useState("");
+  const [error,     setError]     = useState("");
+  const [loading,   setLoading]   = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const washRef = useRef<HTMLDivElement>(null);
+
+  /* entrance */
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  /* ambient wash tracks pointer */
+  useEffect(() => {
+    const wash = washRef.current;
+    if (!wash || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    let tx = 50, ty = 22, cx = 50, cy = 22, raf: number | null = null;
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth)  * 100;
+      ty = (e.clientY / window.innerHeight) * 100;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    function tick() {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      wash!.style.setProperty("--mx", cx.toFixed(2) + "%");
+      wash!.style.setProperty("--my", cy.toFixed(2) + "%");
+      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1)
+        ? requestAnimationFrame(tick) : null;
+    }
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
+  /* word rotator */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => {
+      setWordIdx(prev => {
+        const next = (prev + 1) % WORDS.length;
+        setPrevIdx(prev);
+        setTimeout(() => setPrevIdx(null), 650);
+        return next;
+      });
+    }, 2600);
+    return () => clearInterval(id);
+  }, []);
+
+  /* waitlist submit */
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      setError("That address doesn't look right.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    await new Promise(r => setTimeout(r, 700)); // swap for real endpoint
+    setLoading(false);
+    setSubmitted(true);
+  }
+
   return (
-    <div className="min-h-screen bg-white text-[#14181A]">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/8">
-        <div
-          className="mx-auto h-16 flex items-center justify-between"
-          style={{ maxWidth: "1320px", padding: "0 50px" }}
-        >
-          <Link href="/">
-            <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
-                S
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "5px",
-                    height: "5px",
-                    borderRadius: "50%",
-                    backgroundColor: "white",
-                    margin: "0 1px 2px 1px",
-                    verticalAlign: "middle",
-                  }}
-                />
-                uq
-              </span>
-            </div>
-          </Link>
+    <div
+      data-ready={ready}
+      style={{
+        minHeight: "100svh",
+        background: "oklch(0.985 0.003 85)",
+        color: "oklch(0.165 0.006 285)",
+        fontFamily: "'Inter', ui-sans-serif, -apple-system, sans-serif",
+        fontFeatureSettings: '"cv02" 1,"cv03" 1,"cv04" 1,"ss01" 1',
+        WebkitFontSmoothing: "antialiased",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
+      {/* ── ambient wash ── */}
+      <div
+        ref={washRef}
+        aria-hidden="true"
+        className="u-wash"
+        style={{ opacity: ready ? 1 : 0 }}
+      />
 
-          <div className="hidden md:flex items-center gap-10">
-            <Link href="/capital">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                Capital
-              </span>
-            </Link>
-            <Link href="/accelerator">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                Accelerator
-              </span>
-            </Link>
-            <Link href="/3pl">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                3PL
-              </span>
-            </Link>
-          </div>
+      {/* ── film grain ── */}
+      <div aria-hidden="true" className="u-grain" />
 
-          <Link href="/apply">
-            <button
-              className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 hover:bg-black/80 transition-all"
-              style={{ borderRadius: "99px" }}
-            >
-              Apply
-            </button>
-          </Link>
-        </div>
-      </nav>
+      {/* ── Swiss column rules ── */}
+      <div aria-hidden="true" className="u-rules">
+        <span /><span /><span /><span />
+      </div>
 
-      {/* Hero */}
-      <section style={{ padding: "160px 50px 80px" }}>
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <ScrollReveal>
-            <h1
-              style={{
-                fontSize: "80px",
-                fontWeight: 600,
-                letterSpacing: "-3px",
-                lineHeight: 1.05,
-                fontFamily: "Inter, sans-serif",
-                maxWidth: "900px",
-              }}
-            >
-              Scaling the next generation of brands.
-            </h1>
-            <p className="text-[#787777] mt-6" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>
-              from the Founders of Souq Capital and Veiled
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* ── shell ── */}
+      <div className="u-shell">
 
-      {/* Three pillars */}
-      <section style={{ padding: "0 50px 140px" }}>
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {PILLARS.map((pillar, i) => (
-              <ScrollReveal key={pillar.name} delay={i * 100}>
-                <div className="border border-black/8 rounded-2xl p-10 flex flex-col gap-8 h-full hover:border-black/20 transition-colors duration-200">
-                  <div className="flex flex-col gap-2">
-                    <p className="section-label text-[#787777]">{pillar.tag}</p>
-                    <h2
-                      style={{
-                        fontSize: "32px",
-                        fontWeight: 600,
-                        letterSpacing: "-1px",
-                        lineHeight: 1.2,
-                        fontFamily: "Inter, sans-serif",
-                      }}
-                    >
-                      Souq {pillar.name}
-                    </h2>
-                  </div>
-
-                  <p className="text-[#555]" style={{ fontSize: "18px", lineHeight: 1.6, whiteSpace: "pre-line", flex: 1 }}>
-                    {pillar.description}
-                  </p>
-
-                  {"external" in pillar && pillar.external ? (
-                    <a href={pillar.href}>
-                      <button
-                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
-                        style={{ borderRadius: "99px" }}
-                      >
-                        {pillar.cta} →
-                      </button>
-                    </a>
-                  ) : (
-                    <Link href={pillar.href}>
-                      <button
-                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
-                        style={{ borderRadius: "99px" }}
-                      >
-                        {pillar.cta} →
-                      </button>
-                    </Link>
-                  )}
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-black/8 py-8" style={{ padding: "32px 50px" }}>
-        <div
-          className="mx-auto flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ maxWidth: "1320px" }}
-        >
-          <span className="section-label text-[#787777]">
-            © {new Date().getFullYear()} Souq. All rights reserved.
+        {/* header */}
+        <header className="u-pad u-header">
+          <a href="/" className="u-mark">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                className={ready ? "u-draw" : ""}
+              />
+            </svg>
+            <span className="u-wordmark">Souq</span>
+          </a>
+          <span className="u-status">
+            <span className="u-dot" aria-hidden="true" />
+            In stealth
           </span>
-          <div className="flex items-center gap-6">
-            <Link href="/capital">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                Capital
+        </header>
+
+        {/* hero */}
+        <main className="u-pad u-main">
+          <p className={`u-eyebrow u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "0ms" } as React.CSSProperties}>
+            The consumer accelerator
+          </p>
+
+          <h1 className={`u-h1 u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "85ms" } as React.CSSProperties}>
+            Everything it takes{" "}
+            to launch a{" "}
+            {/* rotator */}
+            <span className="u-rotator" aria-hidden="true">
+              {/* outgoing word */}
+              {prevIdx !== null && (
+                <span key={`out-${prevIdx}`} className="u-word u-word-out">
+                  {WORDS[prevIdx]}
+                </span>
+              )}
+              {/* current word */}
+              <span key={`in-${wordIdx}`} className="u-word u-word-in">
+                {WORDS[wordIdx]}
               </span>
-            </Link>
-            <Link href="/capital#accelerator">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                Accelerator
-              </span>
-            </Link>
-            <Link href="/3pl">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                3PL
-              </span>
-            </Link>
+              <span className="u-underline" />
+            </span>
+            <span className="sr-only">{WORDS[wordIdx]}</span>{" "}
+            brand.
+          </h1>
+
+          <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
+            Capital, the operating stack, and a room of founders who actually
+            care — <strong>in one place</strong>. We back consumer companies
+            from the first idea to the first hundred thousand customers.
+          </p>
+
+          {/* waitlist */}
+          <div className={`u-cta u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "255ms" } as React.CSSProperties}>
+            {submitted ? (
+              <div className="u-done">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="u-tick">
+                  <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <p>
+                  You're on the list.
+                  <span>{email} — we only send one email, when the doors open.</span>
+                </p>
+              </div>
+            ) : (
+              <>
+                <form onSubmit={handleSubmit} className="u-form" noValidate>
+                  <label className="sr-only" htmlFor="u-email">Email address</label>
+                  <input
+                    id="u-email"
+                    className={`u-input${error ? " u-input-err" : ""}`}
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); if (error) setError(""); }}
+                    required
+                  />
+                  <button className="u-btn" type="submit" disabled={loading}>
+                    {loading ? "Sending…" : "Join the waitlist"}
+                    {!loading && (
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </form>
+                <p className={`u-note${error ? " u-note-err" : ""}`} role="status" aria-live="polite">
+                  {error || "Applications open to a small first cohort."}
+                </p>
+              </>
+            )}
           </div>
+        </main>
+
+        {/* triad */}
+        <div className={`u-pad u-triad u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
+          {TRIAD.map((item, i) =>
+            item.href.startsWith("mailto:") ? (
+              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+                <span className="u-triad-idx">{item.idx}</span>
+                <span className="u-triad-lbl">{item.label}</span>
+              </a>
+            ) : (
+              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+                <span className="u-triad-idx">{item.idx}</span>
+                <span className="u-triad-lbl">{item.label}</span>
+              </Link>
+            )
+          )}
         </div>
-      </footer>
+
+        {/* footer */}
+        <footer className="u-pad u-footer">
+          <span>Souq — joinsouq.com</span>
+          <a href="mailto:hello@joinsouq.com" className="u-footer-link">hello@joinsouq.com</a>
+          <span>© MMXXVI</span>
+        </footer>
+      </div>
+
+      <style>{`
+        /* ── tokens ── */
+        .u-wash {
+          position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
+          background: radial-gradient(38vmax 38vmax at var(--mx,50%) var(--my,22%), oklch(0.72 0.10 55/.16), transparent 68%);
+          transition: opacity .8s ease; will-change: background;
+        }
+        .u-grain {
+          position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .045;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        .u-rules {
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          display: grid; grid-template-columns: repeat(4,1fr);
+          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
+        }
+        .u-rules span { border-left: 1px solid oklch(0.905 0.004 285); opacity: .55; }
+        .u-rules span:first-child { border-left-color: oklch(0.83 0.005 285); opacity: .8; }
+        @media (max-width:720px) { .u-rules { display:none; } }
+
+        /* shell */
+        .u-shell {
+          position: relative; z-index: 2;
+          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
+          min-height: 100svh; display: flex; flex-direction: column;
+          border-inline: 1px solid oklch(0.83 0.005 285);
+        }
+        @media (max-width:720px) { .u-shell { width:100%; border-inline:0; } }
+        .u-pad { padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
+
+        /* header */
+        .u-header {
+          display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+          padding-block: 1.4rem;
+          border-bottom: 1px solid oklch(0.905 0.004 285);
+        }
+        .u-mark {
+          display: flex; align-items: center; gap: .6rem;
+          text-decoration: none; color: inherit;
+        }
+        .u-wordmark { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.035em; }
+        .u-draw {
+          stroke-dasharray: 40; stroke-dashoffset: 0;
+          animation: u-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both;
+        }
+        @keyframes u-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+        .u-status {
+          display: inline-flex; align-items: center; gap: .5rem;
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+          color: oklch(0.55 0.008 285); white-space: nowrap;
+        }
+        .u-dot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: oklch(0.66 0.15 48); position: relative; flex: none;
+        }
+        .u-dot::after {
+          content: ""; position: absolute; inset: 0; border-radius: 50%;
+          background: oklch(0.66 0.15 48);
+          animation: u-pulse 2.6s cubic-bezier(.22,1,.36,1) infinite;
+        }
+        @keyframes u-pulse { 0%{transform:scale(1);opacity:.7} 70%,100%{transform:scale(3.2);opacity:0} }
+
+        /* main */
+        .u-main {
+          flex: 1; display: flex; flex-direction: column; justify-content: center;
+          padding-block: clamp(3.5rem, 11vh, 8rem);
+        }
+        .u-eyebrow {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase;
+          color: oklch(0.74 0.006 285); margin: 0 0 clamp(1.5rem,4vh,2.5rem);
+        }
+        .u-h1 {
+          margin: 0;
+          font-size: clamp(2.6rem, 7.4vw, 5.9rem);
+          line-height: .96; letter-spacing: -0.045em; font-weight: 400; max-width: 22ch;
+        }
+        .u-sub {
+          margin: clamp(1.75rem,4.5vh,2.5rem) 0 0; max-width: 46ch;
+          font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
+          line-height: 1.55; color: oklch(0.55 0.008 285); letter-spacing: -0.011em;
+        }
+        .u-sub strong { color: oklch(0.165 0.006 285); font-weight: 500; }
+
+        /* rotator */
+        .u-rotator {
+          position: relative; display: inline-block; vertical-align: bottom;
+          overflow: hidden; padding-bottom: .24em; margin-bottom: -.24em;
+        }
+        .u-word {
+          display: inline-block; white-space: nowrap; font-style: italic; font-weight: 400;
+        }
+        .u-word-in  { animation: u-word-in  .52s cubic-bezier(.32,.72,0,1) both; }
+        .u-word-out {
+          position: absolute; left: 0; top: 0;
+          animation: u-word-out .52s cubic-bezier(.32,.72,0,1) both;
+        }
+        @keyframes u-word-in  { from { transform: translateY(140%); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes u-word-out { from { transform: none; opacity: 1; } to { transform: translateY(-140%); opacity: 0; } }
+        .u-underline {
+          position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
+          background: oklch(0.66 0.15 48); opacity: .8;
+        }
+
+        /* waitlist */
+        .u-cta { margin-top: clamp(2.25rem, 5vh, 3.25rem); max-width: 30rem; }
+        .u-form { display: flex; gap: .5rem; }
+        @media (max-width:480px) { .u-form { flex-direction: column; } }
+        .u-input {
+          flex: 1; min-width: 0; height: 2.875rem; padding: 0 .9rem;
+          font: inherit; font-size: .9375rem; color: oklch(0.165 0.006 285);
+          background: oklch(1 0 0); border: 1px solid oklch(0.83 0.005 285);
+          border-radius: .625rem; outline: none;
+          transition: border-color .18s ease, box-shadow .18s ease;
+        }
+        .u-input::placeholder { color: oklch(0.74 0.006 285); }
+        .u-input:focus-visible { border-color: oklch(0.19 0.006 285); box-shadow: 0 0 0 3px oklch(0.19 0.006 285/.12); }
+        .u-input-err { border-color: oklch(0.58 0.19 25) !important; }
+        .u-btn {
+          height: 2.875rem; padding: 0 1.15rem;
+          display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+          font: inherit; font-size: .9375rem; font-weight: 500; letter-spacing: -0.008em;
+          color: oklch(0.99 0 0); background: oklch(0.19 0.006 285);
+          border: 1px solid oklch(0.19 0.006 285); border-radius: .625rem;
+          cursor: pointer; white-space: nowrap;
+          transition: opacity .18s ease, transform .16s cubic-bezier(.22,1,.36,1);
+        }
+        .u-btn:hover { opacity: .88; }
+        .u-btn:active { transform: scale(.985); }
+        .u-btn:disabled { opacity: .6; cursor: default; }
+        .u-btn svg { transition: transform .28s cubic-bezier(.22,1,.36,1); }
+        .u-btn:hover svg { transform: translateX(3px); }
+        .u-note {
+          margin: .875rem 0 0; min-height: 1.25rem;
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .6875rem; letter-spacing: .06em; color: oklch(0.74 0.006 285);
+        }
+        .u-note-err { color: oklch(0.55 0.19 25); }
+        .u-done {
+          display: flex; align-items: flex-start; gap: .75rem;
+          padding: 1.05rem 1.15rem;
+          background: oklch(1 0 0); border: 1px solid oklch(0.83 0.005 285);
+          border-radius: .625rem;
+          animation: u-rise .5s cubic-bezier(.22,1,.36,1) both;
+        }
+        .u-tick { flex: none; margin-top: .15rem; color: oklch(0.66 0.15 48); }
+        .u-done p { margin: 0; font-size: .9375rem; letter-spacing: -0.008em; }
+        .u-done p span { display: block; color: oklch(0.55 0.008 285); font-size: .8125rem; margin-top: .2rem; }
+        @keyframes u-rise { from { opacity: 0; transform: translateY(8px); } }
+
+        /* triad */
+        .u-triad {
+          display: grid; grid-template-columns: repeat(3,1fr);
+          border-top: 1px solid oklch(0.905 0.004 285);
+        }
+        @media (max-width:600px) { .u-triad { grid-template-columns: 1fr; } }
+        .u-triad-item {
+          position: relative; padding: 1.35rem 0 1.4rem;
+          display: flex; align-items: baseline; gap: .75rem;
+          text-decoration: none; color: inherit; cursor: pointer;
+          overflow: hidden;
+        }
+        .u-triad-border { border-left: 1px solid oklch(0.905 0.004 285); padding-left: 1.15rem; }
+        @media (max-width:600px) {
+          .u-triad-border { border-left: 0; padding-left: 0; border-top: 1px solid oklch(0.905 0.004 285); }
+        }
+        .u-triad-item::after {
+          content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+          background: oklch(0.165 0.006 285);
+          transform: scaleX(0); transform-origin: left;
+          transition: transform .55s cubic-bezier(.22,1,.36,1);
+        }
+        .u-triad-item:hover::after { transform: scaleX(1); }
+        .u-triad-idx {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .6875rem; color: oklch(0.74 0.006 285); letter-spacing: .06em;
+          transition: color .3s ease;
+        }
+        .u-triad-item:hover .u-triad-idx { color: oklch(0.66 0.15 48); }
+        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; }
+
+        /* footer */
+        .u-footer {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 1rem 1.5rem; flex-wrap: wrap; padding-block: 1.35rem;
+          border-top: 1px solid oklch(0.905 0.004 285);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase;
+          color: oklch(0.74 0.006 285);
+        }
+        @media (max-width:560px) {
+          .u-footer { flex-direction: column; align-items: flex-start; gap: .55rem; padding-block: 1.6rem 2rem; }
+        }
+        .u-footer-link {
+          color: oklch(0.55 0.008 285); text-decoration: none; position: relative;
+        }
+        .u-footer-link::after {
+          content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
+          background: currentColor; transform: scaleX(0); transform-origin: right;
+          transition: transform .4s cubic-bezier(.22,1,.36,1);
+        }
+        .u-footer-link:hover { color: oklch(0.165 0.006 285); }
+        .u-footer-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+        /* entrance */
+        .u-reveal { opacity: 0; transform: translateY(14px); }
+        .u-vis { animation: u-reveal .95s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
+        @keyframes u-reveal { to { opacity: 1; transform: none; } }
+
+        /* utils */
+        .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+
+        /* reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .u-reveal, .u-vis { opacity:1 !important; transform:none !important; animation:none !important; }
+          .u-wash { display:none; }
+          .u-word-in, .u-word-out { animation:none !important; }
+        }
+      `}</style>
     </div>
   );
 }
