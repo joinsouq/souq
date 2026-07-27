@@ -9,7 +9,7 @@ const WORDS = [
 const TRIAD = [
   { idx: "01", label: "Capital",             href: "/capital" },
   { idx: "02", label: "The operating stack", href: "/accelerator" },
-  { idx: "03", label: "Fulfillment",         href: "mailto:yaser@joinsouq.com" },
+  { idx: "03", label: "Community",            href: "mailto:yaser@joinsouq.com" },
 ];
 
 export default function Umbrella() {
