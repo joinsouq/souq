@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Souq</title>
+<meta name="description" content="Everything it takes to launch a consumer brand. In one place." />
+<meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+<meta property="og:title" content="Souq" />
+<meta property="og:description" content="Everything it takes to launch a consumer brand. In one place." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://joinsouq.com" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7' fill='none' stroke='%23161616' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   Souq — design tokens (shadcn/ui token model, oklch)
+   Swap these six values and the whole page re-skins.
+   ============================================================ */
+:root {
+  --background:      oklch(0.985 0.003 85);
+  --foreground:      oklch(0.165 0.006 285);
+  --muted:           oklch(0.55  0.008 285);
+  --faint:           oklch(0.74  0.006 285);
+  --border:          oklch(0.905 0.004 285);
+  --border-strong:   oklch(0.83  0.005 285);
+  --card:            oklch(1 0 0);
+  --primary:         oklch(0.19  0.006 285);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring:            oklch(0.19  0.006 285);
+  --accent:          oklch(0.66  0.15 48);
+  --wash:            oklch(0.72 0.10 55 / 0.16);
+  --grain:           0.045;
+  --radius:          0.625rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background:      oklch(0.155 0.004 285);
+    --foreground:      oklch(0.965 0.002 285);
+    --muted:           oklch(0.66  0.006 285);
+    --faint:           oklch(0.45  0.006 285);
+    --border:          oklch(0.27  0.005 285);
+    --border-strong:   oklch(0.36  0.006 285);
+    --card:            oklch(0.19  0.004 285);
+    --primary:         oklch(0.97  0.002 285);
+    --primary-foreground: oklch(0.16 0.004 285);
+    --ring:            oklch(0.80  0.004 285);
+    --accent:          oklch(0.76  0.14 55);
+    --wash:            oklch(0.72 0.11 55 / 0.10);
+    --grain:           0.03;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+::selection { background: var(--foreground); color: var(--background); }
+
+/* ---------- ambient layers ---------- */
+.wash {
+  position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
+  background: radial-gradient(38vmax 38vmax at var(--mx, 50%) var(--my, 22%), var(--wash), transparent 68%);
+  transition: opacity .8s ease;
+  opacity: 0;
+  will-change: background;
+}
+.grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Swiss column rules — 4 hairlines, container-aligned */
+.rules {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  width: min(100% - 3rem, 76rem); margin-inline: auto;
+}
+.rules span { border-left: 1px solid var(--border); opacity: .55; }
+.rules span:first-child { border-left-color: var(--border-strong); opacity: .8; }
+@media (max-width: 720px) { .rules { display: none; } }
+
+/* ---------- shell ---------- */
+.shell {
+  position: relative; z-index: 2;
+  width: min(100% - 3rem, 76rem);
+  margin-inline: auto;
+  min-height: 100svh;
+  display: flex; flex-direction: column;
+  border-inline: 1px solid var(--border-strong);
+}
+@media (max-width: 720px) { .shell { width: 100%; border-inline: 0; } }
+
+.pad { padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
+
+/* ---------- header ---------- */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.4rem;
+  border-bottom: 1px solid var(--border);
+}
+.mark { display: flex; align-items: center; gap: .6rem; text-decoration: none; color: inherit; }
+.mark svg { display: block; overflow: visible; }
+.mark svg path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 1.4s cubic-bezier(.22,1,.36,1) .15s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.wordmark {
+  font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.035em;
+}
+.status {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); white-space: nowrap;
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); position: relative; flex: none; }
+.dot::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--accent);
+  animation: pulse 2.6s cubic-bezier(.22,1,.36,1) infinite;
+}
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 70%, 100% { transform: scale(3.2); opacity: 0; } }
+
+/* ---------- hero ---------- */
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: clamp(3.5rem, 11vh, 8rem); }
+
+.eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--faint); margin: 0 0 clamp(1.5rem, 4vh, 2.5rem);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 7.4vw, 5.9rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  font-weight: 400;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+/* rotating category word */
+.rotator {
+  position: relative; display: inline-block; vertical-align: bottom;
+  overflow: hidden;
+  padding-bottom: .24em; margin-bottom: -.24em;
+  transition: width .62s cubic-bezier(.65,0,.35,1);
+  will-change: width;
+}
+.rotator .slot { display: block; position: relative; height: .96em; white-space: nowrap; }
+.rotator .word {
+  position: absolute; left: 0; top: 0;
+  display: inline-block; white-space: nowrap; line-height: inherit;
+  font-style: italic; font-weight: 400;
+  color: var(--foreground);
+  transition: transform .5s cubic-bezier(.32,.72,0,1), opacity .38s ease;
+}
+.rotator .word.out { transform: translateY(-140%); opacity: 0; }
+.rotator .word.in  { transform: translateY(140%);  opacity: 0; transition: none; }
+.rotator::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
+  background: var(--accent); opacity: .8;
+  transform-origin: left;
+}
+.measure {
+  position: absolute; left: -9999px; top: 0;
+  visibility: hidden; white-space: nowrap; pointer-events: none;
+  font-style: italic; max-width: none;
+}
+@media (max-width: 560px) { .hb { display: none; } }
+
+.sub {
+  margin: clamp(1.75rem, 4.5vh, 2.5rem) 0 0;
+  max-width: 46ch;
+  font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--muted);
+  letter-spacing: -0.011em;
+  text-wrap: pretty;
+}
+.sub b { color: var(--foreground); font-weight: 500; }
+
+/* ---------- waitlist ---------- */
+.cta { margin-top: clamp(2.25rem, 5vh, 3.25rem); max-width: 30rem; }
+form { display: flex; gap: .5rem; }
+@media (max-width: 480px) { form { flex-direction: column; } }
+
+.input {
+  flex: 1; min-width: 0;
+  height: 2.875rem; padding: 0 .9rem;
+  font: inherit; font-size: .9375rem; color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.input::placeholder { color: var(--faint); }
+.input:hover { border-color: var(--muted); }
+.input:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 16%, transparent); }
+.input[aria-invalid="true"] { border-color: oklch(0.58 0.19 25); box-shadow: 0 0 0 3px oklch(0.58 0.19 25 / .14); }
+
+.btn {
+  height: 2.875rem; padding: 0 1.15rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font: inherit; font-size: .9375rem; font-weight: 500; letter-spacing: -0.008em;
+  color: var(--primary-foreground); background: var(--primary);
+  border: 1px solid var(--primary); border-radius: var(--radius);
+  cursor: pointer; white-space: nowrap;
+  transition: transform .16s cubic-bezier(.22,1,.36,1), opacity .18s ease, box-shadow .18s ease;
+}
+.btn:hover { opacity: .9; }
+.btn:active { transform: scale(.985); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }
+.btn[disabled] { opacity: .6; cursor: default; }
+.btn svg { transition: transform .28s cubic-bezier(.22,1,.36,1); }
+.btn:hover svg { transform: translateX(3px); }
+
+.note {
+  margin: .875rem 0 0; min-height: 1.25rem;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: .6875rem; letter-spacing: .06em; color: var(--faint);
+}
+.note.err { color: oklch(0.55 0.19 25); }
+@media (prefers-color-scheme: dark) { .note.err { color: oklch(0.72 0.16 25); } }
+
+.done { display: none; }
+.cta.is-done form, .cta.is-done .note { display: none; }
+.cta.is-done .done {
+  display: flex; align-items: flex-start; gap: .75rem;
+  padding: 1.05rem 1.15rem;
+  background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius);
+  animation: rise .5s cubic-bezier(.22,1,.36,1) both;
+}
+.done .tick { flex: none; margin-top: .15rem; color: var(--accent); }
+.done p { margin: 0; font-size: .9375rem; letter-spacing: -0.008em; }
+.done p span { display: block; color: var(--muted); font-size: .8125rem; margin-top: .2rem; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- triad ---------- */
+.triad {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 720px) { .triad { grid-template-columns: 1fr; } }
+.triad div {
+  position: relative;
+  padding: 1.35rem 0 1.4rem;
+  border-left: 1px solid var(--border);
+  padding-left: 1.15rem;
+  display: flex; align-items: baseline; gap: .75rem;
+}
+.triad div:first-child { border-left: 0; padding-left: 0; }
+@media (max-width: 720px) {
+  .triad div { border-left: 0; padding-left: 0; padding-block: 1rem; border-top: 1px solid var(--border); }
+  .triad div:first-child { border-top: 0; }
+}
+.triad .idx {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: .6875rem; color: var(--faint); letter-spacing: .06em;
+  transition: color .3s ease, transform .3s cubic-bezier(.22,1,.36,1);
+}
+.triad .lbl { font-size: .9375rem; letter-spacing: -0.012em; transition: color .3s ease; }
+.triad div::after {
+  content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+  background: var(--foreground); transform: scaleX(0); transform-origin: left;
+  transition: transform .55s cubic-bezier(.22,1,.36,1);
+}
+.triad div:hover::after { transform: scaleX(1); }
+.triad div:hover .idx { color: var(--accent); transform: translateY(-2px); }
+
+/* ---------- footer ---------- */
+footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  padding-block: 1.35rem;
+  border-top: 1px solid var(--border);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--faint);
+}
+@media (max-width: 560px) {
+  footer { flex-direction: column; align-items: flex-start; gap: .55rem; padding-block: 1.6rem 2rem; }
+}
+footer a { color: var(--muted); text-decoration: none; position: relative; }
+footer a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: right; transition: transform .4s cubic-bezier(.22,1,.36,1);
+}
+footer a:hover { color: var(--foreground); }
+footer a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* ---------- entrance ---------- */
+.reveal { opacity: 0; transform: translateY(14px); }
+.ready .reveal { animation: reveal .95s cubic-bezier(.22,1,.36,1) both; }
+.ready .reveal { animation-delay: calc(var(--i, 0) * 85ms + 60ms); }
+@keyframes reveal { to { opacity: 1; transform: none; } }
+.ready .wash { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .reveal { opacity: 1; transform: none; }
+  .wash { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="wash" aria-hidden="true"></div>
+<div class="rules" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="shell">
+
+  <header class="pad">
+    <a class="mark" href="/" aria-label="Souq — home">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span class="wordmark">Souq</span>
+    </a>
+    <span class="status"><span class="dot" aria-hidden="true"></span>In stealth</span>
+  </header>
+
+  <main class="pad">
+    <p class="eyebrow reveal" style="--i:0">The consumer accelerator</p>
+
+    <h1 class="reveal" style="--i:1">
+      Everything it takes<br class="hb" />
+      to launch a <span class="rotator" id="rot" aria-hidden="true"><span class="slot"><span class="word">beauty</span></span></span><span class="sr-only">consumer</span><br class="hb" />
+      brand.
+    </h1>
+
+    <p class="sub reveal" style="--i:2">
+      Capital, the operating stack, and a room of founders who actually care —
+      <b>in one place</b>. We back consumer companies from the first idea to the
+      first hundred thousand customers.
+    </p>
+
+    <div class="cta reveal" id="cta" style="--i:3">
+      <form id="waitlist" novalidate>
+        <label class="sr-only" for="email">Email address</label>
+        <input class="input" id="email" name="email" type="email" inputmode="email"
+               autocomplete="email" placeholder="you@company.com" required />
+        <button class="btn" type="submit" id="submit">
+          <span id="btn-label">Join the waitlist</span>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+      <p class="note" id="note" role="status" aria-live="polite">Applications open to a small first cohort.</p>
+
+      <div class="done" role="status" aria-live="polite">
+        <svg class="tick" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>You're on the list.<span id="done-sub">We only send one email — when the doors open.</span></p>
+      </div>
+    </div>
+  </main>
+
+  <div class="triad pad reveal" style="--i:4">
+    <div><span class="idx">01</span><span class="lbl">Capital</span></div>
+    <div><span class="idx">02</span><span class="lbl">The operating stack</span></div>
+    <div><span class="idx">03</span><span class="lbl">The community</span></div>
+  </div>
+
+  <footer class="pad">
+    <span>Souq — joinsouq.com</span>
+    <a href="mailto:hello@joinsouq.com">hello@joinsouq.com</a>
+    <span>© MMXXVI</span>
+  </footer>
+
+</div>
+
+<style>
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- entrance ---- */
+  requestAnimationFrame(function () { document.body.classList.add("ready"); });
+
+  /* ---- ambient wash follows the pointer ---- */
+  var wash = document.querySelector(".wash");
+  if (wash && !reduce && window.matchMedia("(pointer: fine)").matches) {
+    var tx = 50, ty = 22, cx = 50, cy = 22, raf = null;
+    window.addEventListener("pointermove", function (e) {
+      tx = (e.clientX / window.innerWidth) * 100;
+      ty = (e.clientY / window.innerHeight) * 100;
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+    function tick() {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      wash.style.setProperty("--mx", cx.toFixed(2) + "%");
+      wash.style.setProperty("--my", cy.toFixed(2) + "%");
+      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) ? requestAnimationFrame(tick) : null;
+    }
+  }
+
+  /* ---- headline category rotator ---- */
+  var WORDS = ["beauty", "fashion", "food", "skincare", "fragrance", "coffee",
+               "home", "wellness", "jewelry", "fitness"];
+  var rot = document.getElementById("rot");
+  if (rot && !reduce) {
+    var slot = rot.querySelector(".slot");
+    var measure = document.createElement("span");
+    measure.className = "measure";
+    rot.parentNode.appendChild(measure);   /* outside the clipped, width-locked box */
+
+    var i = 0;
+    var widths = [];
+    function measureAll() {
+      widths = WORDS.map(function (w) { measure.textContent = w; return Math.ceil(measure.getBoundingClientRect().width) + 2; });
+      rot.style.width = widths[i] + "px";
+    }
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureAll); }
+    measureAll();
+    window.addEventListener("resize", measureAll, { passive: true });
+
+    function cycle() {
+      var next = (i + 1) % WORDS.length;
+      var current = slot.querySelector(".word");
+      var incoming = document.createElement("span");
+      incoming.className = "word in";
+      incoming.textContent = WORDS[next];
+      slot.appendChild(incoming);
+
+      rot.style.width = widths[next] + "px";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          incoming.classList.remove("in");
+          current.classList.add("out");
+        });
+      });
+      window.setTimeout(function () { if (current.parentNode) current.parentNode.removeChild(current); }, 620);
+      i = next;
+    }
+    var timer = window.setInterval(cycle, 2600);
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { window.clearInterval(timer); timer = null; }
+      else if (!timer) { timer = window.setInterval(cycle, 2600); }
+    });
+  }
+
+  /* ---- waitlist ----
+     Swap the fake await below for your provider, e.g.:
+       await fetch("https://formspree.io/f/XXXX", {
+         method: "POST", headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ email: email })
+       });
+     Loops, ConvertKit, Beehiiv and Resend all take the same shape.
+  --------------------------------------------------------- */
+  var form = document.getElementById("waitlist");
+  var input = document.getElementById("email");
+  var note = document.getElementById("note");
+  var btn = document.getElementById("submit");
+  var label = document.getElementById("btn-label");
+  var cta = document.getElementById("cta");
+  var VALID = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  input.addEventListener("input", function () {
+    if (input.getAttribute("aria-invalid") === "true") {
+      input.removeAttribute("aria-invalid");
+      note.classList.remove("err");
+      note.textContent = "Applications open to a small first cohort.";
+    }
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var email = input.value.trim();
+    if (!VALID.test(email)) {
+      input.setAttribute("aria-invalid", "true");
+      note.classList.add("err");
+      note.textContent = "That address doesn't look right.";
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    label.textContent = "Sending";
+    note.classList.remove("err");
+    note.textContent = "";
+
+    window.setTimeout(function () {   /* ← replace with the fetch above */
+      document.getElementById("done-sub").textContent =
+        email + " — we only send one email, when the doors open.";
+      cta.classList.add("is-done");
+    }, 700);
+  });
+})();
+</script>
+</body>
+</html>
