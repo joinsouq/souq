@@ -117,22 +117,33 @@ const PORTFOLIO_LOGOS = [
   "https://framerusercontent.com/images/WV5asNZ4yoIR2gVJUToJbado0.svg",
 ];
 
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a, last }: { q: string; a: string; last?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-black/8 last:border-b-0">
+    <div>
       <button
         onClick={() => setOpen(!open)}
         data-testid={`faq-${q.slice(0, 20).replace(/\s+/g, "-").toLowerCase()}`}
-        className="w-full flex items-center justify-between py-6 text-left group"
+        className="w-full flex items-center justify-between py-6 px-8 text-left group"
       >
-        <span className="font-medium text-[#14181A] text-base pr-4">{q}</span>
-        <span className="text-2xl text-muted-foreground group-hover:text-[#14181A] transition-colors flex-shrink-0">
-          {open ? "−" : "+"}
-        </span>
+        <span className="font-medium text-[#333] text-base pr-4" style={{ fontSize: "16px" }}>{q}</span>
+        <div
+          className="flex-shrink-0 relative"
+          style={{ width: "20px", height: "20px", opacity: 0.3 }}
+        >
+          {/* horizontal bar */}
+          <div className="absolute" style={{ width: "14px", height: "2px", backgroundColor: "#000", borderRadius: "10px", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
+          {/* vertical bar — hidden when open */}
+          {!open && (
+            <div className="absolute" style={{ width: "2px", height: "14px", backgroundColor: "#000", borderRadius: "10px", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
+          )}
+        </div>
       </button>
       {open && (
-        <p className="pb-6 text-muted-foreground leading-relaxed text-sm">{a}</p>
+        <p className="px-8 pb-6 leading-relaxed text-[#333]" style={{ fontSize: "16px", opacity: 0.8 }}>{a}</p>
+      )}
+      {!last && (
+        <div style={{ height: "1px", backgroundColor: "rgba(0,0,0,0.05)", margin: "0 0" }} />
       )}
     </div>
   );
@@ -308,6 +319,79 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── COMPARE ── */}
+      <section
+        id="compare"
+        className="border-b border-black/8"
+        style={{ padding: "100px 50px", backgroundColor: "#14181A" }}
+      >
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
+          <ScrollReveal>
+            <div className="flex flex-col gap-3 mb-12">
+              <p className="section-label" style={{ color: "rgba(255,255,255,0.5)" }}>[ Compare ]</p>
+              <h2 className="section-h2" style={{ color: "#fff" }}>Compare Your Options</h2>
+              <p className="body-p" style={{ color: "rgba(255,255,255,0.6)" }}>
+                Two ways to fund your business. Only one moves you forward.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Souq Capital card */}
+            <ScrollReveal>
+              <div className="rounded-[20px] bg-white p-10 flex flex-col gap-6 h-full">
+                <h3 className="body-h3 font-semibold text-[#14181A]">Souq Capital</h3>
+                <div className="flex flex-col gap-3">
+                  {[
+                    "Interest Free",
+                    "Equity Free",
+                    "Payback when you sell",
+                    "Flexible Use (Goods & Services)",
+                    "Aligned Incentives",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <div
+                        className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: "rgba(31,181,103,0.25)", border: "1px solid rgb(31,181,103)" }}
+                      >
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                          <path d="M1 4L3.5 6.5L9 1" stroke="rgb(31,181,103)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <p className="body-p" style={{ color: "#101010", letterSpacing: "-0.04em" }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Traditional Funding card */}
+            <ScrollReveal delay={100}>
+              <div className="rounded-[20px] p-10 flex flex-col gap-6 h-full" style={{ backgroundColor: "rgba(255,255,255,0.06)" }}>
+                <h3 className="body-h3 font-semibold" style={{ color: "#fff" }}>Traditional Funding Types</h3>
+                <div className="flex flex-col gap-3">
+                  {[
+                    "Bank Loans: High interest rates, Conflicts of interest",
+                    "Venture Capital: Debt-ridden, Variable payback, Conflicts of interest",
+                    "RBF / Lending Platforms: High interest rates, Rigid use (mostly inventory), Misaligned Values",
+                    "Credit Cards / LOC: High interest rates, Variable payback, Rigid use, Conflicts of interest",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-1 w-5 h-5">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M17.799 2.161C18.067 2.431 18.067 2.867 17.799 3.137L12.422 8.514C12.154 8.784 12.154 9.221 12.422 9.491L17.796 14.869C18.064 15.14 18.064 15.576 17.796 15.847L15.839 17.799C15.567 18.067 15.132 18.067 14.86 17.799L9.488 12.422C9.217 12.154 8.781 12.154 8.51 12.422L3.133 17.796C2.863 18.065 2.426 18.065 2.156 17.796L0.201 15.841C-0.067 15.57-0.067 15.134 0.201 14.863L5.579 9.488C5.847 9.217 5.847 8.781 5.579 8.51L0.205 3.131C-0.064 2.861-0.064 2.424 0.205 2.154L2.162 0.2C2.433-0.067 2.869-0.067 3.14 0.201L8.512 5.578C8.782 5.847 9.219 5.847 9.489 5.579L14.866 0.205C15.137-0.063 15.573-0.063 15.844 0.205Z" fill="rgb(255,89,89)"/>
+                        </svg>
+                      </div>
+                      <p className="body-p" style={{ color: "rgba(255,255,255,0.7)", letterSpacing: "-0.04em" }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
       {/* ── PORTFOLIO LOGOS ── */}
       <section
         className="border-b border-black/8"
@@ -470,9 +554,12 @@ export default function Home() {
             </div>
           </ScrollReveal>
 
-          <div className="border-t border-black/8 max-w-3xl">
+          <div
+            className="max-w-3xl"
+            style={{ backgroundColor: "rgb(242,242,242)", borderRadius: "20px", overflow: "hidden" }}
+          >
             {FAQS.map((faq, i) => (
-              <FaqItem key={i} q={faq.q} a={faq.a} />
+              <FaqItem key={i} q={faq.q} a={faq.a} last={i === FAQS.length - 1} />
             ))}
           </div>
         </div>

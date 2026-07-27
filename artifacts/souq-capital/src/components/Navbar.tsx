@@ -55,7 +55,7 @@ export default function Navbar() {
             className="text-[#666666] hover:text-black transition-colors"
             style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
           >
-            How it works
+            How it Works?
           </button>
           <button
             onClick={() => scrollTo("team")}
@@ -65,12 +65,20 @@ export default function Navbar() {
           >
             Team
           </button>
+          <button
+            onClick={() => scrollTo("accelerator")}
+            data-testid="nav-accelerator"
+            className="text-[#666666] hover:text-black transition-colors"
+            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
+          >
+            Accelerator
+          </button>
         </div>
 
         {/* CTA */}
         <div className="flex items-center gap-3">
           <Link href="/apply" data-testid="nav-apply-btn">
-            <button className="hidden md:block border border-[#14181A] text-[#14181A] text-sm font-medium px-5 py-2 rounded-lg hover:bg-[#14181A] hover:text-white transition-all duration-200">
+            <button className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80" style={{ borderRadius: "99px" }}>
               Apply
             </button>
           </Link>
@@ -91,8 +99,9 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-black/8 px-6 py-4 flex flex-col gap-4">
           <button onClick={() => scrollTo("about")} className="text-sm font-medium text-left">About</button>
-          <button onClick={() => scrollTo("how-it-works")} className="text-sm font-medium text-left">How it works</button>
+          <button onClick={() => scrollTo("how-it-works")} className="text-sm font-medium text-left">How it Works?</button>
           <button onClick={() => scrollTo("team")} className="text-sm font-medium text-left">Team</button>
+          <button onClick={() => scrollTo("accelerator")} className="text-sm font-medium text-left">Accelerator</button>
           <Link href="/apply">
             <button className="w-full border border-[#14181A] text-[#14181A] text-sm font-medium px-5 py-2 rounded-lg">Apply</button>
           </Link>
