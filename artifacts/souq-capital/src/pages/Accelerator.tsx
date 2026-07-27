@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import ScrollReveal from "@/components/ScrollReveal";
 
 const AT_A_GLANCE_BEST_FOR = [
-  "Have $100K+ in revenue",
+  "Have $1M+ in revenue",
   "Are led by a strong founder-operator",
   "Have a $75M+ addressable market",
   "Are scaling in the U.S. or entering the U.S. market",
@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: "Who is it for?",
-    a: "We work with a small, selective group of consumer brands that show strong fundamentals and clear potential to scale.\n\nIdeal companies typically have $100K+ in existing revenue, an exceptional founder-operator, a large defensible market opportunity ($75M+), clear product differentiation, and are either global brands entering the U.S. or U.S.-based brands scaling further. Apparel brands are considered on a highly selective basis.",
+    a: "We work with a small, selective group of consumer brands that show strong fundamentals and clear potential to scale.\n\nIdeal companies typically have $1M+ in existing revenue, an exceptional founder-operator, a large defensible market opportunity ($75M+), clear product differentiation, and are either global brands entering the U.S. or U.S.-based brands scaling further. Apparel brands are considered on a highly selective basis.",
   },
   {
     q: "How does the program work?",
