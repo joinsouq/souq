@@ -211,7 +211,7 @@ export default function Home() {
           {/* CTA row */}
           <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: "24px" }}>
             <Link href="/apply" data-testid="hero-apply-btn">
-              <button className="bg-[#14181A] text-white font-medium px-6 py-3 rounded-lg hover:bg-black/80 transition-all duration-200 text-sm">
+              <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
                 Apply Now
               </button>
             </Link>
@@ -230,7 +230,7 @@ export default function Home() {
         id="about"
         data-testid="about-section"
         className="border-b border-black/8"
-        style={{ padding: "49px 50px 30px" }}
+        style={{ padding: "100px 50px" }}
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "row", gap: "80px", alignItems: "flex-start" }}>
           <ScrollReveal style={{ flex: "0.6 0 0" }}>
@@ -252,7 +252,7 @@ export default function Home() {
       <section
         id="why-we-do-it"
         className="border-b border-black/8"
-        style={{ padding: "49px 50px 30px" }}
+        style={{ padding: "100px 50px" }}
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "row", gap: "80px", alignItems: "flex-start" }}>
           <ScrollReveal style={{ flex: "0.6 0 0" }}>
@@ -282,7 +282,7 @@ export default function Home() {
         id="how-it-works"
         data-testid="how-it-works-section"
         className="border-b border-black/8"
-        style={{ padding: "50px 50px 100px" }}
+        style={{ padding: "100px 50px" }}
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
@@ -371,7 +371,7 @@ export default function Home() {
 
             {/* Traditional Funding card */}
             <ScrollReveal delay={100}>
-              <div className="rounded-[20px] p-10 flex flex-col gap-6 h-full" style={{ backgroundColor: "rgba(255,255,255,0.06)" }}>
+              <div className="rounded-[20px] p-10 flex flex-col gap-6 h-full" style={{ backgroundColor: "rgba(255,255,255,0.11)" }}>
                 <h3 className="body-h3 font-semibold" style={{ color: "#fff" }}>Traditional Funding Types</h3>
                 <div className="flex flex-col gap-3">
                   {[
@@ -404,8 +404,8 @@ export default function Home() {
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="section-label text-[#787777] text-center mb-4">Portfolio</p>
-            <p className="step-h4 text-[#14181A] text-center mb-16">
+            <p className="section-label text-[#787777] mb-4">Portfolio</p>
+            <p className="step-h4 text-[#14181A] mb-16">
               $5M Invested | 13 Companies | 17 Investments
             </p>
           </ScrollReveal>
@@ -433,7 +433,7 @@ export default function Home() {
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
             <div className="flex flex-col gap-2 mb-12">
-              <p className="section-label text-[#787777]">[ Client Reviews ]</p>
+              <p className="section-label text-[#787777]">[ Testimonials ]</p>
               <h2 className="section-h2 text-[#14181A]">Client Reviews</h2>
             </div>
           </ScrollReveal>
@@ -560,7 +560,6 @@ export default function Home() {
           </ScrollReveal>
 
           <div
-            className="max-w-3xl"
             style={{ backgroundColor: "rgb(242,242,242)", borderRadius: "20px", overflow: "hidden" }}
           >
             {FAQS.map((faq, i) => (
@@ -586,7 +585,7 @@ export default function Home() {
                 <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
                 <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
                 <Link href="/apply" data-testid="cta-apply-btn">
-                  <button className="border-2 border-[#222] text-[#14181A] font-medium px-6 py-3 rounded-lg hover:bg-[#14181A] hover:text-white transition-all duration-200 text-sm">
+                  <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
                     Apply
                   </button>
                 </Link>
