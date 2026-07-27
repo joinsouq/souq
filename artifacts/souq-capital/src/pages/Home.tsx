@@ -66,7 +66,8 @@ const TEAM = [
     name: "Ahmad Saleh",
     role: "Investments",
     img: "https://framerusercontent.com/images/X1IMUee8SEC5fnr7ZufgF5PpR4.png",
-    objectPosition: "center 18%",
+    objectPosition: "center 8%",
+    scale: 1.1,
   },
   {
     name: "Safeer Mohiuddin",
@@ -78,7 +79,8 @@ const TEAM = [
     name: "Bathool Syed",
     role: "Finance",
     img: "https://framerusercontent.com/images/XdNBxWXW7OmyJn0KTAaUPKRjTY.jpg",
-    objectPosition: "center 12%",
+    objectPosition: "center 2%",
+    scale: 1.1,
   },
   {
     name: "Razi Mohiuddin",
@@ -526,7 +528,11 @@ export default function Home() {
                       src={member.img}
                       alt={member.name}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      style={{ objectPosition: member.objectPosition }}
+                      style={{
+                        objectPosition: member.objectPosition,
+                        transform: member.scale ? `scale(${member.scale})` : undefined,
+                        transformOrigin: "center top",
+                      }}
                     />
                   </div>
                   <p className="section-label text-[#787777] mb-1">{member.role}</p>
