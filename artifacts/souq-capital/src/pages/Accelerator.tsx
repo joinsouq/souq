@@ -234,10 +234,10 @@ export default function Accelerator() {
               <h3 style={{ fontSize: "22px", fontWeight: 700, letterSpacing: "-0.5px", marginBottom: "24px" }}>
                 Best for brands that:
               </h3>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-3" style={{ listStyle: "none", padding: 0, margin: 0 }}>
                 {AT_A_GLANCE_BEST_FOR.map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-[#14181A]" />
+                    <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#14181A]" style={{ marginTop: "7px" }} />
                     <span style={{ fontSize: "17px", lineHeight: 1.6, color: "#444" }}>{item}</span>
                   </li>
                 ))}
@@ -248,10 +248,10 @@ export default function Accelerator() {
               <h3 style={{ fontSize: "22px", fontWeight: 700, letterSpacing: "-0.5px", marginBottom: "24px" }}>
                 What you get:
               </h3>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-3" style={{ listStyle: "none", padding: 0, margin: 0 }}>
                 {AT_A_GLANCE_WHAT_YOU_GET.map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-[#14181A]" />
+                    <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#14181A]" style={{ marginTop: "7px" }} />
                     <span style={{ fontSize: "17px", lineHeight: 1.6, color: "#444" }}>{item}</span>
                   </li>
                 ))}
@@ -300,10 +300,10 @@ export default function Accelerator() {
               <ScrollReveal key={area.label} delay={i * 80}>
                 <div className="bg-white rounded-2xl p-8">
                   <p className="section-label text-[#787777] mb-3">{area.label}</p>
-                  <ul className="flex flex-col gap-2.5 mt-4">
+                  <ul className="flex flex-col gap-2.5 mt-4" style={{ listStyle: "none", padding: 0, margin: 0 }}>
                     {area.items.map((item) => (
                       <li key={item} className="flex items-start gap-3">
-                        <span className="flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-[#14181A]" />
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#14181A]" style={{ marginTop: "7px" }} />
                         <span style={{ fontSize: "16px", lineHeight: 1.6, color: "#444" }}>{item}</span>
                       </li>
                     ))}
