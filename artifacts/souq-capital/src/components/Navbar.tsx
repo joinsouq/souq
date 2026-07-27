@@ -30,14 +30,18 @@ export default function Navbar() {
       } border-b border-black/8`}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" data-testid="logo-link">
-          <div className="flex items-center gap-0 cursor-pointer">
-            <span className="bg-[#14181A] text-white font-heading font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
-              S<span className="inline-block w-2 h-2 bg-white rounded-full mx-0.5 align-middle" style={{ verticalAlign: "middle", display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "white", margin: "0 1px 2px 1px" }} />uq.Capital
-            </span>
-          </div>
-        </Link>
+        {/* Logo / breadcrumb */}
+        <div className="flex items-center gap-2">
+          <Link href="/" data-testid="logo-link">
+            <div className="flex items-center cursor-pointer">
+              <span className="bg-[#14181A] text-white font-heading font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
+                S<span style={{ verticalAlign: "middle", display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "white", margin: "0 1px 2px 1px" }} />uq
+              </span>
+            </div>
+          </Link>
+          <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
+          <span className="text-[#14181A]" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>Capital</span>
+        </div>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-[84px]">

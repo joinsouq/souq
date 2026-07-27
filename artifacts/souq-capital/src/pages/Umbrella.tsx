@@ -6,8 +6,7 @@ const PILLARS = [
     tag: "Working Capital",
     name: "Capital",
     description:
-      "Non-dilutive, interest-free funding aligned to your revenue cycle. We pay your suppliers — you pay us back as you sell.",
-    stats: ["Interest Free", "Equity Free", "Payback when you sell"],
+      "Fuel your growth, without debt or dilution.\nWe fund what drives your business — and only win when you do.",
     href: "/capital",
     cta: "Apply for capital",
   },
@@ -15,8 +14,7 @@ const PILLARS = [
     tag: "Growth Program",
     name: "Accelerator",
     description:
-      "A structured program for early-stage founders. Capital, mentorship, and a community built on shared values — without compromise.",
-    stats: ["Mentorship", "Network", "Community"],
+      "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We either advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
     href: "/capital#accelerator",
     cta: "Learn more",
   },
@@ -25,9 +23,9 @@ const PILLARS = [
     name: "3PL",
     description:
       "Fulfillment run by operators, not middlemen. 1.2M+ orders shipped per year. Same-day by 12pm ET. Built for DTC brands in fashion, supplements, and beverage.",
-    stats: ["1.2M+ orders per year", "<0.3% pick error", "Same-day by 12pm ET"],
-    href: "/3pl",
+    href: "mailto:yaser@joinsouq.com",
     cta: "Get a quote",
+    external: true,
   },
 ];
 
@@ -102,7 +100,6 @@ export default function Umbrella() {
       <section style={{ padding: "160px 50px 80px" }}>
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <p className="section-label text-[#787777] mb-6">[ Souq ]</p>
             <h1
               style={{
                 fontSize: "80px",
@@ -110,13 +107,13 @@ export default function Umbrella() {
                 letterSpacing: "-3px",
                 lineHeight: 1.05,
                 fontFamily: "Inter, sans-serif",
+                maxWidth: "900px",
               }}
             >
-              Capital.<br />Accelerator.<br />Fulfillment.
+              Scaling the next generation of brands.
             </h1>
-            <p className="body-p text-[#666] mt-8" style={{ maxWidth: "480px" }}>
-              Souq builds the infrastructure Muslim-aligned brands need to grow —
-              without debt, without dilution, without compromise.
+            <p className="text-[#787777] mt-6" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>
+              from the Founders of Souq Capital and Veiled
             </p>
           </ScrollReveal>
         </div>
@@ -144,30 +141,29 @@ export default function Umbrella() {
                     </h2>
                   </div>
 
-                  <p className="body-p text-[#666]" style={{ fontSize: "16px" }}>
+                  <p className="text-[#555]" style={{ fontSize: "18px", lineHeight: 1.6, whiteSpace: "pre-line", flex: 1 }}>
                     {pillar.description}
                   </p>
 
-                  <div className="flex flex-col gap-2 mt-auto">
-                    {pillar.stats.map((s) => (
-                      <div key={s} className="flex items-center gap-2">
-                        <div
-                          className="flex-shrink-0 w-1 h-1 rounded-full"
-                          style={{ backgroundColor: "#14181A" }}
-                        />
-                        <p className="section-label text-[#14181A]">{s}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link href={pillar.href}>
-                    <button
-                      className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
-                      style={{ borderRadius: "99px" }}
-                    >
-                      {pillar.cta} →
-                    </button>
-                  </Link>
+                  {"external" in pillar && pillar.external ? (
+                    <a href={pillar.href}>
+                      <button
+                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
+                        style={{ borderRadius: "99px" }}
+                      >
+                        {pillar.cta} →
+                      </button>
+                    </a>
+                  ) : (
+                    <Link href={pillar.href}>
+                      <button
+                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
+                        style={{ borderRadius: "99px" }}
+                      >
+                        {pillar.cta} →
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </ScrollReveal>
             ))}
