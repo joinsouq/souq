@@ -310,12 +310,12 @@ export default function Home() {
 
             {/* Dark repay card */}
             <ScrollReveal delay={240} className="border-b border-r border-black/8 p-8 flex flex-col gap-6 bg-[#14181A]">
-              <p className="section-label text-white/50">[ Repay ]</p>
+              <p className="section-label text-white/70">[ Repay ]</p>
               <div className="flex flex-col gap-1">
                 <h3 className="body-h3 text-white">Repay Souq</h3>
-                <h4 className="step-h4 text-white/70">Shared profit as you sell</h4>
+                <h4 className="step-h4 text-white/90">Shared profit as you sell</h4>
               </div>
-              <p className="body-p text-white/60">
+              <p className="body-p text-white/80">
                 Only pay when product sells. A monthly invoice for a small percentage of profit on Souq inventory.
               </p>
             </ScrollReveal>
