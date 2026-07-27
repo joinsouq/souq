@@ -72,7 +72,7 @@ const TEAM = [
     name: "Safeer Mohiuddin",
     role: "Investments",
     img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
-    objectPosition: "center 57%",
+    objectPosition: "center 62%",
   },
   {
     name: "Bathool Syed",
@@ -84,7 +84,7 @@ const TEAM = [
     name: "Razi Mohiuddin",
     role: "Strategy",
     img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
-    objectPosition: "center 57%",
+    objectPosition: "center 62%",
   },
 ];
 
@@ -510,7 +510,7 @@ export default function Home() {
           <ScrollReveal>
             <div className="flex flex-col gap-2 mb-16">
               <p className="section-label text-[#787777]">[ Team ]</p>
-              <h2 className="section-h2 text-[#14181A]">The team behind Souq</h2>
+              <h2 className="section-h2 text-[#14181A]">The team behind Souq Capital</h2>
               <p className="body-p text-[#666]">
                 10+ years experience | 10 investment funds | 6 completed | $40M+ raised | 300+ investors
               </p>
