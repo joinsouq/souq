@@ -186,7 +186,7 @@ export default function Home() {
         </div>
 
         {/* Hero content */}
-        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 24px", zIndex: 2 }}>
+        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 160px", zIndex: 2 }}>
           <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
             {/* Souq title — fixed 372px */}
             <div style={{ width: "372px", flexShrink: 0 }}>
@@ -209,12 +209,7 @@ export default function Home() {
           </div>
 
           {/* CTA row */}
-          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: "24px" }}>
-            <Link href="/apply" data-testid="hero-apply-btn">
-              <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
-                Apply Now
-              </button>
-            </Link>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", paddingTop: "24px" }}>
             <button
               onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
               className="section-label text-[#14181A]/60 hover:text-[#14181A] transition-colors"
@@ -236,13 +231,13 @@ export default function Home() {
           <ScrollReveal style={{ flex: "0.6 0 0" }}>
             <div className="flex flex-col gap-3">
               <p className="section-label text-[#787777]">[ About ]</p>
-              <h4 className="about-heading text-[#14181A]">What we do for you</h4>
+              <p className="section-label text-[#14181A]">What we do for you</p>
             </div>
           </ScrollReveal>
           <ScrollReveal delay={100} style={{ flex: "1 0 0" }}>
             <div className="flex flex-col gap-4">
               <p className="body-h3 font-bold text-[#14181A]">Capital built to move your business forward.</p>
-              <h3 className="body-h3 text-[#14181A]">Souq Capital partners with you by funding inventory and service contracts.</h3>
+              <p className="body-p text-[#14181A]">Souq Capital partners with you by funding inventory and service contracts — unlocking cash flow so you can invest in marketing, operations, and scale your business with confidence.</p>
             </div>
           </ScrollReveal>
         </div>
@@ -256,22 +251,23 @@ export default function Home() {
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "row", gap: "80px", alignItems: "flex-start" }}>
           <ScrollReveal style={{ flex: "0.6 0 0" }}>
-            <h4 className="about-heading text-[#14181A]">Why we do it </h4>
+            <p className="section-label text-[#14181A]">Why we do it</p>
           </ScrollReveal>
           <ScrollReveal delay={100} style={{ flex: "1 0 0" }}>
             <div className="flex flex-col gap-4">
               <p className="body-h3 font-bold text-[#14181A]">The funding world is broken.</p>
               <ul className="flex flex-col gap-2 list-none p-0 m-0">
                 <li>
-                  <h3 className="body-h3 text-[#14181A]">Banks offer rigid loans with collateral</h3>
+                  <p className="body-p text-[#14181A]">Banks offer rigid loans with collateral</p>
                 </li>
                 <li>
                   <p className="body-p text-[#14181A]">VCs take ownership and control</p>
                 </li>
                 <li>
-                  <p className="body-p text-[#14181A]">"Revenue-based" lenders are misaligned with your values</p>
+                  <p className="body-p text-[#14181A]">"Revenue-based" lenders still charge interest and expect fixed payments — even when you haven't been paid yet.</p>
                 </li>
               </ul>
+              <p className="body-p text-[#14181A]">We built Souq to match capital to revenue — with funding that moves at the speed of your business, not someone else's schedule.</p>
             </div>
           </ScrollReveal>
         </div>
