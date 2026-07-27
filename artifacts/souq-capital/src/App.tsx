@@ -2,6 +2,7 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import Umbrella from "@/pages/Umbrella";
 import Capital from "@/pages/Home";
 import Apply from "@/pages/Apply";
+import Accelerator from "@/pages/Accelerator";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -9,6 +10,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Umbrella} />
       <Route path="/capital" component={Capital} />
+      <Route path="/accelerator" component={Accelerator} />
       <Route path="/apply" component={Apply} />
       <Route component={NotFound} />
     </Switch>

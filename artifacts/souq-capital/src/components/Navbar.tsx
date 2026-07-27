@@ -69,14 +69,15 @@ export default function Navbar() {
           >
             Team
           </button>
-          <button
-            onClick={() => scrollTo("accelerator")}
-            data-testid="nav-accelerator"
-            className="text-[#666666] hover:text-black transition-colors"
-            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-          >
-            Accelerator
-          </button>
+          <Link href="/accelerator">
+            <span
+              data-testid="nav-accelerator"
+              className="text-[#666666] hover:text-black transition-colors cursor-pointer"
+              style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
+            >
+              Accelerator
+            </span>
+          </Link>
         </div>
 
         {/* CTA */}

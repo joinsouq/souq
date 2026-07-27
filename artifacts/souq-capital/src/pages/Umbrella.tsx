@@ -15,7 +15,7 @@ const PILLARS = [
     name: "Accelerator",
     description:
       "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
-    href: "/capital#accelerator",
+    href: "/accelerator",
     cta: "Learn more",
   },
   {
@@ -67,7 +67,7 @@ export default function Umbrella() {
                 Capital
               </span>
             </Link>
-            <Link href="/capital#accelerator">
+            <Link href="/accelerator">
               <span
                 className="text-[#666] hover:text-black transition-colors cursor-pointer"
                 style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
