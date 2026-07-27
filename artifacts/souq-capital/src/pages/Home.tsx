@@ -72,7 +72,7 @@ const TEAM = [
     name: "Safeer Mohiuddin",
     role: "Investments",
     img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
-    objectPosition: "center 42%",
+    objectPosition: "center 57%",
   },
   {
     name: "Bathool Syed",
@@ -84,7 +84,7 @@ const TEAM = [
     name: "Razi Mohiuddin",
     role: "Strategy",
     img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
-    objectPosition: "center 42%",
+    objectPosition: "center 57%",
   },
 ];
 
