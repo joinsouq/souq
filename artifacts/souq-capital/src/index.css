@@ -203,5 +203,37 @@
 
 /* Scroll reveal — opacity/transform controlled via inline styles in ScrollReveal.tsx */
 
+/* Umbrella hero */
+.umbrella-hero-section {
+  padding: 160px 50px 80px;
+}
+.umbrella-hero-title {
+  font-size: 80px;
+  font-weight: 600;
+  letter-spacing: -3px;
+  line-height: 1.05;
+  font-family: Inter, sans-serif;
+  max-width: 900px;
+}
+@media (max-width: 809px) {
+  .umbrella-hero-section {
+    padding: 100px 24px 60px;
+  }
+  .umbrella-hero-title {
+    font-size: 44px;
+    letter-spacing: -1.5px;
+  }
+}
+
+/* Capital hero content padding */
+.capital-hero-content {
+  padding: 120px 50px 160px;
+}
+@media (max-width: 809px) {
+  .capital-hero-content {
+    padding: 100px 24px 60px;
+  }
+}
+
 /* Grid lines — removed in favour of per-element dividers */
 .grid-lines {}

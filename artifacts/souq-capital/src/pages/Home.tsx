@@ -186,10 +186,10 @@ export default function Home() {
         </div>
 
         {/* Hero content */}
-        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 160px", zIndex: 2 }}>
-          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
-            {/* Souq title — fixed 372px */}
-            <div style={{ width: "372px", flexShrink: 0 }}>
+        <div className="flex-1 flex flex-col justify-end capital-hero-content" style={{ zIndex: 2 }}>
+          <div className="mx-auto w-full flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-0" style={{ maxWidth: "1320px" }}>
+            {/* Souq title */}
+            <div className="md:w-[372px] md:flex-shrink-0">
               <h1
                 className="hero-title text-[#14181A] leading-none select-none"
                 data-testid="hero-title"
@@ -198,8 +198,8 @@ export default function Home() {
               </h1>
             </div>
 
-            {/* Tagline — max 49% */}
-            <div style={{ maxWidth: "49%" }} className="flex flex-col gap-2 pb-1">
+            {/* Tagline */}
+            <div className="flex flex-col gap-2 pb-1 md:max-w-[49%]">
               <p className="body-h3 font-semibold text-[#14181A]">
                 <strong>Fuel your growth, without debt or dilution.</strong>
                 <br />
@@ -209,7 +209,7 @@ export default function Home() {
           </div>
 
           {/* CTA row */}
-          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", paddingTop: "24px" }}>
+          <div className="mx-auto w-full flex justify-end pt-6" style={{ maxWidth: "1320px" }}>
             <button
               onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
               className="section-label text-[#14181A]/60 hover:text-[#14181A] transition-colors"

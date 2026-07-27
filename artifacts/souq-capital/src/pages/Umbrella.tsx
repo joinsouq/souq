@@ -85,19 +85,10 @@ export default function Umbrella() {
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: "160px 50px 80px" }}>
+      <section className="umbrella-hero-section">
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <h1
-              style={{
-                fontSize: "80px",
-                fontWeight: 600,
-                letterSpacing: "-3px",
-                lineHeight: 1.05,
-                fontFamily: "Inter, sans-serif",
-                maxWidth: "900px",
-              }}
-            >
+            <h1 className="umbrella-hero-title">
               Scaling the next generation of brands.
             </h1>
             <p className="text-[#787777] mt-6" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>
