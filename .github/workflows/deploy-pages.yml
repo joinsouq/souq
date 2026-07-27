@@ -21,7 +21,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BASE_PATH: /souq/
   PORT: "3000"
 
 jobs:
@@ -30,6 +29,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -47,12 +50,14 @@ jobs:
 
       - name: Build souq-capital
         run: pnpm --filter @workspace/souq-capital run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - name: Add .nojekyll (prevent Jekyll from interfering)
+        run: touch artifacts/souq-capital/dist/public/.nojekyll
 
       - name: Add SPA fallback for client-side routing
         run: cp artifacts/souq-capital/dist/public/index.html artifacts/souq-capital/dist/public/404.html
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -62,6 +67,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
