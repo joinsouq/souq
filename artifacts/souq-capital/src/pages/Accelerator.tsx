@@ -93,7 +93,7 @@ function AcceleratorNavbar() {
           <Link href="/">
             <div className="flex items-center cursor-pointer">
               <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight inline-flex items-center">
-                S<span className="w-[5px] h-[5px] rounded-full bg-white flex-shrink-0 mx-[1px]" />uq
+                S<svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="inline-block flex-shrink-0 mx-[1px]" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.5" stroke="white" strokeWidth="1"/><ellipse cx="6.5" cy="6.5" rx="2.8" ry="5.5" stroke="white" strokeWidth="1"/><line x1="1" y1="6.5" x2="12" y2="6.5" stroke="white" strokeWidth="1"/></svg>uq
               </span>
             </div>
           </Link>
