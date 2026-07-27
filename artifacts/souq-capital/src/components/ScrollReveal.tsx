@@ -14,12 +14,19 @@ export default function ScrollReveal({ children, className = "", delay = 0, styl
     const el = ref.current;
     if (!el) return;
 
+    const show = () => setTimeout(() => el.classList.add("visible"), delay);
+
+    // Already in viewport on mount — reveal immediately, no observer needed
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      show();
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            el.classList.add("visible");
-          }, delay);
+          show();
           observer.unobserve(el);
         }
       },

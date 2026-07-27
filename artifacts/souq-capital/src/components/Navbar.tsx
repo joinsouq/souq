@@ -14,10 +14,6 @@ export default function Navbar() {
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
-    if (location !== "/") {
-      window.location.href = `/#${id}`;
-      return;
-    }
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
@@ -28,14 +24,15 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
       } border-b border-black/8`}
+      style={{ padding: "0 50px" }}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="mx-auto h-16 flex items-center justify-between" style={{ maxWidth: "1320px" }}>
         {/* Logo / breadcrumb */}
         <div className="flex items-center gap-2">
           <Link href="/" data-testid="logo-link">
             <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-heading font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
-                S<span style={{ verticalAlign: "middle", display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "white", margin: "0 1px 2px 1px" }} />uq
+              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight inline-flex items-center">
+                S<span className="w-[5px] h-[5px] rounded-full bg-white flex-shrink-0 mx-[1px]" />uq
               </span>
             </div>
           </Link>

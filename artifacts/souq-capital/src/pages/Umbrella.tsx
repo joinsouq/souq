@@ -33,27 +33,15 @@ export default function Umbrella() {
   return (
     <div className="min-h-screen bg-white text-[#14181A]">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/8">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/8" style={{ padding: "0 50px" }}>
         <div
           className="mx-auto h-16 flex items-center justify-between"
-          style={{ maxWidth: "1320px", padding: "0 50px" }}
+          style={{ maxWidth: "1320px" }}
         >
           <Link href="/">
             <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
-                S
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "5px",
-                    height: "5px",
-                    borderRadius: "50%",
-                    backgroundColor: "white",
-                    margin: "0 1px 2px 1px",
-                    verticalAlign: "middle",
-                  }}
-                />
-                uq
+              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight inline-flex items-center">
+                S<span className="w-[5px] h-[5px] rounded-full bg-white flex-shrink-0 mx-[1px]" />uq
               </span>
             </div>
           </Link>

@@ -2,8 +2,8 @@ import { Link } from "wouter";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-black/8 bg-white py-8 px-6" data-testid="footer">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="border-t border-black/8 bg-white" data-testid="footer" style={{ padding: "32px 50px" }}>
+      <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-4" style={{ maxWidth: "1320px" }}>
         <span className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Souq Capital. All rights reserved.
         </span>
