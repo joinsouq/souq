@@ -74,9 +74,19 @@ export default function Umbrella() {
     }
     setError("");
     setLoading(true);
-    await new Promise(r => setTimeout(r, 700)); // swap for real endpoint
-    setLoading(false);
-    setSubmitted(true);
+    try {
+      const res = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("Submit failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong — try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
