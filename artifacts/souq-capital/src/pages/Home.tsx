@@ -66,25 +66,29 @@ const TEAM = [
     name: "Ahmad Saleh",
     role: "Investments",
     img: "https://framerusercontent.com/images/X1IMUee8SEC5fnr7ZufgF5PpR4.png",
-    objectPosition: "center 35%",
+    objectPosition: "center 20%",
+    scale: 0.82,
   },
   {
     name: "Safeer Mohiuddin",
     role: "Investments",
     img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
     objectPosition: "center top",
+    scale: 1,
   },
   {
     name: "Bathool Syed",
     role: "Finance",
     img: "https://framerusercontent.com/images/XdNBxWXW7OmyJn0KTAaUPKRjTY.jpg",
-    objectPosition: "center 30%",
+    objectPosition: "center 15%",
+    scale: 0.82,
   },
   {
     name: "Razi Mohiuddin",
     role: "Strategy",
     img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
     objectPosition: "center top",
+    scale: 1,
   },
 ];
 
@@ -305,13 +309,13 @@ export default function Home() {
             ))}
 
             {/* Dark repay card */}
-            <ScrollReveal delay={240} className="border-b border-r border-black/8 p-8 flex flex-col gap-6 bg-[#14181A]">
-              <p className="section-label text-white/70">[ Repay ]</p>
+            <ScrollReveal delay={240} className="border-b border-r border-black/8 p-8 flex flex-col gap-6" style={{ backgroundColor: "#F0F0F0" }}>
+              <p className="section-label text-[#787777]">[ Repay ]</p>
               <div className="flex flex-col gap-1">
-                <h3 className="body-h3 text-white">Repay Souq</h3>
-                <h4 className="step-h4 text-white/90">Shared profit as you sell</h4>
+                <h3 className="body-h3 text-[#14181A]">Repay Souq</h3>
+                <h4 className="step-h4 text-[#14181A]">Shared profit as you sell</h4>
               </div>
-              <p className="body-p text-white/80">
+              <p className="body-p text-[#666]">
                 Only pay when product sells. A monthly invoice for a small percentage of profit on Souq inventory.
               </p>
             </ScrollReveal>
@@ -525,8 +529,12 @@ export default function Home() {
                     <img
                       src={member.img}
                       alt={member.name}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      style={{ objectPosition: member.objectPosition }}
+                      className="w-full h-full object-cover transition-transform duration-500"
+                      style={{
+                        objectPosition: member.objectPosition,
+                        transform: `scale(${member.scale ?? 1})`,
+                        transformOrigin: "center top",
+                      }}
                     />
                   </div>
                   <p className="section-label text-[#787777] mb-1">{member.role}</p>
@@ -567,6 +575,7 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section
+        id="accelerator"
         data-testid="cta-section"
         style={{ padding: "100px 50px" }}
       >
