@@ -577,24 +577,26 @@ export default function Home() {
       <section
         id="accelerator"
         data-testid="cta-section"
-        style={{ padding: "100px 50px" }}
+        style={{
+          backgroundImage: "url(https://framerusercontent.com/images/PyLlmV1BoQoNCsiIPcTDPuDRja8.jpeg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          padding: "100px 50px",
+        }}
       >
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1320px", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "32px" }}>
           <ScrollReveal>
-            <div
-              className="rounded-[40px] bg-white border border-black/8 flex flex-col items-start gap-6 p-16"
-              style={{ backgroundImage: "url(https://framerusercontent.com/images/PyLlmV1BoQoNCsiIPcTDPuDRja8.jpeg)", backgroundSize: "cover", backgroundPosition: "center" }}
-            >
-              <p className="section-label" style={{ color: "rgb(48,48,48)" }}>[ WORK WITH US ]</p>
-              <div className="bg-white rounded-[40px] p-12 flex flex-col gap-6 max-w-xl">
-                <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
-                <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
-                <Link href="/apply" data-testid="cta-apply-btn">
-                  <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
-                    Apply
-                  </button>
-                </Link>
-              </div>
+            <p className="section-label" style={{ color: "rgba(255,255,255,0.7)" }}>[ WORK WITH US ]</p>
+          </ScrollReveal>
+          <ScrollReveal delay={80}>
+            <div className="bg-white rounded-[40px] p-12 flex flex-col gap-6 max-w-xl">
+              <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
+              <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
+              <Link href="/apply" data-testid="cta-apply-btn">
+                <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
+                  Apply
+                </button>
+              </Link>
             </div>
           </ScrollReveal>
         </div>
