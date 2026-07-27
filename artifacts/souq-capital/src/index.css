@@ -201,17 +201,7 @@
   line-height: 2em;
 }
 
-/* Scroll reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Scroll reveal — opacity/transform controlled via inline styles in ScrollReveal.tsx */
 
 /* Grid lines — removed in favour of per-element dividers */
 .grid-lines {}
