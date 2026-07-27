@@ -66,29 +66,25 @@ const TEAM = [
     name: "Ahmad Saleh",
     role: "Investments",
     img: "https://framerusercontent.com/images/X1IMUee8SEC5fnr7ZufgF5PpR4.png",
-    objectPosition: "center 20%",
-    scale: 0.82,
+    objectPosition: "center 18%",
   },
   {
     name: "Safeer Mohiuddin",
     role: "Investments",
     img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
     objectPosition: "center top",
-    scale: 1,
   },
   {
     name: "Bathool Syed",
     role: "Finance",
     img: "https://framerusercontent.com/images/XdNBxWXW7OmyJn0KTAaUPKRjTY.jpg",
-    objectPosition: "center 15%",
-    scale: 0.82,
+    objectPosition: "center 12%",
   },
   {
     name: "Razi Mohiuddin",
     role: "Strategy",
     img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
     objectPosition: "center top",
-    scale: 1,
   },
 ];
 
@@ -529,12 +525,8 @@ export default function Home() {
                     <img
                       src={member.img}
                       alt={member.name}
-                      className="w-full h-full object-cover transition-transform duration-500"
-                      style={{
-                        objectPosition: member.objectPosition,
-                        transform: `scale(${member.scale ?? 1})`,
-                        transformOrigin: "center top",
-                      }}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      style={{ objectPosition: member.objectPosition }}
                     />
                   </div>
                   <p className="section-label text-[#787777] mb-1">{member.role}</p>
