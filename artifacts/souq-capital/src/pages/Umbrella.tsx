@@ -14,7 +14,7 @@ const PILLARS = [
     tag: "Growth Program",
     name: "Accelerator",
     description:
-      "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We either advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
+      "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
     href: "/capital#accelerator",
     cta: "Learn more",
   },
