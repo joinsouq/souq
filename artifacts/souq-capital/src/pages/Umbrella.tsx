@@ -91,26 +91,13 @@ export default function Umbrella() {
     }
     setError("");
     setLoading(true);
-    try {
-      const res = await fetch("https://api.fillout.com/v1/api/forms/vrn4oMRfTqus/submissions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({
-          questions: [{ name: "Email", type: "EmailInput", value: email }],
-        }),
-      });
-      if (!res.ok) throw new Error("Submit failed");
-      setSubmitted(true);
-    } catch {
-      // Fallback: open Fillout form pre-filled in new tab and show success
-      window.open(
-        `https://souqcapital.fillout.com/t/vrn4oMRfTqus?Email=${encodeURIComponent(email)}`,
-        "_blank"
-      );
-      setSubmitted(true);
-    } finally {
-      setLoading(false);
-    }
+    // Open synchronously so the browser treats it as a direct user gesture
+    window.open(
+      `https://souqcapital.fillout.com/t/vrn4oMRfTqus?Email=${encodeURIComponent(email)}`,
+      "_blank"
+    );
+    setSubmitted(true);
+    setLoading(false);
   }
 
   return (
