@@ -221,22 +221,17 @@ export default function Umbrella() {
 
         {/* triad */}
         <div className={`u-pad u-triad u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
-          {TRIAD.map((item, i) => {
-            const inner = (
-              <>
-                <div className="u-triad-top">
-                  <span className="u-triad-idx">{item.idx}</span>
-                  <span className="u-triad-lbl">{item.label}</span>
-                </div>
-                <p className="u-triad-desc">{item.desc}</p>
-              </>
-            );
-            return item.href.startsWith("mailto:") ? (
-              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>{inner}</a>
+          {TRIAD.map((item, i) =>
+            item.href.startsWith("mailto:") ? (
+              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+                <span className="u-triad-lbl">{item.label}</span>
+              </a>
             ) : (
-              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>{inner}</Link>
-            );
-          })}
+              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+                <span className="u-triad-lbl">{item.label}</span>
+              </Link>
+            )
+          )}
         </div>
       </div>
 
@@ -410,8 +405,8 @@ export default function Umbrella() {
         }
         @media (max-width:600px) { .u-triad { grid-template-columns: 1fr; } }
         .u-triad-item {
-          position: relative; padding: 1.5rem 0 1.75rem;
-          display: flex; flex-direction: column; gap: .65rem;
+          position: relative; padding: 1.25rem 0;
+          display: flex; align-items: center;
           text-decoration: none; color: inherit; cursor: pointer;
           overflow: hidden;
         }
@@ -426,21 +421,8 @@ export default function Umbrella() {
           transition: transform .55s cubic-bezier(.22,1,.36,1);
         }
         .u-triad-item:hover::after { transform: scaleX(1); }
-        .u-triad-top { display: flex; align-items: baseline; gap: .75rem; }
-        .u-triad-idx {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .6875rem; color: oklch(0.45 0.006 285); letter-spacing: .06em;
-          transition: color .3s ease; flex: none;
-        }
-        .u-triad-item:hover .u-triad-idx { color: oklch(0.76 0.14 55); }
-        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; }
-        .u-triad-desc {
-          margin: 0; padding-right: 1rem;
-          font-size: .8125rem; line-height: 1.6; letter-spacing: -0.006em;
-          color: oklch(0.45 0.006 285);
-          transition: color .3s ease;
-        }
-        .u-triad-item:hover .u-triad-desc { color: oklch(0.66 0.006 285); }
+        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; }
+        .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
 
         /* entrance */
         .u-reveal { opacity: 0; transform: translateY(14px); }
