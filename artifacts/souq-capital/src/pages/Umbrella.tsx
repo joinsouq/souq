@@ -30,9 +30,13 @@ const TRIAD = [
 ];
 
 export default function Umbrella() {
-  const [ready,   setReady]   = useState(false);
-  const [wordIdx, setWordIdx] = useState(0);
-  const [prevIdx, setPrevIdx] = useState<number | null>(null);
+  const [ready,     setReady]     = useState(false);
+  const [wordIdx,   setWordIdx]   = useState(0);
+  const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
+  const [email,     setEmail]     = useState("");
+  const [error,     setError]     = useState("");
+  const [loading,   setLoading]   = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const washRef = useRef<HTMLDivElement>(null);
 
   /* entrance */
@@ -79,6 +83,28 @@ export default function Umbrella() {
   }, []);
 
   /* waitlist submit */
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      setError("That address doesn't look right.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong — try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div
@@ -151,13 +177,45 @@ export default function Umbrella() {
 
           {/* waitlist */}
           <div className={`u-cta u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "255ms" } as React.CSSProperties}>
-            <a className="u-btn" href="https://souqcapital.fillout.com/t/vrn4oMRfTqus">
-              Join the waitlist
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
-            <p className="u-note">Applications open to a small first cohort.</p>
+            {submitted ? (
+              <div className="u-done">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="u-tick">
+                  <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <p>
+                  You're on the list.
+                  <span>{email} — we only send one email, when the doors open.</span>
+                </p>
+              </div>
+            ) : (
+              <>
+                <form onSubmit={handleSubmit} className="u-form" noValidate>
+                  <label className="sr-only" htmlFor="u-email">Email address</label>
+                  <input
+                    id="u-email"
+                    className={`u-input${error ? " u-input-err" : ""}`}
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); if (error) setError(""); }}
+                    required
+                  />
+                  <button className="u-btn" type="submit" disabled={loading}>
+                    {loading ? "Sending…" : "Join the waitlist"}
+                    {!loading && (
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </form>
+                <p className={`u-note${error ? " u-note-err" : ""}`} role="status" aria-live="polite">
+                  {error || "Applications open to a small first cohort."}
+                </p>
+              </>
+            )}
           </div>
         </main>
 
