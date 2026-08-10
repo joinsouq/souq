@@ -2,8 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 
 const WORDS = [
-  "beauty", "fashion", "food", "skincare", "fragrance",
-  "coffee", "home", "wellness", "jewelry", "fitness",
+  "modest wear",
+  "hair essentials",
+  "specialty coffee",
+  "clean beauty",
+  "women's wellness",
+  "niche fragrance",
+  "baby care",
+  "activewear",
+  "gut health",
+  "olive oil",
 ];
 
 const TRIAD = [
