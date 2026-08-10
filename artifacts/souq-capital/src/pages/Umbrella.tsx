@@ -7,9 +7,18 @@ const WORDS = [
 ];
 
 const TRIAD = [
-  { idx: "01", label: "Capital",             href: "/capital" },
-  { idx: "02", label: "The operating stack", href: "/accelerator" },
-  { idx: "03", label: "Community",            href: "mailto:yaser@joinsouq.com" },
+  {
+    idx: "01", label: "Capital", href: "/capital",
+    desc: "Fuel your growth, without debt or dilution. We fund what drives your business — and only win when you do.",
+  },
+  {
+    idx: "02", label: "The operating stack", href: "/accelerator",
+    desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
+  },
+  {
+    idx: "03", label: "Community", href: "mailto:yaser@joinsouq.com",
+    desc: "A room of founders who actually care. From the first idea to the first hundred thousand customers.",
+  },
 ];
 
 export default function Umbrella() {
@@ -212,27 +221,23 @@ export default function Umbrella() {
 
         {/* triad */}
         <div className={`u-pad u-triad u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
-          {TRIAD.map((item, i) =>
-            item.href.startsWith("mailto:") ? (
-              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-                <span className="u-triad-idx">{item.idx}</span>
-                <span className="u-triad-lbl">{item.label}</span>
-              </a>
+          {TRIAD.map((item, i) => {
+            const inner = (
+              <>
+                <div className="u-triad-top">
+                  <span className="u-triad-idx">{item.idx}</span>
+                  <span className="u-triad-lbl">{item.label}</span>
+                </div>
+                <p className="u-triad-desc">{item.desc}</p>
+              </>
+            );
+            return item.href.startsWith("mailto:") ? (
+              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>{inner}</a>
             ) : (
-              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-                <span className="u-triad-idx">{item.idx}</span>
-                <span className="u-triad-lbl">{item.label}</span>
-              </Link>
-            )
-          )}
+              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>{inner}</Link>
+            );
+          })}
         </div>
-
-        {/* footer */}
-        <footer className="u-pad u-footer">
-          <span>Souq — joinsouq.com</span>
-          <a href="mailto:hello@joinsouq.com" className="u-footer-link">hello@joinsouq.com</a>
-          <span>© MMXXVI</span>
-        </footer>
       </div>
 
       <style>{`
@@ -405,8 +410,8 @@ export default function Umbrella() {
         }
         @media (max-width:600px) { .u-triad { grid-template-columns: 1fr; } }
         .u-triad-item {
-          position: relative; padding: 1.35rem 0 1.4rem;
-          display: flex; align-items: baseline; gap: .75rem;
+          position: relative; padding: 1.5rem 0 1.75rem;
+          display: flex; flex-direction: column; gap: .65rem;
           text-decoration: none; color: inherit; cursor: pointer;
           overflow: hidden;
         }
@@ -421,36 +426,21 @@ export default function Umbrella() {
           transition: transform .55s cubic-bezier(.22,1,.36,1);
         }
         .u-triad-item:hover::after { transform: scaleX(1); }
+        .u-triad-top { display: flex; align-items: baseline; gap: .75rem; }
         .u-triad-idx {
           font-family: 'JetBrains Mono', ui-monospace, monospace;
           font-size: .6875rem; color: oklch(0.45 0.006 285); letter-spacing: .06em;
-          transition: color .3s ease;
+          transition: color .3s ease; flex: none;
         }
         .u-triad-item:hover .u-triad-idx { color: oklch(0.76 0.14 55); }
         .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; }
-
-        /* footer */
-        .u-footer {
-          display: flex; align-items: center; justify-content: space-between;
-          gap: 1rem 1.5rem; flex-wrap: wrap; padding-block: 1.35rem;
-          border-top: 1px solid oklch(0.27 0.005 285);
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase;
+        .u-triad-desc {
+          margin: 0; padding-right: 1rem;
+          font-size: .8125rem; line-height: 1.6; letter-spacing: -0.006em;
           color: oklch(0.45 0.006 285);
+          transition: color .3s ease;
         }
-        @media (max-width:560px) {
-          .u-footer { flex-direction: column; align-items: flex-start; gap: .55rem; padding-block: 1.6rem 2rem; }
-        }
-        .u-footer-link {
-          color: oklch(0.66 0.006 285); text-decoration: none; position: relative;
-        }
-        .u-footer-link::after {
-          content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
-          background: currentColor; transform: scaleX(0); transform-origin: right;
-          transition: transform .4s cubic-bezier(.22,1,.36,1);
-        }
-        .u-footer-link:hover { color: oklch(0.965 0.002 285); }
-        .u-footer-link:hover::after { transform: scaleX(1); transform-origin: left; }
+        .u-triad-item:hover .u-triad-desc { color: oklch(0.66 0.006 285); }
 
         /* entrance */
         .u-reveal { opacity: 0; transform: translateY(14px); }
