@@ -30,13 +30,10 @@ const TRIAD = [
 ];
 
 export default function Umbrella() {
-  const [ready,     setReady]     = useState(false);
-  const [wordIdx,   setWordIdx]   = useState(0);
-  const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
-  const [email,     setEmail]     = useState("");
-  const [error,     setError]     = useState("");
-  const [loading,   setLoading]   = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [ready,      setReady]      = useState(false);
+  const [wordIdx,    setWordIdx]    = useState(0);
+  const [prevIdx,    setPrevIdx]    = useState<number | null>(null);
+  const [modalOpen,  setModalOpen]  = useState(false);
   const washRef = useRef<HTMLDivElement>(null);
 
   /* entrance */
@@ -83,22 +80,13 @@ export default function Umbrella() {
   }, []);
 
   /* waitlist submit */
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      setError("That address doesn't look right.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    // Open synchronously so the browser treats it as a direct user gesture
-    window.open(
-      `https://souqcapital.fillout.com/t/vrn4oMRfTqus?Email=${encodeURIComponent(email)}`,
-      "_blank"
-    );
-    setSubmitted(true);
-    setLoading(false);
-  }
+  /* close modal on Escape */
+  useEffect(() => {
+    if (!modalOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setModalOpen(false); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [modalOpen]);
 
   return (
     <div
@@ -171,45 +159,13 @@ export default function Umbrella() {
 
           {/* waitlist */}
           <div className={`u-cta u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "255ms" } as React.CSSProperties}>
-            {submitted ? (
-              <div className="u-done">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="u-tick">
-                  <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <p>
-                  You're on the list.
-                  <span>{email} — we only send one email, when the doors open.</span>
-                </p>
-              </div>
-            ) : (
-              <>
-                <form onSubmit={handleSubmit} className="u-form" noValidate>
-                  <label className="sr-only" htmlFor="u-email">Email address</label>
-                  <input
-                    id="u-email"
-                    className={`u-input${error ? " u-input-err" : ""}`}
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); if (error) setError(""); }}
-                    required
-                  />
-                  <button className="u-btn" type="submit" disabled={loading}>
-                    {loading ? "Sending…" : "Join the waitlist"}
-                    {!loading && (
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </button>
-                </form>
-                <p className={`u-note${error ? " u-note-err" : ""}`} role="status" aria-live="polite">
-                  {error || "Applications open to a small first cohort."}
-                </p>
-              </>
-            )}
+            <button className="u-btn" onClick={() => setModalOpen(true)}>
+              Join the waitlist
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <p className="u-note">Applications open to a small first cohort.</p>
           </div>
         </main>
 
@@ -234,6 +190,27 @@ export default function Umbrella() {
           )}
         </div>
       </div>
+
+      {/* ── Fillout modal ── */}
+      {modalOpen && (
+        <div className="u-modal-backdrop" onClick={() => setModalOpen(false)} role="dialog" aria-modal="true" aria-label="Join the waitlist">
+          <div className="u-modal" onClick={e => e.stopPropagation()}>
+            <button className="u-modal-close" onClick={() => setModalOpen(false)} aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+            </button>
+            <iframe
+              src="https://souqcapital.fillout.com/t/vrn4oMRfTqus"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              title="Join the waitlist"
+              allow="clipboard-write"
+            />
+          </div>
+        </div>
+      )}
 
       <style>{`
         /* ── dark base ── */
@@ -429,6 +406,35 @@ export default function Umbrella() {
           .u-triad-arrow { opacity: 1; transform: none; }
           .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
         }
+
+        /* modal */
+        .u-modal-backdrop {
+          position: fixed; inset: 0; z-index: 100;
+          background: oklch(0.08 0.004 285 / .75);
+          backdrop-filter: blur(6px);
+          display: flex; align-items: center; justify-content: center;
+          padding: 1rem;
+          animation: u-fade-in .2s ease both;
+        }
+        @keyframes u-fade-in { from { opacity: 0; } }
+        .u-modal {
+          position: relative;
+          width: min(100%, 480px); height: min(88svh, 640px);
+          background: oklch(0.155 0.004 285);
+          border: 1px solid oklch(0.36 0.006 285);
+          border-radius: 1rem;
+          overflow: hidden;
+          animation: u-rise .3s cubic-bezier(.22,1,.36,1) both;
+        }
+        .u-modal-close {
+          position: absolute; top: .75rem; right: .75rem; z-index: 10;
+          width: 2rem; height: 2rem;
+          display: flex; align-items: center; justify-content: center;
+          background: oklch(0.22 0.004 285); border: 1px solid oklch(0.36 0.006 285);
+          border-radius: 50%; cursor: pointer; color: oklch(0.66 0.006 285);
+          transition: color .2s ease, background .2s ease;
+        }
+        .u-modal-close:hover { color: oklch(0.965 0.002 285); background: oklch(0.27 0.005 285); }
 
         /* entrance */
         .u-reveal { opacity: 0; transform: translateY(14px); }
