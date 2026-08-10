@@ -124,22 +124,47 @@ export default function Umbrella() {
 
         {/* header */}
         <header className="u-pad u-header">
-          <a href="/" className="u-mark">
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                className={ready ? "u-draw" : ""}
-              />
-            </svg>
-            <span className="u-wordmark">Souq</span>
-          </a>
-          <span className="u-status">
-            <span className="u-dot" aria-hidden="true" />
-            In stealth
-          </span>
+          {/* TEMP logo comparison */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+            {[
+              { label: "A", path: "M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7", desc: "arch (current)" },
+            ].map(() => null)}
+
+            {/* A: arch (current) */}
+            <a href="/" className="u-mark">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+              <span className="u-wordmark">Souq</span>
+              <span style={{ fontFamily: "monospace", fontSize: ".6rem", color: "oklch(0.45 0.006 285)", marginLeft: ".25rem" }}>A</span>
+            </a>
+
+            {/* B: market tent */}
+            <a href="/" className="u-mark">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 14h14M3 14V9l5-5 5 5v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <span className="u-wordmark">Souq</span>
+              <span style={{ fontFamily: "monospace", fontSize: ".6rem", color: "oklch(0.45 0.006 285)", marginLeft: ".25rem" }}>B</span>
+            </a>
+
+            {/* C: S-curve */}
+            <a href="/" className="u-mark">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12 5.5a3.5 3.5 0 0 0-7 0c0 2 1.5 3 3.5 3.8S12 11 12 13a3.5 3.5 0 0 1-7 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+              <span className="u-wordmark">Souq</span>
+              <span style={{ fontFamily: "monospace", fontSize: ".6rem", color: "oklch(0.45 0.006 285)", marginLeft: ".25rem" }}>C</span>
+            </a>
+
+            {/* D: diamond */}
+            <a href="/" className="u-mark">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2l6 6-6 6-6-6z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>
+              <span className="u-wordmark">Souq</span>
+              <span style={{ fontFamily: "monospace", fontSize: ".6rem", color: "oklch(0.45 0.006 285)", marginLeft: ".25rem" }}>D</span>
+            </a>
+
+            {/* E: lantern */}
+            <a href="/" className="u-mark">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="9" r="5" stroke="currentColor" strokeWidth="1.6"/><path d="M8 4V2M6 2h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+              <span className="u-wordmark">Souq</span>
+              <span style={{ fontFamily: "monospace", fontSize: ".6rem", color: "oklch(0.45 0.006 285)", marginLeft: ".25rem" }}>E</span>
+            </a>
+          </div>
         </header>
 
         {/* hero */}
