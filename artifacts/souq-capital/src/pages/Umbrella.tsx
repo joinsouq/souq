@@ -148,10 +148,6 @@ export default function Umbrella() {
 
         {/* hero */}
         <main className="u-pad u-main">
-          <p className={`u-eyebrow u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "0ms" } as React.CSSProperties}>
-            The consumer accelerator
-          </p>
-
           <h1 className={`u-h1 u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "85ms" } as React.CSSProperties}>
             Everything it takes{" "}
             to launch a{" "}
