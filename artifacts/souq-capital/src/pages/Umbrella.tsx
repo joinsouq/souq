@@ -20,7 +20,7 @@ const TRIAD = [
     desc: "Fuel your growth, without debt or dilution. We fund what drives your business — and only win when you do.",
   },
   {
-    idx: "02", label: "The operating stack", href: "/accelerator",
+    idx: "02", label: "The Operating Stack", href: "/accelerator",
     desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
   },
   {
@@ -92,15 +92,22 @@ export default function Umbrella() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+      const res = await fetch("https://api.fillout.com/v1/api/forms/vrn4oMRfTqus/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          questions: [{ name: "Email", type: "EmailInput", value: email }],
+        }),
       });
       if (!res.ok) throw new Error("Submit failed");
       setSubmitted(true);
     } catch {
-      setError("Something went wrong — try again.");
+      // Fallback: open Fillout form pre-filled in new tab and show success
+      window.open(
+        `https://souqcapital.fillout.com/t/vrn4oMRfTqus?Email=${encodeURIComponent(email)}`,
+        "_blank"
+      );
+      setSubmitted(true);
     } finally {
       setLoading(false);
     }
@@ -225,10 +232,16 @@ export default function Umbrella() {
             item.href.startsWith("mailto:") ? (
               <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
                 <span className="u-triad-lbl">{item.label}</span>
+                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </a>
             ) : (
               <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
                 <span className="u-triad-lbl">{item.label}</span>
+                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Link>
             )
           )}
@@ -421,8 +434,14 @@ export default function Umbrella() {
           transition: transform .55s cubic-bezier(.22,1,.36,1);
         }
         .u-triad-item:hover::after { transform: scaleX(1); }
-        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; }
+        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; flex: 1; }
         .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
+        .u-triad-arrow { flex: none; color: oklch(0.45 0.006 285); opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
+        .u-triad-item:hover .u-triad-arrow { opacity: 1; transform: none; color: oklch(0.965 0.002 285); }
+        @media (max-width:720px) {
+          .u-triad-arrow { opacity: 1; transform: none; }
+          .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
+        }
 
         /* entrance */
         .u-reveal { opacity: 0; transform: translateY(14px); }
