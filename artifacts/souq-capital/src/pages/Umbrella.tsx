@@ -313,7 +313,7 @@ export default function Umbrella() {
         /* main */
         .u-main {
           flex: 1; display: flex; flex-direction: column; justify-content: center;
-          padding-block: clamp(3.5rem, 11vh, 8rem);
+          padding-block: clamp(2rem, 6vh, 5rem);
         }
         .u-eyebrow {
           font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -326,7 +326,7 @@ export default function Umbrella() {
           line-height: .96; letter-spacing: -0.045em; font-weight: 400; max-width: 22ch;
         }
         .u-sub {
-          margin: clamp(1.75rem,4.5vh,2.5rem) 0 0; max-width: 46ch;
+          margin: clamp(1.25rem,3vh,1.75rem) 0 0; max-width: 46ch;
           font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
           line-height: 1.55; color: oklch(0.66 0.006 285); letter-spacing: -0.011em;
         }
@@ -353,7 +353,7 @@ export default function Umbrella() {
         }
 
         /* waitlist */
-        .u-cta { margin-top: clamp(2.25rem, 5vh, 3.25rem); max-width: 30rem; }
+        .u-cta { margin-top: clamp(1.5rem, 3.5vh, 2.5rem); max-width: 30rem; }
         .u-form { display: flex; gap: .5rem; }
         @media (max-width:480px) { .u-form { flex-direction: column; } }
         .u-input {
