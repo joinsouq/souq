@@ -152,21 +152,23 @@ export default function Umbrella() {
             Everything it takes{" "}
             to launch a{" "}
             {/* rotator */}
-            <span className="u-rotator" aria-hidden="true">
-              {/* outgoing word */}
-              {prevIdx !== null && (
-                <span key={`out-${prevIdx}`} className="u-word u-word-out">
-                  {WORDS[prevIdx]}
+            <span style={{ whiteSpace: "nowrap" }}>
+              <span className="u-rotator" aria-hidden="true">
+                {/* outgoing word */}
+                {prevIdx !== null && (
+                  <span key={`out-${prevIdx}`} className="u-word u-word-out">
+                    {WORDS[prevIdx]}
+                  </span>
+                )}
+                {/* current word */}
+                <span key={`in-${wordIdx}`} className="u-word u-word-in">
+                  {WORDS[wordIdx]}
                 </span>
-              )}
-              {/* current word */}
-              <span key={`in-${wordIdx}`} className="u-word u-word-in">
-                {WORDS[wordIdx]}
+                <span className="u-underline" />
               </span>
-              <span className="u-underline" />
+              <span className="sr-only">{WORDS[wordIdx]}</span>{" "}
+              brand.
             </span>
-            <span className="sr-only">{WORDS[wordIdx]}</span>{" "}
-            brand.
           </h1>
 
           <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
