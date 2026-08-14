@@ -32,12 +32,11 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo / breadcrumb */}
         <div className="flex items-center gap-2">
-          <Link href="/" data-testid="logo-link">
-            <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-heading font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight">
-                S<span style={{ verticalAlign: "middle", display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "white", margin: "0 1px 2px 1px" }} />uq
-              </span>
-            </div>
+          <Link href="/" data-testid="logo-link" className="flex items-center gap-2 text-[#14181A] no-underline">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            <span style={{ fontSize: "1.0625rem", fontWeight: 600, letterSpacing: "-0.035em" }}>Souq</span>
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
           <span className="text-[#14181A]" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>Capital</span>
