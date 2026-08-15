@@ -4,7 +4,13 @@ import { Link, useLocation } from "wouter";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [ready, setReady] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -34,8 +40,11 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <Link href="/" data-testid="logo-link" className="flex items-center gap-2 text-[#14181A] no-underline">
             <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                style={ready ? { strokeDasharray: 40, strokeDashoffset: 0, animation: "nav-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both" } : { strokeDasharray: 40, strokeDashoffset: 40 }}
+              />
             </svg>
+            <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
             <span style={{ fontSize: "1.0625rem", fontWeight: 600, letterSpacing: "-0.035em" }}>Souq</span>
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
