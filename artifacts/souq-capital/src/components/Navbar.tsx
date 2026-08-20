@@ -35,6 +35,7 @@ export default function Navbar() {
         scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
       } border-b border-black/8`}
     >
+      <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo / breadcrumb */}
         <div className="flex items-center gap-2">
@@ -44,7 +45,6 @@ export default function Navbar() {
                 style={ready ? { strokeDasharray: 40, strokeDashoffset: 0, animation: "nav-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both" } : { strokeDasharray: 40, strokeDashoffset: 40 }}
               />
             </svg>
-            <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
             <span style={{ fontSize: "1.0625rem", fontWeight: 600, letterSpacing: "-0.035em" }}>Souq</span>
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>

@@ -92,6 +92,7 @@ function AcceleratorNavbar() {
         scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
       } border-b border-black/8`}
     >
+      <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
       <div className="mx-auto h-16 flex items-center justify-between" style={{ maxWidth: "1320px", padding: "0 50px" }}>
         {/* Breadcrumb */}
         <div className="flex items-center gap-2">
@@ -101,7 +102,6 @@ function AcceleratorNavbar() {
                 style={ready ? { strokeDasharray: 40, strokeDashoffset: 0, animation: "nav-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both" } : { strokeDasharray: 40, strokeDashoffset: 40 }}
               />
             </svg>
-            <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
             <span style={{ fontSize: "1.0625rem", fontWeight: 600, letterSpacing: "-0.035em" }}>Souq</span>
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
