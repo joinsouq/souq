@@ -187,7 +187,7 @@ export default function Home() {
 
         {/* Hero content */}
         <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 160px", zIndex: 2 }}>
-          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
             {/* Souq title — fixed 372px */}
             <div style={{ width: "372px", flexShrink: 0 }}>
               <h1

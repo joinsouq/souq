@@ -1,1 +1,2 @@
 - [Summit event freshness](summit-event-freshness.md) — Serve frequently changing Summit details fresh and tolerate a temporarily older public payload.
+- [Souq palette direction](souq-palette-direction.md) — Dark Souq experiences use the approved coral, peach, and powder-blue reference palette.

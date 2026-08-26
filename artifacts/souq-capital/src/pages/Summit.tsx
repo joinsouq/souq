@@ -29,6 +29,7 @@ type SummitDetails = {
     date: string;
     rsvpDeadline: string;
     lumaHref: string;
+    hotels?: Array<{ name: string; rate: string; href: string }>;
   };
   closing: {
     eyebrow: string;
@@ -214,6 +215,28 @@ export default function Summit() {
                 </h3>
                 <p>Location, timing, and invitation details live on the Luma event page.</p>
               </article>
+              {details.logistics.hotels?.length ? (
+                <article className="summit-hotels-card">
+                  <span className="summit-card-index">STAY NEARBY</span>
+                  <h3>🏨 Recommended Hotels</h3>
+                  <p>If you are traveling in for the event, here are three nearby options:</p>
+                  <ul className="summit-hotel-list">
+                    {details.logistics.hotels.map((hotel) => (
+                      <li key={hotel.name}>
+                        <span className="summit-hotel-name">
+                          <strong>{hotel.name}</strong>
+                          <span>{hotel.rate}</span>
+                        </span>
+                        <a href={hotel.href} target="_blank" rel="noreferrer">
+                          Open in Google Maps
+                          <Arrow />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="summit-hotels-note">We recommend locking in your room as soon as possible.</p>
+                </article>
+              ) : null}
             </div>
           </section>
         )}
@@ -253,8 +276,8 @@ export default function Summit() {
           z-index: 0;
           pointer-events: none;
           background:
-            radial-gradient(32vmax 32vmax at 72% 15%, oklch(0.72 0.11 55 / .12), transparent 70%),
-            radial-gradient(38vmax 32vmax at 12% 84%, oklch(0.32 0.06 210 / .14), transparent 72%);
+            radial-gradient(32vmax 32vmax at 72% 15%, color-mix(in srgb, var(--souq-coral) 14%, transparent), transparent 70%),
+            radial-gradient(38vmax 32vmax at 12% 84%, color-mix(in srgb, var(--souq-blue-deep) 16%, transparent), transparent 72%);
         }
         .summit-grain {
           position: fixed;
@@ -302,19 +325,19 @@ export default function Summit() {
           font-family: 'JetBrains Mono', ui-monospace, monospace;
           text-transform: uppercase;
           letter-spacing: .14em;
-          font-size: .66rem;
+           font-size: .78rem;
         }
         .summit-kicker {
           margin: 0 0 1rem;
-          color: oklch(0.76 0.14 55);
+          color: var(--souq-coral);
         }
         .summit-primary-link {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: .55rem;
-          border: 1px solid oklch(0.76 0.14 55);
-          background: oklch(0.76 0.14 55);
+          border: 1px solid var(--souq-coral);
+          background: var(--souq-coral);
           color: oklch(0.16 0.004 285);
           font: inherit;
           font-size: .9rem;
@@ -324,7 +347,7 @@ export default function Summit() {
           transition: transform .2s cubic-bezier(.22,1,.36,1), background .2s ease, color .2s ease;
         }
         .summit-primary-link:hover {
-          background: oklch(0.87 0.12 72);
+          background: var(--souq-peach);
           transform: translateY(-2px);
         }
         .summit-header {
@@ -351,7 +374,7 @@ export default function Summit() {
           width: .3rem;
           height: .3rem;
           border-radius: 50%;
-          background: oklch(0.76 0.14 55);
+           background: var(--souq-coral);
         }
         .summit-hero {
           min-height: min(46rem, 72svh);
@@ -374,7 +397,7 @@ export default function Summit() {
         .summit-title em,
         .summit-closing em {
           display: block;
-          color: oklch(0.76 0.14 55);
+           color: var(--souq-coral);
           font-style: italic;
           font-weight: 350;
         }
@@ -382,7 +405,7 @@ export default function Summit() {
           max-width: 35ch;
           margin: 2.4rem 0 2rem;
           color: oklch(0.66 0.006 285);
-          font-size: clamp(1rem, 1.4vw, 1.2rem);
+          font-size: clamp(1.15rem, 1.6vw, 1.4rem);
           line-height: 1.55;
         }
         .summit-primary-link {
@@ -397,13 +420,13 @@ export default function Summit() {
         .summit-aside-number {
           display: block;
           margin-bottom: 1.1rem;
-          color: oklch(0.76 0.14 55);
+           color: var(--souq-coral);
           font-family: 'JetBrains Mono', ui-monospace, monospace;
           font-size: .75rem;
         }
         .summit-hero-aside p {
           margin: 0;
-          font-size: .95rem;
+          font-size: 1.1rem;
           line-height: 1.55;
         }
         .summit-intro-section,
@@ -440,7 +463,7 @@ export default function Summit() {
           max-width: 49ch;
           margin: 0;
           color: oklch(0.66 0.006 285);
-          font-size: 1.05rem;
+          font-size: 1.15rem;
           line-height: 1.65;
         }
         .summit-experience-grid {
@@ -483,7 +506,7 @@ export default function Summit() {
           gap: .75rem;
           margin-bottom: 1.25rem;
         }
-        .summit-program .summit-card-index { color: oklch(0.58 0.13 55); }
+        .summit-program .summit-card-index { color: var(--souq-coral); }
         .summit-program article h3 {
           margin: 0;
           font-size: 1.2rem;
@@ -497,7 +520,7 @@ export default function Summit() {
           padding: 0;
           list-style: none;
           color: oklch(0.38 0.008 285);
-          font-size: .92rem;
+          font-size: 1rem;
           line-height: 1.5;
         }
         .summit-program li {
@@ -507,7 +530,7 @@ export default function Summit() {
         }
         .summit-program li::before {
           content: "—";
-          color: oklch(0.58 0.13 55);
+          color: var(--souq-coral);
           flex: none;
         }
         .summit-experience article {
@@ -518,7 +541,7 @@ export default function Summit() {
           border: 1px solid oklch(0.27 0.005 285);
           background: oklch(0.18 0.004 285 / .55);
         }
-        .summit-card-index { color: oklch(0.76 0.14 55); }
+        .summit-card-index { color: var(--souq-coral); }
         .summit-experience h3 {
           margin: auto 0 .75rem;
           font-size: clamp(1.5rem, 2vw, 1.9rem);
@@ -528,7 +551,7 @@ export default function Summit() {
         .summit-experience article p {
           margin: 0;
           color: oklch(0.6 0.006 285);
-          font-size: .9rem;
+          font-size: 1rem;
           line-height: 1.5;
         }
         .summit-logistics {
@@ -568,16 +591,72 @@ export default function Summit() {
         }
         .summit-logistics h3 a:hover,
         .summit-logistics li a:hover {
-          color: oklch(0.76 0.14 55);
+           color: var(--souq-coral);
         }
         .summit-logistics h3 svg {
           width: .8rem;
           height: .8rem;
         }
+        .summit-hotels-card {
+          grid-column: 1 / -1;
+          min-height: 0 !important;
+        }
+        .summit-hotels-card h3 {
+          margin: .8rem 0 .7rem;
+          font-size: clamp(1.4rem, 2.2vw, 2rem);
+        }
+        .summit-hotels-card > p {
+          max-width: 42rem;
+        }
+        .summit-hotel-list {
+          display: grid;
+          gap: 0;
+          margin: 1.2rem 0 0;
+          padding: 0;
+          list-style: none;
+        }
+        .summit-hotel-list li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem;
+          padding: .9rem 0;
+          border-top: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-hotel-list li:last-child {
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-hotel-name {
+          display: inline-flex;
+          align-items: baseline;
+          gap: .8rem;
+          color: oklch(0.86 0.006 285);
+        }
+        .summit-hotel-name strong {
+          font-size: 1.05rem;
+          font-weight: 500;
+        }
+        .summit-hotel-name > span {
+          color: var(--souq-coral);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .8rem;
+        }
+        .summit-hotel-list a {
+          flex: none;
+          color: oklch(0.72 0.006 285);
+          font-size: .95rem;
+        }
+        .summit-hotel-list a:hover {
+          color: var(--souq-coral);
+        }
+        .summit-hotels-note {
+          margin-top: 1.1rem !important;
+          color: oklch(0.72 0.006 285) !important;
+        }
         .summit-logistics p {
           margin: 0;
           color: oklch(0.6 0.006 285);
-          font-size: .85rem;
+          font-size: .95rem;
           line-height: 1.5;
         }
         .summit-logistics ul {
@@ -601,6 +680,24 @@ export default function Summit() {
           justify-content: space-between;
           width: 100%;
         }
+        .summit-logistics .summit-hotel-list {
+          gap: 0;
+          margin: 1.2rem 0 0;
+          font-size: 1rem;
+        }
+        .summit-logistics .summit-hotel-list li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem;
+          padding: .9rem 0;
+          border-top: 1px solid oklch(0.27 0.005 285);
+          border-bottom: 0;
+        }
+        .summit-logistics .summit-hotel-list li:last-child {
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+          padding-bottom: .9rem;
+        }
         .summit-closing {
           padding: clamp(6rem, 15vw, 12rem) clamp(1.25rem, 4vw, 3.5rem);
           text-align: center;
@@ -622,7 +719,7 @@ export default function Summit() {
           border-top: 1px solid oklch(0.27 0.005 285);
           color: oklch(0.45 0.006 285);
           font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .62rem;
+          font-size: .72rem;
           letter-spacing: .04em;
           text-transform: uppercase;
         }
@@ -685,6 +782,9 @@ export default function Summit() {
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
+          .summit-hotels-card { grid-column: auto; }
+          .summit-logistics .summit-hotel-list li { align-items: flex-start; flex-direction: column; gap: .5rem; }
+          .summit-logistics .summit-hotel-list a { font-size: 1rem; }
           .summit-program article {
             display: block;
             min-height: 0;

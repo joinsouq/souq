@@ -66,21 +66,12 @@ export default function Navbar() {
           >
             Team
           </button>
-          <Link href="/accelerator">
-            <span
-              data-testid="nav-accelerator"
-              className="text-[#666666] hover:text-black transition-colors cursor-pointer"
-              style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-            >
-              Accelerator
-            </span>
-          </Link>
         </div>
 
         {/* CTA */}
         <div className="flex items-center gap-3">
           <Link href="/apply" data-testid="nav-apply-btn">
-            <button className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80" style={{ borderRadius: "99px" }}>
+            <button className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80">
               Apply
             </button>
           </Link>
@@ -103,9 +94,8 @@ export default function Navbar() {
           <button onClick={() => scrollTo("about")} className="text-sm font-medium text-left">About</button>
           <button onClick={() => scrollTo("how-it-works")} className="text-sm font-medium text-left">How it Works?</button>
           <button onClick={() => scrollTo("team")} className="text-sm font-medium text-left">Team</button>
-          <button onClick={() => scrollTo("accelerator")} className="text-sm font-medium text-left">Accelerator</button>
           <Link href="/apply">
-            <button className="w-full border border-[#14181A] text-[#14181A] text-sm font-medium px-5 py-2 rounded-lg">Apply</button>
+            <button className="w-full border border-[#14181A] text-[#14181A] text-sm font-medium px-5 py-2">Apply</button>
           </Link>
         </div>
       )}

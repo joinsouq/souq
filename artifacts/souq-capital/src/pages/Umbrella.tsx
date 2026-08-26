@@ -3,10 +3,16 @@ import { Link } from "wouter";
 import SouqLogo from "@/components/SouqLogo";
 
 const WORDS = [
-  "consumer brand",
-  "CPG business",
-  "modern SMB",
-  "great company",
+  "natural haircare brand",
+  "modestwear brand",
+  "ice cream brand",
+  "specialty coffee brand",
+  "clean skincare brand",
+  "fine fragrance brand",
+  "home goods brand",
+  "wellness brand",
+  "jewelry brand",
+  "activewear brand",
 ];
 
 const TRIAD = [
@@ -102,6 +108,16 @@ export default function Umbrella() {
           <a href="/" className="u-mark">
             <SouqLogo variant="white" className="u-logo-image" />
           </a>
+          <div className={`u-triad u-header-nav u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
+            {TRIAD.map((item, i) =>
+              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+                <span className="u-triad-lbl">{item.label}</span>
+                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            )}
+          </div>
         </header>
 
         {/* hero */}
@@ -130,22 +146,11 @@ export default function Umbrella() {
           <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
             Souq is the one-stop shop for CPG and SMB businesses — growth
             capital, the operating stack, and industry veterans at your
-            disposal. <strong>Summit, when you need it.</strong>
+            disposal.
           </p>
 
         </main>
 
-        {/* triad */}
-        <div className={`u-pad u-triad u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
-          {TRIAD.map((item, i) =>
-            <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-              <span className="u-triad-lbl">{item.label}</span>
-              <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
-          )}
-        </div>
       </div>
 
 
@@ -165,7 +170,9 @@ export default function Umbrella() {
         /* ── ambient layers ── */
         .u-wash {
           position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
-          background: radial-gradient(38vmax 38vmax at var(--mx,50%) var(--my,22%), oklch(0.72 0.11 55/.10), transparent 68%);
+          background:
+            radial-gradient(38vmax 38vmax at var(--mx,50%) var(--my,22%), color-mix(in srgb, var(--souq-coral) 12%, transparent), transparent 68%),
+            radial-gradient(30vmax 30vmax at 12% 84%, color-mix(in srgb, var(--souq-blue) 10%, transparent), transparent 70%);
           transition: opacity .8s ease; will-change: background;
         }
         .u-grain {
@@ -210,16 +217,16 @@ export default function Umbrella() {
         .u-status {
           display: inline-flex; align-items: center; gap: .5rem;
           font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+          font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
           color: oklch(0.66 0.006 285); white-space: nowrap;
         }
         .u-dot {
           width: 6px; height: 6px; border-radius: 50%;
-          background: oklch(0.76 0.14 55); position: relative; flex: none;
+          background: var(--souq-coral); position: relative; flex: none;
         }
         .u-dot::after {
           content: ""; position: absolute; inset: 0; border-radius: 50%;
-          background: oklch(0.76 0.14 55);
+          background: var(--souq-coral);
           animation: u-pulse 2.6s cubic-bezier(.22,1,.36,1) infinite;
         }
         @keyframes u-pulse { 0%{transform:scale(1);opacity:.7} 70%,100%{transform:scale(3.2);opacity:0} }
@@ -231,7 +238,7 @@ export default function Umbrella() {
         }
         .u-eyebrow {
           font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase;
+          font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
           color: oklch(0.45 0.006 285); margin: 0 0 clamp(1.5rem,4vh,2.5rem);
         }
         .u-h1 {
@@ -241,7 +248,7 @@ export default function Umbrella() {
         }
         .u-sub {
           margin: clamp(1.25rem,3vh,1.75rem) 0 0; max-width: 46ch;
-          font-size: clamp(1.0625rem, 1.35vw, 1.1875rem);
+           font-size: clamp(1.2rem, 1.55vw, 1.35rem);
           line-height: 1.55; color: oklch(0.66 0.006 285); letter-spacing: -0.011em;
         }
         .u-sub strong { color: oklch(0.965 0.002 285); font-weight: 500; }
@@ -263,7 +270,7 @@ export default function Umbrella() {
         @keyframes u-word-out { from { transform: none; opacity: 1; } to { transform: translateY(-140%); opacity: 0; } }
         .u-underline {
           position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
-          background: oklch(0.76 0.14 55); opacity: .8;
+          background: var(--souq-coral); opacity: .8;
         }
 
         /* triad */
@@ -289,13 +296,49 @@ export default function Umbrella() {
           transition: transform .55s cubic-bezier(.22,1,.36,1);
         }
         .u-triad-item:hover::after { transform: scaleX(1); }
-        .u-triad-lbl { font-size: .9375rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; flex: 1; }
+        .u-triad-lbl { font-size: 1.2rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; flex: 1; }
         .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
         .u-triad-arrow { flex: none; color: oklch(0.45 0.006 285); opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
         .u-triad-item:hover .u-triad-arrow { opacity: 1; transform: none; color: oklch(0.965 0.002 285); }
+        .u-header-nav {
+          grid-template-columns: repeat(3, auto);
+          border-top: 0;
+          width: auto;
+          flex: none;
+        }
+        .u-header-nav .u-triad-item {
+          min-width: 5rem;
+          padding: .35rem 0 .35rem 1.2rem;
+        }
+        .u-header-nav .u-triad-item:first-child {
+          padding-left: 0;
+        }
+        .u-header-nav .u-triad-border {
+          padding-left: 1.2rem;
+        }
         @media (max-width:720px) {
           .u-triad-arrow { opacity: 1; transform: none; }
           .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
+          .u-header {
+            display: block;
+          }
+          .u-header-nav {
+            width: 100%;
+            grid-template-columns: 1fr;
+            margin-top: 1.25rem;
+            padding-top: .25rem;
+            border-top: 1px solid oklch(0.27 0.005 285);
+          }
+          .u-header-nav .u-triad-item,
+          .u-header-nav .u-triad-item:first-child,
+          .u-header-nav .u-triad-border {
+            min-width: 0;
+            padding: .8rem 0;
+          }
+          .u-header-nav .u-triad-border {
+            border-left: 0;
+            border-top: 1px solid oklch(0.27 0.005 285);
+          }
         }
 
         /* entrance */

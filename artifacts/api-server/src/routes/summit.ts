@@ -91,6 +91,23 @@ const summitDetails = {
     date: "Saturday, September 12, 2026",
     rsvpDeadline: "RSVP by August 25",
     lumaHref: lumaEventUrl,
+    hotels: [
+      {
+        name: "Hilton",
+        rate: "$319/night",
+        href: "https://www.google.com/maps/search/?api=1&query=Hilton+Santa+Monica",
+      },
+      {
+        name: "The Georgian",
+        rate: "$425/night",
+        href: "https://www.google.com/maps/search/?api=1&query=The+Georgian+Santa+Monica",
+      },
+      {
+        name: "The Proper",
+        rate: "$475/night",
+        href: "https://www.google.com/maps/search/?api=1&query=Santa+Monica+Proper+Hotel",
+      },
+    ],
   },
   closing: {
     eyebrow: "By invitation · Seats limited",
