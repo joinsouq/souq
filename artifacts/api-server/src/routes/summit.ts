@@ -13,22 +13,22 @@ const summitDetails = {
     title: "The Founders",
     emphasis: "Forum.",
     description:
-      "A full day in LA for the people building the next wave of Muslim-owned businesses.",
+      "A Saturday for Muslim founders, operators, and creators who want to compare notes, make useful connections, and move the work forward.",
     ctaLabel: "Request your invitation",
     ctaHref: lumaEventUrl,
     asideNumber: "09 / 12",
     aside:
-      "Saturday, September 12, 2026 · Blank Space Santa Monica, Los Angeles.",
+      "Saturday, September 12, 2026 · Full event details on Luma.",
   },
   invitation: {
     label: "The room",
-    heading: "Founders, operators, and creators building what’s next.",
+    heading: "A room full of people in the work.",
     body:
-      "Founders and operators scaling brands, ecom, CPG, and service companies. Creators and influencers giving them reach. One room where both sides meet to talk about what it really takes to grow.",
+      "Founders bringing brands and businesses to the next stage. Operators building the systems behind them. Creators helping good companies get noticed. Come ready to share what’s working and what isn’t.",
   },
   program: {
     label: "The program",
-    heading: "A full day of candid conversations and practical ideas for the work ahead.",
+    heading: "A working day with people who know the work.",
     blocks: [
       {
         title: "Morning",
@@ -72,45 +72,25 @@ const summitDetails = {
       {
         index: "01",
         title: "Founders",
-        description: "Building the next wave of Muslim-owned brands and businesses.",
+        description: "Owners and builders of Muslim-led brands and businesses.",
       },
       {
         index: "02",
         title: "Operators",
-        description: "Scaling ecom, CPG, service companies, and the systems behind them.",
+        description: "People running the finance, fulfillment, growth, and day-to-day systems.",
       },
       {
         index: "03",
         title: "Creators",
-        description: "Giving great businesses the reach, attention, and momentum to grow.",
+        description: "Creators who help good businesses earn attention and build trust.",
       },
     ],
   },
   logistics: {
-    label: "When & where",
+    label: "Event details",
     date: "Saturday, September 12, 2026",
     rsvpDeadline: "RSVP by August 25",
-    venue: "Blank Space Santa Monica",
-    venueNote: "Los Angeles · Venue announced",
-    venueHref: "https://www.google.com/maps/search/?api=1&query=Blank+Space+Santa+Monica",
     lumaHref: lumaEventUrl,
-    hotels: [
-      {
-        name: "Hilton",
-        rate: "$319/night",
-        href: "https://www.google.com/maps/search/?api=1&query=Hilton+Santa+Monica",
-      },
-      {
-        name: "The Georgian",
-        rate: "$425/night",
-        href: "https://www.google.com/maps/search/?api=1&query=The+Georgian+Santa+Monica",
-      },
-      {
-        name: "The Proper",
-        rate: "$475/night",
-        href: "https://www.google.com/maps/search/?api=1&query=Santa+Monica+Proper+Hotel",
-      },
-    ],
   },
   closing: {
     eyebrow: "By invitation · Seats limited",

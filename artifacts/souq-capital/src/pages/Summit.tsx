@@ -28,11 +28,7 @@ type SummitDetails = {
     label: string;
     date: string;
     rsvpDeadline: string;
-    venue: string;
-    venueNote: string;
-    venueHref: string;
     lumaHref: string;
-    hotels: Array<{ name: string; rate: string; href: string }>;
   };
   closing: {
     eyebrow: string;
@@ -209,37 +205,14 @@ export default function Summit() {
                 <p>{details.logistics.rsvpDeadline}</p>
               </article>
               <article>
-                <span className="summit-card-index">VENUE</span>
-                <h3>
-                  <a href={details.logistics.venueHref} target="_blank" rel="noreferrer">
-                    {details.logistics.venue}
-                    <Arrow />
-                  </a>
-                </h3>
-                <p>{details.logistics.venueNote}</p>
-              </article>
-              <article>
-                <span className="summit-card-index">STAY NEARBY</span>
-                <ul>
-                  {details.logistics.hotels.map((hotel) => (
-                    <li key={hotel.name}>
-                      <a href={hotel.href} target="_blank" rel="noreferrer">
-                        <span>{hotel.name}</span>
-                        <span>{hotel.rate}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-              <article>
-                <span className="summit-card-index">EVENT LINK</span>
+                <span className="summit-card-index">LOGISTICS</span>
                 <h3>
                   <a href={details.logistics.lumaHref} target="_blank" rel="noreferrer">
-                    View event on Luma
+                    Full details on Luma
                     <Arrow />
                   </a>
                 </h3>
-                <p>Request your invitation and see the event details.</p>
+                <p>Location, timing, and invitation details live on the Luma event page.</p>
               </article>
             </div>
           </section>
@@ -444,6 +417,16 @@ export default function Summit() {
         .summit-section-label {
           color: oklch(0.55 0.006 285);
         }
+        .summit-experience > .summit-section-label {
+          align-self: start;
+          color: oklch(0.72 0.006 285);
+          font-family: 'Inter', ui-sans-serif, sans-serif;
+          font-size: clamp(1.2rem, 1.75vw, 1.65rem);
+          font-weight: 500;
+          letter-spacing: -.045em;
+          line-height: 1;
+          text-transform: none;
+        }
         .summit-intro-copy { max-width: 45rem; }
         .summit-intro-copy h2 {
           max-width: 18ch;
@@ -484,18 +467,15 @@ export default function Summit() {
         }
         .summit-program-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1rem;
-        }
-        .summit-program article {
-          padding: 1.35rem 0 0;
           border-top: 1px solid oklch(0.23 0.006 285 / .22);
         }
-        .summit-program article:last-child {
-          grid-column: 1 / -1;
+        .summit-program article {
           display: grid;
           grid-template-columns: 1fr 2fr;
           gap: 1rem;
+          align-items: start;
+          padding: 1.35rem 0;
+          border-bottom: 1px solid oklch(0.23 0.006 285 / .22);
         }
         .summit-program-block-heading {
           display: flex;
@@ -541,7 +521,7 @@ export default function Summit() {
         .summit-card-index { color: oklch(0.76 0.14 55); }
         .summit-experience h3 {
           margin: auto 0 .75rem;
-          font-size: 1.35rem;
+          font-size: clamp(1.5rem, 2vw, 1.9rem);
           font-weight: 500;
           letter-spacing: -.035em;
         }
@@ -705,10 +685,14 @@ export default function Summit() {
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
-          .summit-program article:last-child { display: block; }
+          .summit-program article {
+            display: block;
+            min-height: 0;
+          }
+          .summit-program-block-heading { margin-bottom: 1rem; }
           .summit-program article,
-          .summit-experience article,
-          .summit-logistics article { min-height: 12rem; }
+          .summit-logistics article { min-height: 0; }
+          .summit-experience article { min-height: 12rem; }
           .summit-closing { padding: 6rem 1.25rem; }
           .summit-closing h2 { font-size: 3.7rem; }
           .summit-footer { flex-wrap: wrap; padding-inline: 1.25rem; }
