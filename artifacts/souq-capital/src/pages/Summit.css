@@ -1,0 +1,261 @@
+.summit-page {
+  min-height: 100svh;
+  position: relative;
+  overflow-x: hidden;
+  color: oklch(0.965 0.002 285);
+  background: oklch(0.155 0.004 285);
+  font-family: "Inter", ui-sans-serif, -apple-system, sans-serif;
+  font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.summit-atmosphere {
+  position: fixed;
+  inset: -25vmax;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(32vmax 32vmax at 72% 15%, oklch(0.72 0.11 55 / 0.12), transparent 70%),
+    radial-gradient(38vmax 32vmax at 12% 84%, oklch(0.32 0.06 210 / 0.14), transparent 72%);
+}
+
+.summit-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.summit-gate-rules {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: min(calc(100% - 3rem), 76rem);
+  margin-inline: auto;
+  pointer-events: none;
+}
+
+.summit-gate-rules span {
+  border-left: 1px solid oklch(0.36 0.006 285);
+  opacity: 0.45;
+}
+
+.summit-gate-rules span:first-child {
+  border-left-color: oklch(0.48 0.006 285);
+  opacity: 0.7;
+}
+
+.summit-gate-shell {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(calc(100% - 3rem), 76rem);
+  min-height: 100svh;
+  margin-inline: auto;
+  padding: 2rem;
+}
+
+.summit-gate-logo {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: inherit;
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-decoration: none;
+}
+
+.summit-gate-card {
+  width: min(100%, 31rem);
+  padding: clamp(2.25rem, 5vw, 4rem);
+  border: 1px solid oklch(0.76 0.14 55 / 0.28);
+  background: oklch(0.13 0.004 285 / 0.76);
+  box-shadow: 0 30px 100px oklch(0 0 0 / 0.28);
+  text-align: center;
+  animation: summit-gate-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.summit-gate-mark {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1.6rem;
+  place-items: center;
+  border: 1px solid oklch(0.76 0.14 55 / 0.6);
+  border-radius: 50%;
+  color: oklch(0.76 0.14 55);
+}
+
+.summit-gate .summit-kicker,
+.summit-gate .summit-entry-note,
+.summit-gate-footer {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+}
+
+.summit-gate .summit-kicker {
+  margin: 0 0 1rem;
+  color: oklch(0.76 0.14 55);
+  text-transform: uppercase;
+}
+
+.summit-gate-card h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.summit-gate-intro {
+  max-width: 23ch;
+  margin: 1.2rem auto 2rem;
+  color: oklch(0.66 0.006 285);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.summit-entry-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.summit-entry-form input {
+  min-width: 0;
+  flex: 1;
+  height: 3rem;
+  padding: 0 1rem;
+  border: 1px solid oklch(0.36 0.006 285);
+  border-radius: 0.35rem;
+  outline: none;
+  color: oklch(0.965 0.002 285);
+  background: oklch(0.19 0.004 285);
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summit-entry-form input::placeholder {
+  color: oklch(0.48 0.006 285);
+}
+
+.summit-entry-form input:focus-visible {
+  border-color: oklch(0.76 0.14 55);
+  box-shadow: 0 0 0 3px oklch(0.76 0.14 55 / 0.13);
+}
+
+.summit-entry-form input[aria-invalid="true"] {
+  border-color: oklch(0.7 0.16 25);
+}
+
+.summit-entry-form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 3rem;
+  padding: 0 1.15rem;
+  border: 1px solid oklch(0.76 0.14 55);
+  border-radius: 0.35rem;
+  color: oklch(0.16 0.004 285);
+  background: oklch(0.76 0.14 55);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
+}
+
+.summit-entry-form button:hover {
+  background: oklch(0.87 0.12 72);
+  transform: translateY(-2px);
+}
+
+.summit-gate .summit-entry-note {
+  min-height: 1rem;
+  margin: 1rem 0 0;
+  color: oklch(0.48 0.006 285);
+  letter-spacing: 0.05em;
+}
+
+.summit-gate .summit-entry-error {
+  color: oklch(0.72 0.16 25);
+}
+
+.summit-gate-footer {
+  position: absolute;
+  bottom: 2rem;
+  margin: 0;
+  color: oklch(0.45 0.006 285);
+  text-transform: uppercase;
+}
+
+.summit-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes summit-gate-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .summit-gate-rules {
+    display: none;
+  }
+
+  .summit-gate-shell {
+    width: 100%;
+    padding: 1.25rem;
+  }
+
+  .summit-gate-logo {
+    top: 1.25rem;
+    left: 1.25rem;
+  }
+
+  .summit-gate-footer {
+    bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .summit-entry-form {
+    flex-direction: column;
+  }
+
+  .summit-entry-form button {
+    width: 100%;
+  }
+
+  .summit-gate-card {
+    padding: 2rem 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summit-gate-card {
+    animation: none;
+  }
+}

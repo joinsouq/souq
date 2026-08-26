@@ -24,8 +24,8 @@ const TRIAD = [
     desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
   },
   {
-    idx: "03", label: "Community", href: "mailto:yaser@joinsouq.com",
-    desc: "A room of founders who actually care. From the first idea to the first hundred thousand customers.",
+    idx: "03", label: "Summit", href: "/summit",
+    desc: "A room of founders who actually care. A private gathering for the people building what comes next.",
   },
 ];
 
@@ -224,21 +224,12 @@ export default function Umbrella() {
         {/* triad */}
         <div className={`u-pad u-triad u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
           {TRIAD.map((item, i) =>
-            item.href.startsWith("mailto:") ? (
-              <a key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-                <span className="u-triad-lbl">{item.label}</span>
-                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </a>
-            ) : (
-              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-                <span className="u-triad-lbl">{item.label}</span>
-                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
-            )
+            <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
+              <span className="u-triad-lbl">{item.label}</span>
+              <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
           )}
         </div>
       </div>
