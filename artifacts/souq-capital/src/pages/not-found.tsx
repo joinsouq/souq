@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="min-h-screen flex flex-col bg-white text-[#14181A]">
       <header className="h-16 border-b border-black/8 px-6 flex items-center">
         <Link href="/" aria-label="Souq home">
-          <SouqLogo variant="black" className="w-[92px] h-auto" />
+          <SouqLogo variant="black" className="w-[110px]" />
         </Link>
       </header>
       <main className="flex-1 flex items-center justify-center">

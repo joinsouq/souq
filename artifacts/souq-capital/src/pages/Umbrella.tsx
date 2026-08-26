@@ -202,7 +202,8 @@ export default function Umbrella() {
           text-decoration: none; color: inherit;
         }
         .u-logo-image {
-          display: block;
+          display: inline-flex;
+          align-items: center;
           width: clamp(6.5rem, 8vw, 7.5rem);
           height: auto;
         }

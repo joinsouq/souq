@@ -34,7 +34,7 @@ export default function Navbar() {
         {/* Logo / breadcrumb */}
         <div className="flex items-center gap-2">
           <Link href="/" data-testid="logo-link" className="flex items-center gap-2 text-[#14181A] no-underline">
-            <SouqLogo variant="black" className="w-[92px] h-auto" />
+            <SouqLogo variant="black" className="w-[110px]" />
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
           <span className="text-[#14181A]" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>Capital</span>

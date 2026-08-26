@@ -18,7 +18,7 @@ type SummitDetails = {
   program: {
     label: string;
     heading: string;
-    items: Array<{ index: string; title: string; description: string }>;
+    blocks: Array<{ title: string; items: string[] }>;
   };
   evening: {
     label: string;
@@ -166,11 +166,19 @@ export default function Summit() {
           <div className="summit-program-content">
             <h2>{details.program.heading}</h2>
             <div className="summit-program-grid">
-              {details.program.items.map((item) => (
-                <article key={item.index}>
-                  <span className="summit-card-index">{item.index}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
+              {details.program.blocks.map((block, index) => (
+                <article key={block.title}>
+                  <div className="summit-program-block-heading">
+                    <span className="summit-card-index">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{block.title}</h3>
+                  </div>
+                  <ul>
+                    {block.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </article>
               ))}
             </div>
@@ -344,7 +352,8 @@ export default function Summit() {
         }
         .summit-wordmark { font-size: 1.06rem; font-weight: 600; letter-spacing: -.035em; }
         .summit-logo-image {
-          display: block;
+          display: inline-flex;
+          align-items: center;
           width: 7.5rem;
           height: auto;
         }
@@ -450,10 +459,12 @@ export default function Summit() {
           grid-template-columns: 1fr 2fr;
           gap: 3rem;
           padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
-          border-bottom: 1px solid oklch(0.27 0.005 285);
+          background: oklch(0.95 0.008 80);
+          color: oklch(0.19 0.006 285);
         }
+        .summit-program .summit-section-label { color: oklch(0.48 0.008 285); }
         .summit-program-content h2 {
-          max-width: 19ch;
+          max-width: 21ch;
           margin: 0 0 2.4rem;
           font-size: clamp(2rem, 4.6vw, 4.1rem);
           font-weight: 400;
@@ -462,28 +473,51 @@ export default function Summit() {
         }
         .summit-program-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
         }
         .summit-program article {
-          min-height: 14rem;
-          display: flex;
-          flex-direction: column;
-          padding: 1.35rem;
-          border: 1px solid oklch(0.27 0.005 285);
-          background: oklch(0.18 0.004 285 / .55);
+          padding: 1.35rem 0 0;
+          border-top: 1px solid oklch(0.23 0.006 285 / .22);
         }
+        .summit-program article:last-child {
+          grid-column: 1 / -1;
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 1rem;
+        }
+        .summit-program-block-heading {
+          display: flex;
+          align-items: baseline;
+          gap: .75rem;
+          margin-bottom: 1.25rem;
+        }
+        .summit-program .summit-card-index { color: oklch(0.58 0.13 55); }
         .summit-program article h3 {
-          margin: auto 0 .75rem;
-          font-size: 1.35rem;
+          margin: 0;
+          font-size: 1.2rem;
           font-weight: 500;
           letter-spacing: -.035em;
         }
-        .summit-program article p {
+        .summit-program ul {
+          display: grid;
+          gap: .7rem;
           margin: 0;
-          color: oklch(0.6 0.006 285);
-          font-size: .9rem;
+          padding: 0;
+          list-style: none;
+          color: oklch(0.38 0.008 285);
+          font-size: .92rem;
           line-height: 1.5;
+        }
+        .summit-program li {
+          display: flex;
+          align-items: flex-start;
+          gap: .6rem;
+        }
+        .summit-program li::before {
+          content: "—";
+          color: oklch(0.58 0.13 55);
+          flex: none;
         }
         .summit-experience article {
           min-height: 15rem;
@@ -660,6 +694,7 @@ export default function Summit() {
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
+          .summit-program article:last-child { display: block; }
           .summit-program article,
           .summit-experience article,
           .summit-logistics article { min-height: 12rem; }

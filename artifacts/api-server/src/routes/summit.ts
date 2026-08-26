@@ -27,25 +27,41 @@ const summitDetails = {
   },
   program: {
     label: "The program",
-    heading: "A full day built around the work, the reach, and the people behind both.",
-    items: [
+    heading: "A full day of candid conversations and practical ideas for the work ahead.",
+    blocks: [
       {
-        index: "01",
-        title: "Build",
-        description:
-          "Honest conversations for the founders and operators scaling what they’ve started.",
+        title: "Morning",
+        items: [
+          "Doors and coffee",
+          "Welcome",
+          "Fireside: Marketing and Media",
+          "Hot Seat: a founder's challenge, solved live by the room",
+          "Fireside: Capital & Islamic finance",
+          "Benchmarking Roundtables, grouped by stage",
+        ],
       },
       {
-        index: "02",
-        title: "Reach",
-        description:
-          "Creators and influencers sharing how great businesses earn attention and momentum.",
+        title: "Midday",
+        items: [
+          "Lunch, brand activations, and pre-matched 1:1 meetings",
+        ],
       },
       {
-        index: "03",
-        title: "Meet in the middle",
-        description:
-          "One room to connect both sides and talk about what it really takes to grow.",
+        title: "Afternoon",
+        items: [
+          "Fireside: Operations and Fulfillment",
+          "Hot Seat: a founder's challenge, solved live by the room",
+          "Fireside: Leadership and Growth",
+          "Live Brand Teardown",
+          "Keynote",
+          "Closing reflection",
+        ],
+      },
+      {
+        title: "Running all day",
+        items: [
+          "Souq Office Hours: 1:1 sessions with the Souq capital, 3PL, media, and financial ops teams",
+        ],
       },
     ],
   },
