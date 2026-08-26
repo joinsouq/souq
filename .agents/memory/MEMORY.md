@@ -1,0 +1,1 @@
+- [Summit event freshness](summit-event-freshness.md) — Serve frequently changing Summit details fresh and tolerate a temporarily older public payload.

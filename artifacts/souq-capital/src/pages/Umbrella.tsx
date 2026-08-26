@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
+import SouqLogo from "@/components/SouqLogo";
 
 const WORDS = [
   "consumer brand",
@@ -18,7 +19,7 @@ const TRIAD = [
     desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
   },
   {
-    idx: "03", label: "Your C-Suite", href: "/summit",
+    idx: "03", label: "Summit", href: "/summit",
     desc: "Industry veterans at your disposal — senior operators who bring CMO, COO, CFO, and CEO-level judgment to the moments that matter.",
   },
 ];
@@ -99,11 +100,7 @@ export default function Umbrella() {
         {/* header */}
         <header className="u-pad u-header">
           <a href="/" className="u-mark">
-            <img
-              src="/souq-block-logo-white.svg"
-              alt="Souq"
-              className="u-logo-image"
-            />
+            <SouqLogo variant="white" className="u-logo-image" />
           </a>
         </header>
 
@@ -133,7 +130,7 @@ export default function Umbrella() {
           <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
             Souq is the one-stop shop for CPG and SMB businesses — growth
             capital, the operating stack, and industry veterans at your
-            disposal. <strong>Your C-suite, when you need it.</strong>
+            disposal. <strong>Summit, when you need it.</strong>
           </p>
 
         </main>

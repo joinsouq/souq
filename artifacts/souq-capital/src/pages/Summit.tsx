@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import SouqLogo from "@/components/SouqLogo";
 
 type SummitDetails = {
   header: { gathering: string; year: string };
@@ -14,9 +15,23 @@ type SummitDetails = {
     aside: string;
   };
   invitation: { label: string; heading: string; body: string };
+  program: {
+    label: string;
+    heading: string;
+    items: Array<{ index: string; title: string; description: string }>;
+  };
   evening: {
     label: string;
     items: Array<{ index: string; title: string; description: string }>;
+  };
+  logistics: {
+    label: string;
+    date: string;
+    rsvpDeadline: string;
+    venue: string;
+    venueNote: string;
+    venueHref: string;
+    hotels: Array<{ name: string; rate: string; href: string }>;
   };
   closing: {
     eyebrow: string;
@@ -27,27 +42,6 @@ type SummitDetails = {
   };
   footer: { pillars: string; copyright: string };
 };
-
-function ArchMark({ small = false }: { small?: boolean }) {
-  const size = small ? 18 : 26;
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 16 16"
-      fill="none"
-      aria-hidden="true"
-      className="summit-arch"
-    >
-      <path
-        d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 function Arrow() {
   return (
@@ -76,7 +70,7 @@ export default function Summit() {
 
   async function loadDetails() {
     try {
-      const response = await fetch("/api/summit");
+      const response = await fetch("/api/summit", { cache: "no-store" });
       if (!response.ok) throw new Error("failed");
       setDetails((await response.json()) as SummitDetails);
     } catch {
@@ -104,8 +98,7 @@ export default function Summit() {
         <div className="summit-shell summit-loading-shell">
           <header className="summit-header">
             <Link href="/" className="summit-wordmark">
-              <ArchMark small />
-              <span>Souq</span>
+              <SouqLogo variant="white" className="summit-logo-image" />
             </Link>
           </header>
           <section className="summit-loading-state" aria-live="polite">
@@ -132,8 +125,7 @@ export default function Summit() {
       <div className="summit-shell">
         <header className="summit-header">
           <Link href="/" className="summit-wordmark">
-            <ArchMark small />
-            <span>Souq</span>
+            <SouqLogo variant="white" className="summit-logo-image" />
           </Link>
           <div className="summit-header-meta">
             <span>{details.header.gathering}</span>
@@ -169,6 +161,22 @@ export default function Summit() {
           </div>
         </section>
 
+        <section className="summit-program">
+          <div className="summit-section-label">{details.program.label}</div>
+          <div className="summit-program-content">
+            <h2>{details.program.heading}</h2>
+            <div className="summit-program-grid">
+              {details.program.items.map((item) => (
+                <article key={item.index}>
+                  <span className="summit-card-index">{item.index}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="summit-experience">
           <div className="summit-section-label">{details.evening.label}</div>
           <div className="summit-experience-grid">
@@ -182,6 +190,42 @@ export default function Summit() {
           </div>
         </section>
 
+        {details.logistics && (
+          <section className="summit-logistics">
+            <div className="summit-section-label">{details.logistics.label}</div>
+            <div className="summit-logistics-grid">
+              <article>
+                <span className="summit-card-index">DATE</span>
+                <h3>{details.logistics.date}</h3>
+                <p>{details.logistics.rsvpDeadline}</p>
+              </article>
+              <article>
+                <span className="summit-card-index">VENUE</span>
+                <h3>
+                  <a href={details.logistics.venueHref} target="_blank" rel="noreferrer">
+                    {details.logistics.venue}
+                    <Arrow />
+                  </a>
+                </h3>
+                <p>{details.logistics.venueNote}</p>
+              </article>
+              <article>
+                <span className="summit-card-index">STAY NEARBY</span>
+                <ul>
+                  {details.logistics.hotels.map((hotel) => (
+                    <li key={hotel.name}>
+                      <a href={hotel.href} target="_blank" rel="noreferrer">
+                        <span>{hotel.name}</span>
+                        <span>{hotel.rate}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+          </section>
+        )}
+
         <section className="summit-closing">
           <p className="summit-kicker">{details.closing.eyebrow}</p>
           <h2>{details.closing.title}<br /><em>{details.closing.emphasis}</em></h2>
@@ -193,8 +237,7 @@ export default function Summit() {
 
         <footer className="summit-footer">
           <Link href="/" className="summit-wordmark">
-            <ArchMark small />
-            <span>Souq</span>
+            <SouqLogo variant="white" className="summit-logo-image" />
           </Link>
           <span>{details.footer.pillars}</span>
           <span>{details.footer.copyright}</span>
@@ -300,7 +343,11 @@ export default function Summit() {
           border-bottom: 1px solid oklch(0.27 0.005 285);
         }
         .summit-wordmark { font-size: 1.06rem; font-weight: 600; letter-spacing: -.035em; }
-        .summit-arch { flex: none; }
+        .summit-logo-image {
+          display: block;
+          width: 7.5rem;
+          height: auto;
+        }
         .summit-header-meta {
           display: inline-flex;
           align-items: center;
@@ -398,6 +445,46 @@ export default function Summit() {
           grid-template-columns: repeat(3, 1fr);
           gap: 1rem;
         }
+        .summit-program {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 3rem;
+          padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-program-content h2 {
+          max-width: 19ch;
+          margin: 0 0 2.4rem;
+          font-size: clamp(2rem, 4.6vw, 4.1rem);
+          font-weight: 400;
+          line-height: .98;
+          letter-spacing: -.055em;
+        }
+        .summit-program-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+        }
+        .summit-program article {
+          min-height: 14rem;
+          display: flex;
+          flex-direction: column;
+          padding: 1.35rem;
+          border: 1px solid oklch(0.27 0.005 285);
+          background: oklch(0.18 0.004 285 / .55);
+        }
+        .summit-program article h3 {
+          margin: auto 0 .75rem;
+          font-size: 1.35rem;
+          font-weight: 500;
+          letter-spacing: -.035em;
+        }
+        .summit-program article p {
+          margin: 0;
+          color: oklch(0.6 0.006 285);
+          font-size: .9rem;
+          line-height: 1.5;
+        }
         .summit-experience article {
           min-height: 15rem;
           display: flex;
@@ -418,6 +505,76 @@ export default function Summit() {
           color: oklch(0.6 0.006 285);
           font-size: .9rem;
           line-height: 1.5;
+        }
+        .summit-logistics {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 3rem;
+          padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-logistics-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+        }
+        .summit-logistics article {
+          min-height: 11rem;
+          display: flex;
+          flex-direction: column;
+          padding: 1.35rem;
+          border: 1px solid oklch(0.27 0.005 285);
+          background: oklch(0.18 0.004 285 / .55);
+        }
+        .summit-logistics h3 {
+          margin: auto 0 .75rem;
+          font-size: 1.15rem;
+          font-weight: 500;
+          line-height: 1.15;
+          letter-spacing: -.035em;
+        }
+        .summit-logistics h3 a,
+        .summit-logistics li a {
+          display: inline-flex;
+          align-items: center;
+          gap: .45rem;
+          color: inherit;
+          text-decoration: none;
+        }
+        .summit-logistics h3 a:hover,
+        .summit-logistics li a:hover {
+          color: oklch(0.76 0.14 55);
+        }
+        .summit-logistics h3 svg {
+          width: .8rem;
+          height: .8rem;
+        }
+        .summit-logistics p {
+          margin: 0;
+          color: oklch(0.6 0.006 285);
+          font-size: .85rem;
+          line-height: 1.5;
+        }
+        .summit-logistics ul {
+          display: grid;
+          gap: .6rem;
+          margin: auto 0 0;
+          padding: 0;
+          list-style: none;
+          color: oklch(0.72 0.006 285);
+          font-size: .85rem;
+        }
+        .summit-logistics li {
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+          padding-bottom: .45rem;
+        }
+        .summit-logistics li:last-child {
+          border-bottom: 0;
+          padding-bottom: 0;
+        }
+        .summit-logistics li a {
+          justify-content: space-between;
+          width: 100%;
         }
         .summit-closing {
           padding: clamp(6rem, 15vw, 12rem) clamp(1.25rem, 4vw, 3.5rem);
@@ -491,12 +648,21 @@ export default function Summit() {
           .summit-title { font-size: clamp(3.9rem, 17vw, 6rem); }
           .summit-hero-aside { margin-top: 4rem; }
           .summit-intro-section,
-          .summit-experience { display: block; padding: 4.5rem 1.25rem; }
+          .summit-program,
+          .summit-experience,
+          .summit-logistics { display: block; padding: 4.5rem 1.25rem; }
           .summit-intro-copy,
-          .summit-experience-grid { margin-top: 2rem; }
+          .summit-program-content,
+          .summit-experience-grid,
+          .summit-logistics-grid { margin-top: 2rem; }
           .summit-intro-copy h2 { font-size: 2.55rem; }
-          .summit-experience-grid { grid-template-columns: 1fr; }
-          .summit-experience article { min-height: 12rem; }
+          .summit-program-content h2 { font-size: 2.55rem; }
+          .summit-program-grid,
+          .summit-experience-grid,
+          .summit-logistics-grid { grid-template-columns: 1fr; }
+          .summit-program article,
+          .summit-experience article,
+          .summit-logistics article { min-height: 12rem; }
           .summit-closing { padding: 6rem 1.25rem; }
           .summit-closing h2 { font-size: 3.7rem; }
           .summit-footer { flex-wrap: wrap; padding-inline: 1.25rem; }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import ScrollReveal from "@/components/ScrollReveal";
+import SouqLogo from "@/components/SouqLogo";
 
 const AT_A_GLANCE_BEST_FOR = [
   "Have $1M+ in revenue",
@@ -73,13 +74,6 @@ const CORE_AREAS = [
 function AcceleratorNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setReady(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -92,17 +86,11 @@ function AcceleratorNavbar() {
         scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
       } border-b border-black/8`}
     >
-      <style>{`@keyframes nav-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }`}</style>
       <div className="mx-auto h-16 flex items-center justify-between" style={{ maxWidth: "1320px", padding: "0 50px" }}>
         {/* Breadcrumb */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2 text-[#14181A] no-underline">
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
-                style={ready ? { strokeDasharray: 40, strokeDashoffset: 0, animation: "nav-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both" } : { strokeDasharray: 40, strokeDashoffset: 40 }}
-              />
-            </svg>
-            <span style={{ fontSize: "1.0625rem", fontWeight: 600, letterSpacing: "-0.035em" }}>Souq</span>
+            <SouqLogo variant="black" className="w-[92px] h-auto" />
           </Link>
           <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
           <span className="text-[#14181A]" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>Accelerator</span>
