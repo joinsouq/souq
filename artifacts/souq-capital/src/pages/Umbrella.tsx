@@ -99,16 +99,11 @@ export default function Umbrella() {
         {/* header */}
         <header className="u-pad u-header">
           <a href="/" className="u-mark">
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M2.5 14.5V7.5a5.5 5.5 0 0 1 11 0v7"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                className={ready ? "u-draw" : ""}
-              />
-            </svg>
-            <span className="u-wordmark">Souq</span>
+            <img
+              src="/souq-block-logo-white.svg"
+              alt="Souq"
+              className="u-logo-image"
+            />
           </a>
         </header>
 
@@ -206,15 +201,14 @@ export default function Umbrella() {
           border-bottom: 1px solid oklch(0.27 0.005 285);
         }
         .u-mark {
-          display: flex; align-items: center; gap: .6rem;
+          display: inline-flex; align-items: center;
           text-decoration: none; color: inherit;
         }
-        .u-wordmark { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.035em; }
-        .u-draw {
-          stroke-dasharray: 40; stroke-dashoffset: 0;
-          animation: u-draw 1.4s cubic-bezier(.22,1,.36,1) .15s both;
+        .u-logo-image {
+          display: block;
+          width: clamp(6.5rem, 8vw, 7.5rem);
+          height: auto;
         }
-        @keyframes u-draw { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
         .u-status {
           display: inline-flex; align-items: center; gap: .5rem;
           font-family: 'JetBrains Mono', ui-monospace, monospace;
