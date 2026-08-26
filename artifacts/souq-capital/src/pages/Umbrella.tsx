@@ -2,16 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 
 const WORDS = [
-  "modest wear",
-  "hair essentials",
-  "specialty coffee",
-  "clean beauty",
-  "women's wellness",
-  "niche fragrance",
-  "baby care",
-  "activewear",
-  "gut health",
-  "olive oil",
+  "consumer brand",
+  "CPG business",
+  "modern SMB",
+  "great company",
 ];
 
 const TRIAD = [
@@ -24,8 +18,8 @@ const TRIAD = [
     desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
   },
   {
-    idx: "03", label: "Summit", href: "/summit",
-    desc: "A room of founders who actually care. A private gathering for the people building what comes next.",
+    idx: "03", label: "Your C-Suite", href: "/summit",
+    desc: "Industry veterans at your disposal — senior operators who bring CMO, COO, CFO, and CEO-level judgment to the moments that matter.",
   },
 ];
 
@@ -33,10 +27,6 @@ export default function Umbrella() {
   const [ready,     setReady]     = useState(false);
   const [wordIdx,   setWordIdx]   = useState(0);
   const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
-  const [email,     setEmail]     = useState("");
-  const [error,     setError]     = useState("");
-  const [loading,   setLoading]   = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const washRef = useRef<HTMLDivElement>(null);
 
   /* entrance */
@@ -82,30 +72,6 @@ export default function Umbrella() {
     return () => clearInterval(id);
   }, []);
 
-  /* waitlist submit */
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      setError("That address doesn't look right.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) throw new Error("failed");
-      setSubmitted(true);
-    } catch {
-      setError("Something went wrong — try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <div
       data-ready={ready}
@@ -149,8 +115,7 @@ export default function Umbrella() {
         {/* hero */}
         <main className="u-pad u-main">
           <h1 className={`u-h1 u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "85ms" } as React.CSSProperties}>
-            Everything it takes{" "}
-            to launch a{" "}
+            One place to build a{" "}
             {/* rotator */}
             <span style={{ whiteSpace: "nowrap" }}>
               <span className="u-rotator" aria-hidden="true">
@@ -166,59 +131,16 @@ export default function Umbrella() {
                 </span>
                 <span className="u-underline" />
               </span>
-              <span className="sr-only">{WORDS[wordIdx]}</span>{" "}
-              brand.
+              <span className="sr-only">{WORDS[wordIdx]}</span>.
             </span>
           </h1>
 
           <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
-            Capital, the operating stack, and a room of founders who actually
-            care — <strong>in one place</strong>. We back consumer companies
-            from the first idea to the first hundred thousand customers.
+            Souq is the one-stop shop for CPG and SMB businesses — growth
+            capital, the operating stack, and industry veterans at your
+            disposal. <strong>Your C-suite, when you need it.</strong>
           </p>
 
-          {/* waitlist */}
-          <div className={`u-cta u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "255ms" } as React.CSSProperties}>
-            {submitted ? (
-              <div className="u-done">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="u-tick">
-                  <path d="M3 8.5l3.2 3.2L13 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <p>
-                  You're on the list.
-                  <span>{email} — we only send one email, when the doors open.</span>
-                </p>
-              </div>
-            ) : (
-              <>
-                <form onSubmit={handleSubmit} className="u-form" noValidate>
-                  <label className="sr-only" htmlFor="u-email">Email address</label>
-                  <input
-                    id="u-email"
-                    className={`u-input${error ? " u-input-err" : ""}`}
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); if (error) setError(""); }}
-                    required
-                  />
-                  <button className="u-btn" type="submit" disabled={loading}>
-                    {loading ? "Sending…" : "Join the waitlist"}
-                    {!loading && (
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </button>
-                </form>
-                <p className={`u-note${error ? " u-note-err" : ""}`} role="status" aria-live="polite">
-                  {error || "Applications open to a small first cohort."}
-                </p>
-              </>
-            )}
-          </div>
         </main>
 
         {/* triad */}
@@ -351,52 +273,6 @@ export default function Umbrella() {
           position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
           background: oklch(0.76 0.14 55); opacity: .8;
         }
-
-        /* waitlist */
-        .u-cta { margin-top: clamp(1.5rem, 3.5vh, 2.5rem); max-width: 30rem; }
-        .u-form { display: flex; gap: .5rem; }
-        @media (max-width:480px) { .u-form { flex-direction: column; } }
-        .u-input {
-          flex: 1; min-width: 0; height: 2.875rem; padding: 0 .9rem;
-          font: inherit; font-size: .9375rem; color: oklch(0.965 0.002 285);
-          background: oklch(0.19 0.004 285); border: 1px solid oklch(0.36 0.006 285);
-          border-radius: .625rem; outline: none;
-          transition: border-color .18s ease, box-shadow .18s ease;
-        }
-        .u-input::placeholder { color: oklch(0.45 0.006 285); }
-        .u-input:focus-visible { border-color: oklch(0.80 0.004 285); box-shadow: 0 0 0 3px oklch(0.80 0.004 285/.12); }
-        .u-input-err { border-color: oklch(0.72 0.16 25) !important; }
-        .u-btn {
-          height: 2.875rem; padding: 0 1.15rem;
-          display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-          font: inherit; font-size: .9375rem; font-weight: 500; letter-spacing: -0.008em;
-          color: oklch(0.16 0.004 285); background: oklch(0.97 0.002 285);
-          border: 1px solid oklch(0.97 0.002 285); border-radius: .625rem;
-          cursor: pointer; white-space: nowrap;
-          transition: opacity .18s ease, transform .16s cubic-bezier(.22,1,.36,1);
-        }
-        .u-btn:hover { opacity: .88; }
-        .u-btn:active { transform: scale(.985); }
-        .u-btn:disabled { opacity: .6; cursor: default; }
-        .u-btn svg { transition: transform .28s cubic-bezier(.22,1,.36,1); }
-        .u-btn:hover svg { transform: translateX(3px); }
-        .u-note {
-          margin: .875rem 0 0; min-height: 1.25rem;
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .6875rem; letter-spacing: .06em; color: oklch(0.45 0.006 285);
-        }
-        .u-note-err { color: oklch(0.72 0.16 25); }
-        .u-done {
-          display: flex; align-items: flex-start; gap: .75rem;
-          padding: 1.05rem 1.15rem;
-          background: oklch(0.19 0.004 285); border: 1px solid oklch(0.36 0.006 285);
-          border-radius: .625rem;
-          animation: u-rise .5s cubic-bezier(.22,1,.36,1) both;
-        }
-        .u-tick { flex: none; margin-top: .15rem; color: oklch(0.76 0.14 55); }
-        .u-done p { margin: 0; font-size: .9375rem; letter-spacing: -0.008em; }
-        .u-done p span { display: block; color: oklch(0.66 0.006 285); font-size: .8125rem; margin-top: .2rem; }
-        @keyframes u-rise { from { opacity: 0; transform: translateY(8px); } }
 
         /* triad */
         .u-triad {

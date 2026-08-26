@@ -1,6 +1,5 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import "./Summit.css";
 
 type SummitDetails = {
   header: { gathering: string; year: string };
@@ -66,11 +65,9 @@ function Arrow() {
 
 export default function Summit() {
   const [details, setDetails] = useState<SummitDetails | null>(null);
-  const [entry, setEntry] = useState("");
-  const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
-  const [checkingAccess, setCheckingAccess] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setReady(true));
@@ -79,13 +76,13 @@ export default function Summit() {
 
   async function loadDetails() {
     try {
-      const response = await fetch("/api/summit", { credentials: "same-origin" });
-      if (response.status === 204 || !response.ok) {
-        return;
-      }
+      const response = await fetch("/api/summit");
+      if (!response.ok) throw new Error("failed");
       setDetails((await response.json()) as SummitDetails);
+    } catch {
+      setError("Summit is temporarily unavailable. Try again soon.");
     } finally {
-      setCheckingAccess(false);
+      setLoading(false);
     }
   }
 
@@ -93,96 +90,29 @@ export default function Summit() {
     void loadDetails();
   }, []);
 
-  async function handleEntry(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setSubmitting(true);
-
-    try {
-      const response = await fetch("/api/summit/access", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({ entryPhrase: entry }),
-      });
-
-      if (!response.ok) {
-        setError("Access is temporarily unavailable. Try again.");
-        return;
-      }
-
-      const result = (await response.json()) as { ok?: boolean };
-      if (!result.ok) {
-        setError("That entry phrase doesn't match.");
-        return;
-      }
-
-      setCheckingAccess(true);
-      await loadDetails();
-    } catch {
-      setError("Access is temporarily unavailable. Try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   if (!details) {
     return (
-      <main className={`summit-page summit-gate${ready ? " summit-ready" : ""}`}>
+      <main className={`summit-page summit-content${ready ? " summit-ready" : ""}`}>
         <div className="summit-atmosphere" aria-hidden="true" />
         <div className="summit-grain" aria-hidden="true" />
-        <div className="summit-gate-rules" aria-hidden="true">
+        <div className="summit-content-rules" aria-hidden="true">
           <span />
           <span />
           <span />
           <span />
         </div>
-        <div className="summit-gate-shell">
-          <Link href="/" className="summit-gate-logo">
-            <ArchMark small />
-            <span>Souq</span>
-          </Link>
-          <section className="summit-gate-card" aria-labelledby="summit-gate-title">
-            <div className="summit-gate-mark">
-              <ArchMark />
-            </div>
-            <p className="summit-kicker">A private gathering</p>
-            <h1 id="summit-gate-title">Souq Summit</h1>
-              <p className="summit-gate-intro">For invited Souq guests.</p>
-            <form onSubmit={handleEntry} className="summit-entry-form" noValidate>
-              <label className="summit-sr-only" htmlFor="summit-entry">
-                Entry phrase
-              </label>
-                <input
-                id="summit-entry"
-                type="password"
-                autoComplete="off"
-                placeholder="the entry phrase"
-                value={entry}
-                onChange={(event) => {
-                  setEntry(event.target.value);
-                  if (error) setError("");
-                }}
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? "summit-entry-error" : undefined}
-                  autoFocus
-                  disabled={checkingAccess || submitting}
-              />
-                <button type="submit" disabled={checkingAccess || submitting}>
-                  {submitting ? "Checking…" : "Enter"}
-                <Arrow />
-              </button>
-            </form>
-            <p
-              id="summit-entry-error"
-              className={`summit-entry-note${error ? " summit-entry-error" : ""}`}
-              role="status"
-              aria-live="polite"
-            >
-              {error || (checkingAccess ? "Checking your invitation…" : "This page is for invited guests.")}
-            </p>
+        <div className="summit-shell summit-loading-shell">
+          <header className="summit-header">
+            <Link href="/" className="summit-wordmark">
+              <ArchMark small />
+              <span>Souq</span>
+            </Link>
+          </header>
+          <section className="summit-loading-state" aria-live="polite">
+            <p className="summit-kicker">Souq / Summit</p>
+            <h1>{error ? "Summit is unavailable." : "Loading Summit."}</h1>
+            <p>{error || "Preparing the room…"}</p>
           </section>
-          <p className="summit-gate-footer">Souq / Summit 2026</p>
         </div>
       </main>
     );
@@ -299,7 +229,6 @@ export default function Summit() {
           opacity: .035;
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
         }
-        .summit-gate-rules,
         .summit-content-rules {
           position: fixed;
           inset: 0;
@@ -310,32 +239,20 @@ export default function Summit() {
           width: min(calc(100% - 3rem), 76rem);
           margin-inline: auto;
         }
-        .summit-gate-rules span,
         .summit-content-rules span {
           border-left: 1px solid oklch(0.36 0.006 285);
           opacity: .45;
         }
-        .summit-gate-rules span:first-child,
         .summit-content-rules span:first-child {
           border-left-color: oklch(0.48 0.006 285);
           opacity: .7;
         }
-        .summit-gate-shell,
         .summit-shell {
           position: relative;
           z-index: 2;
           width: min(calc(100% - 3rem), 76rem);
           margin-inline: auto;
         }
-        .summit-gate-shell {
-          min-height: 100svh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 2rem;
-        }
-        .summit-gate-logo,
         .summit-wordmark {
           display: inline-flex;
           align-items: center;
@@ -343,38 +260,9 @@ export default function Summit() {
           color: inherit;
           text-decoration: none;
         }
-        .summit-gate-logo {
-          position: absolute;
-          top: 2rem;
-          left: 2rem;
-          font-size: 1.06rem;
-          font-weight: 600;
-          letter-spacing: -.035em;
-        }
-        .summit-gate-card {
-          width: min(100%, 31rem);
-          padding: clamp(2.25rem, 5vw, 4rem);
-          border: 1px solid oklch(0.76 0.14 55 / .28);
-          background: oklch(0.13 0.004 285 / .76);
-          box-shadow: 0 30px 100px oklch(0 0 0 / .28);
-          text-align: center;
-          animation: summit-rise .8s cubic-bezier(.22,1,.36,1) both;
-        }
-        .summit-gate-mark {
-          width: 3rem;
-          height: 3rem;
-          display: grid;
-          place-items: center;
-          margin: 0 auto 1.6rem;
-          border: 1px solid oklch(0.76 0.14 55 / .6);
-          border-radius: 50%;
-          color: oklch(0.76 0.14 55);
-        }
         .summit-kicker,
         .summit-section-label,
         .summit-header-meta,
-        .summit-entry-note,
-        .summit-gate-footer,
         .summit-card-index {
           font-family: 'JetBrains Mono', ui-monospace, monospace;
           text-transform: uppercase;
@@ -385,44 +273,6 @@ export default function Summit() {
           margin: 0 0 1rem;
           color: oklch(0.76 0.14 55);
         }
-        .summit-gate-card h1 {
-          margin: 0;
-          font-size: clamp(2.25rem, 5vw, 3.5rem);
-          font-weight: 400;
-          line-height: .98;
-          letter-spacing: -.055em;
-        }
-        .summit-gate-intro {
-          margin: 1.2rem auto 2rem;
-          max-width: 23ch;
-          color: oklch(0.66 0.006 285);
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-        .summit-entry-form {
-          display: flex;
-          gap: .5rem;
-        }
-        .summit-entry-form input {
-          min-width: 0;
-          flex: 1;
-          height: 3rem;
-          padding: 0 1rem;
-          color: oklch(0.965 0.002 285);
-          background: oklch(0.19 0.004 285);
-          border: 1px solid oklch(0.36 0.006 285);
-          border-radius: .35rem;
-          outline: none;
-          font: inherit;
-          transition: border-color .2s ease, box-shadow .2s ease;
-        }
-        .summit-entry-form input::placeholder { color: oklch(0.48 0.006 285); }
-        .summit-entry-form input:focus-visible {
-          border-color: oklch(0.76 0.14 55);
-          box-shadow: 0 0 0 3px oklch(0.76 0.14 55 / .13);
-        }
-        .summit-entry-form input[aria-invalid="true"] { border-color: oklch(0.7 0.16 25); }
-        .summit-entry-form button,
         .summit-primary-link {
           display: inline-flex;
           align-items: center;
@@ -438,29 +288,9 @@ export default function Summit() {
           cursor: pointer;
           transition: transform .2s cubic-bezier(.22,1,.36,1), background .2s ease, color .2s ease;
         }
-        .summit-entry-form button {
-          height: 3rem;
-          padding: 0 1.15rem;
-          border-radius: .35rem;
-        }
-        .summit-entry-form button:hover,
         .summit-primary-link:hover {
           background: oklch(0.87 0.12 72);
           transform: translateY(-2px);
-        }
-        .summit-entry-note {
-          min-height: 1rem;
-          margin: 1rem 0 0;
-          color: oklch(0.48 0.006 285);
-          letter-spacing: .05em;
-          text-transform: none;
-        }
-        .summit-entry-error { color: oklch(0.72 0.16 25); }
-        .summit-gate-footer {
-          position: absolute;
-          bottom: 2rem;
-          margin: 0;
-          color: oklch(0.45 0.006 285);
         }
         .summit-header {
           display: flex;
@@ -648,13 +478,8 @@ export default function Summit() {
           border: 0;
         }
         @media (max-width: 720px) {
-          .summit-gate-rules,
           .summit-content-rules { display: none; }
-          .summit-gate-shell,
           .summit-shell { width: 100%; }
-          .summit-gate-shell { padding: 1.25rem; }
-          .summit-gate-logo { top: 1.25rem; left: 1.25rem; }
-          .summit-gate-footer { bottom: 1.25rem; }
           .summit-header { min-height: 4.5rem; padding-inline: 1.25rem; }
           .summit-header-meta span:first-child,
           .summit-header-dot { display: none; }
@@ -678,12 +503,8 @@ export default function Summit() {
           .summit-footer > span:nth-last-child(2) { display: none; }
         }
         @media (max-width: 480px) {
-          .summit-entry-form { flex-direction: column; }
-          .summit-entry-form button { width: 100%; }
-          .summit-gate-card { padding: 2rem 1.25rem; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .summit-gate-card,
           .summit-ready .summit-reveal { animation: none; }
           .summit-reveal { opacity: 1; transform: none; }
         }
