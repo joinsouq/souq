@@ -2,7 +2,32 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "wouter";
 import "./Summit.css";
 
-const ENTRY_PASSWORD = "OneWell2026";
+type SummitDetails = {
+  header: { gathering: string; year: string };
+  hero: {
+    eyebrow: string;
+    title: string;
+    emphasis: string;
+    description: string;
+    ctaLabel: string;
+    ctaHref: string;
+    asideNumber: string;
+    aside: string;
+  };
+  invitation: { label: string; heading: string; body: string };
+  evening: {
+    label: string;
+    items: Array<{ index: string; title: string; description: string }>;
+  };
+  closing: {
+    eyebrow: string;
+    title: string;
+    emphasis: string;
+    ctaLabel: string;
+    ctaHref: string;
+  };
+  footer: { pillars: string; copyright: string };
+};
 
 function ArchMark({ small = false }: { small?: boolean }) {
   const size = small ? 18 : 26;
@@ -40,27 +65,68 @@ function Arrow() {
 }
 
 export default function Summit() {
-  const [unlocked, setUnlocked] = useState(false);
+  const [details, setDetails] = useState<SummitDetails | null>(null);
   const [entry, setEntry] = useState("");
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setReady(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
-  function handleEntry(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (entry.trim() !== ENTRY_PASSWORD) {
-      setError("That entry phrase doesn't match.");
-      return;
+  async function loadDetails() {
+    try {
+      const response = await fetch("/api/summit", { credentials: "same-origin" });
+      if (response.status === 204 || !response.ok) {
+        return;
+      }
+      setDetails((await response.json()) as SummitDetails);
+    } finally {
+      setCheckingAccess(false);
     }
-    setError("");
-    setUnlocked(true);
   }
 
-  if (!unlocked) {
+  useEffect(() => {
+    void loadDetails();
+  }, []);
+
+  async function handleEntry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/summit/access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ entryPhrase: entry }),
+      });
+
+      if (!response.ok) {
+        setError("Access is temporarily unavailable. Try again.");
+        return;
+      }
+
+      const result = (await response.json()) as { ok?: boolean };
+      if (!result.ok) {
+        setError("That entry phrase doesn't match.");
+        return;
+      }
+
+      setCheckingAccess(true);
+      await loadDetails();
+    } catch {
+      setError("Access is temporarily unavailable. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (!details) {
     return (
       <main className={`summit-page summit-gate${ready ? " summit-ready" : ""}`}>
         <div className="summit-atmosphere" aria-hidden="true" />
@@ -82,14 +148,12 @@ export default function Summit() {
             </div>
             <p className="summit-kicker">A private gathering</p>
             <h1 id="summit-gate-title">Souq Summit</h1>
-            <p className="summit-gate-intro">
-              For the founders building what comes next.
-            </p>
+              <p className="summit-gate-intro">For invited Souq guests.</p>
             <form onSubmit={handleEntry} className="summit-entry-form" noValidate>
               <label className="summit-sr-only" htmlFor="summit-entry">
                 Entry phrase
               </label>
-              <input
+                <input
                 id="summit-entry"
                 type="password"
                 autoComplete="off"
@@ -101,10 +165,11 @@ export default function Summit() {
                 }}
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? "summit-entry-error" : undefined}
-                autoFocus
+                  autoFocus
+                  disabled={checkingAccess || submitting}
               />
-              <button type="submit">
-                Enter
+                <button type="submit" disabled={checkingAccess || submitting}>
+                  {submitting ? "Checking…" : "Enter"}
                 <Arrow />
               </button>
             </form>
@@ -114,7 +179,7 @@ export default function Summit() {
               role="status"
               aria-live="polite"
             >
-              {error || "This page is for invited guests."}
+              {error || (checkingAccess ? "Checking your invitation…" : "This page is for invited guests.")}
             </p>
           </section>
           <p className="summit-gate-footer">Souq / Summit 2026</p>
@@ -141,76 +206,57 @@ export default function Summit() {
             <span>Souq</span>
           </Link>
           <div className="summit-header-meta">
-            <span>Private gathering</span>
+            <span>{details.header.gathering}</span>
             <span className="summit-header-dot" />
-            <span>2026</span>
+            <span>{details.header.year}</span>
           </div>
         </header>
 
         <section className="summit-hero">
           <div className="summit-hero-copy">
-            <p className="summit-kicker summit-reveal">Souq / Summit</p>
+            <p className="summit-kicker summit-reveal">{details.hero.eyebrow}</p>
             <h1 className="summit-title summit-reveal">
-              Make room for
-              <em>what’s next.</em>
+              {details.hero.title}
+              <em>{details.hero.emphasis}</em>
             </h1>
-            <p className="summit-hero-description summit-reveal">
-              An intimate gathering for the founders, operators, and people
-              shaping the next generation of consumer brands.
-            </p>
-            <a className="summit-primary-link summit-reveal" href="mailto:yaser@joinsouq.com?subject=Souq%20Summit%20invitation">
-              Request your invitation
+            <p className="summit-hero-description summit-reveal">{details.hero.description}</p>
+            <a className="summit-primary-link summit-reveal" href={details.hero.ctaHref}>
+              {details.hero.ctaLabel}
               <Arrow />
             </a>
           </div>
           <div className="summit-hero-aside summit-reveal">
-            <span className="summit-aside-number">03</span>
-            <p>
-              The third pillar of Souq is a room of founders who actually
-              care — about the work, the details, and each other.
-            </p>
+            <span className="summit-aside-number">{details.hero.asideNumber}</span>
+            <p>{details.hero.aside}</p>
           </div>
         </section>
 
         <section className="summit-intro-section">
-          <div className="summit-section-label">The invitation</div>
+          <div className="summit-section-label">{details.invitation.label}</div>
           <div className="summit-intro-copy">
-            <h2>Good companies are built in public. Great ones are built together.</h2>
-            <p>
-              Summit is a private space to step away from the dashboard and
-              spend time with the people who understand the journey. No panels,
-              no pitch decks — just generous conversation, a considered table,
-              and a little room to think further.
-            </p>
+            <h2>{details.invitation.heading}</h2>
+            <p>{details.invitation.body}</p>
           </div>
         </section>
 
         <section className="summit-experience">
-          <div className="summit-section-label">The evening</div>
+          <div className="summit-section-label">{details.evening.label}</div>
           <div className="summit-experience-grid">
-            <article>
-              <span className="summit-card-index">01</span>
-              <h3>Arrive curious</h3>
-              <p>Bring the question you haven’t had time to ask out loud.</p>
-            </article>
-            <article>
-              <span className="summit-card-index">02</span>
-              <h3>Stay awhile</h3>
-              <p>A thoughtful table, good food, and conversations with range.</p>
-            </article>
-            <article>
-              <span className="summit-card-index">03</span>
-              <h3>Leave with more</h3>
-              <p>New perspective, useful connections, and momentum for the next move.</p>
-            </article>
+            {details.evening.items.map((item) => (
+              <article key={item.index}>
+                <span className="summit-card-index">{item.index}</span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </article>
+            ))}
           </div>
         </section>
 
         <section className="summit-closing">
-          <p className="summit-kicker">A room for builders</p>
-          <h2>Come as you are.<br /><em>Build what matters.</em></h2>
-          <a className="summit-primary-link" href="mailto:yaser@joinsouq.com?subject=Souq%20Summit%20invitation">
-            Request your invitation
+          <p className="summit-kicker">{details.closing.eyebrow}</p>
+          <h2>{details.closing.title}<br /><em>{details.closing.emphasis}</em></h2>
+          <a className="summit-primary-link" href={details.closing.ctaHref}>
+            {details.closing.ctaLabel}
             <Arrow />
           </a>
         </section>
@@ -220,8 +266,8 @@ export default function Summit() {
             <ArchMark small />
             <span>Souq</span>
           </Link>
-          <span>Capital / Operating Stack / Summit</span>
-          <span>© {new Date().getFullYear()} Souq</span>
+          <span>{details.footer.pillars}</span>
+          <span>{details.footer.copyright}</span>
         </footer>
       </div>
 
