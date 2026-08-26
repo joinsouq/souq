@@ -1,14 +1,10 @@
 import { Link } from "wouter";
-import SouqLogo from "@/components/SouqLogo";
+import Navbar from "@/components/Navbar";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#14181A]">
-      <header className="h-16 border-b border-black/8 px-6 flex items-center">
-        <Link href="/" aria-label="Souq home">
-          <SouqLogo variant="black" className="w-[110px]" />
-        </Link>
-      </header>
+      <Navbar tone="light" />
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">404</h1>

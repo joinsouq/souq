@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "wouter";
-import SouqLogo from "@/components/SouqLogo";
+import Navbar from "@/components/Navbar";
 
 const WORDS = [
   "natural haircare brand",
@@ -13,21 +12,6 @@ const WORDS = [
   "wellness brand",
   "jewelry brand",
   "activewear brand",
-];
-
-const TRIAD = [
-  {
-    idx: "01", label: "Capital", href: "/capital",
-    desc: "Fuel your growth, without debt or dilution. We fund what drives your business — and only win when you do.",
-  },
-  {
-    idx: "02", label: "The Operating Stack", href: "/accelerator",
-    desc: "Operations, fulfillment, media buying, and finance — we advise or fractionally operate your business across everything it takes to go from 6 to 7 figures.",
-  },
-  {
-    idx: "03", label: "Summit", href: "/summit",
-    desc: "Industry veterans at your disposal — senior operators who bring CMO, COO, CFO, and CEO-level judgment to the moments that matter.",
-  },
 ];
 
 export default function Umbrella() {
@@ -84,6 +68,8 @@ export default function Umbrella() {
       data-ready={ready}
       className="u-page"
     >
+      <Navbar tone="dark" />
+
       {/* ── ambient wash ── */}
       <div
         ref={washRef}
@@ -102,23 +88,6 @@ export default function Umbrella() {
 
       {/* ── shell ── */}
       <div className="u-shell">
-
-        {/* header */}
-        <header className="u-pad u-header">
-          <a href="/" className="u-mark">
-            <SouqLogo variant="white" className="u-logo-image" />
-          </a>
-          <div className={`u-triad u-header-nav u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "340ms" } as React.CSSProperties}>
-            {TRIAD.map((item, i) =>
-              <Link key={item.idx} href={item.href} className={`u-triad-item${i > 0 ? " u-triad-border" : ""}`}>
-                <span className="u-triad-lbl">{item.label}</span>
-                <svg className="u-triad-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
-            )}
-          </div>
-        </header>
 
         {/* hero */}
         <main className="u-pad u-main">
@@ -198,39 +167,6 @@ export default function Umbrella() {
         @media (max-width:720px) { .u-shell { width:100%; border-inline:0; } }
         .u-pad { padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
 
-        /* header */
-        .u-header {
-          display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-          padding-block: 1.4rem;
-          border-bottom: 1px solid oklch(0.27 0.005 285);
-        }
-        .u-mark {
-          display: inline-flex; align-items: center;
-          text-decoration: none; color: inherit;
-        }
-        .u-logo-image {
-          display: inline-flex;
-          align-items: center;
-          width: clamp(6.5rem, 8vw, 7.5rem);
-          height: auto;
-        }
-        .u-status {
-          display: inline-flex; align-items: center; gap: .5rem;
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
-          color: oklch(0.66 0.006 285); white-space: nowrap;
-        }
-        .u-dot {
-          width: 6px; height: 6px; border-radius: 50%;
-          background: var(--souq-coral); position: relative; flex: none;
-        }
-        .u-dot::after {
-          content: ""; position: absolute; inset: 0; border-radius: 50%;
-          background: var(--souq-coral);
-          animation: u-pulse 2.6s cubic-bezier(.22,1,.36,1) infinite;
-        }
-        @keyframes u-pulse { 0%{transform:scale(1);opacity:.7} 70%,100%{transform:scale(3.2);opacity:0} }
-
         /* main */
         .u-main {
           flex: 1; display: flex; flex-direction: column; justify-content: center;
@@ -300,45 +236,9 @@ export default function Umbrella() {
         .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
         .u-triad-arrow { flex: none; color: oklch(0.45 0.006 285); opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
         .u-triad-item:hover .u-triad-arrow { opacity: 1; transform: none; color: oklch(0.965 0.002 285); }
-        .u-header-nav {
-          grid-template-columns: repeat(3, auto);
-          border-top: 0;
-          width: auto;
-          flex: none;
-        }
-        .u-header-nav .u-triad-item {
-          min-width: 5rem;
-          padding: .35rem 0 .35rem 1.2rem;
-        }
-        .u-header-nav .u-triad-item:first-child {
-          padding-left: 0;
-        }
-        .u-header-nav .u-triad-border {
-          padding-left: 1.2rem;
-        }
         @media (max-width:720px) {
           .u-triad-arrow { opacity: 1; transform: none; }
           .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
-          .u-header {
-            display: block;
-          }
-          .u-header-nav {
-            width: 100%;
-            grid-template-columns: 1fr;
-            margin-top: 1.25rem;
-            padding-top: .25rem;
-            border-top: 1px solid oklch(0.27 0.005 285);
-          }
-          .u-header-nav .u-triad-item,
-          .u-header-nav .u-triad-item:first-child,
-          .u-header-nav .u-triad-border {
-            min-width: 0;
-            padding: .8rem 0;
-          }
-          .u-header-nav .u-triad-border {
-            border-left: 0;
-            border-top: 1px solid oklch(0.27 0.005 285);
-          }
         }
 
         /* entrance */

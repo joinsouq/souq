@@ -9,6 +9,7 @@ export default function Footer() {
         </span>
         <div className="flex items-center gap-6">
           <Link href="/" className="text-sm text-muted-foreground hover:text-[#14181A] transition-colors">Home</Link>
+          <Link href="/team" className="text-sm text-muted-foreground hover:text-[#14181A] transition-colors">Team</Link>
           <Link href="/apply" className="text-sm text-muted-foreground hover:text-[#14181A] transition-colors">Apply</Link>
         </div>
       </div>

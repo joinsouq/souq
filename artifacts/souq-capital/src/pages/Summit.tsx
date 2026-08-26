@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import Navbar from "@/components/Navbar";
 import SouqLogo from "@/components/SouqLogo";
 
 type SummitDetails = {
@@ -85,6 +86,7 @@ export default function Summit() {
   if (!details) {
     return (
       <main className={`summit-page summit-content${ready ? " summit-ready" : ""}`}>
+        <Navbar tone="dark" />
         <div className="summit-atmosphere" aria-hidden="true" />
         <div className="summit-grain" aria-hidden="true" />
         <div className="summit-content-rules" aria-hidden="true">
@@ -94,11 +96,6 @@ export default function Summit() {
           <span />
         </div>
         <div className="summit-shell summit-loading-shell">
-          <header className="summit-header">
-            <Link href="/" className="summit-wordmark">
-              <SouqLogo variant="white" className="summit-logo-image" />
-            </Link>
-          </header>
           <section className="summit-loading-state" aria-live="polite">
             <p className="summit-kicker">Souq / Summit</p>
             <h1>{error ? "Summit is unavailable." : "Loading Summit."}</h1>
@@ -111,6 +108,7 @@ export default function Summit() {
 
   return (
     <main className={`summit-page summit-content${ready ? " summit-ready" : ""}`}>
+      <Navbar tone="dark" />
       <div className="summit-atmosphere" aria-hidden="true" />
       <div className="summit-grain" aria-hidden="true" />
       <div className="summit-content-rules" aria-hidden="true">
@@ -121,17 +119,6 @@ export default function Summit() {
       </div>
 
       <div className="summit-shell">
-        <header className="summit-header">
-          <Link href="/" className="summit-wordmark">
-            <SouqLogo variant="white" className="summit-logo-image" />
-          </Link>
-          <div className="summit-header-meta">
-            <span>{details.header.gathering}</span>
-            <span className="summit-header-dot" />
-            <span>{details.header.year}</span>
-          </div>
-        </header>
-
         <section className="summit-hero">
           <div className="summit-hero-copy">
             <p className="summit-kicker summit-reveal">{details.hero.eyebrow}</p>
@@ -349,32 +336,6 @@ export default function Summit() {
         .summit-primary-link:hover {
           background: var(--souq-peach);
           transform: translateY(-2px);
-        }
-        .summit-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          min-height: 5.25rem;
-          border-bottom: 1px solid oklch(0.27 0.005 285);
-        }
-        .summit-wordmark { font-size: 1.06rem; font-weight: 600; letter-spacing: -.035em; }
-        .summit-logo-image {
-          display: inline-flex;
-          align-items: center;
-          width: 7.5rem;
-          height: auto;
-        }
-        .summit-header-meta {
-          display: inline-flex;
-          align-items: center;
-          gap: .7rem;
-          color: oklch(0.55 0.006 285);
-        }
-        .summit-header-dot {
-          width: .3rem;
-          height: .3rem;
-          border-radius: 50%;
-           background: var(--souq-coral);
         }
         .summit-hero {
           min-height: min(46rem, 72svh);
@@ -759,9 +720,6 @@ export default function Summit() {
         @media (max-width: 720px) {
           .summit-content-rules { display: none; }
           .summit-shell { width: 100%; }
-          .summit-header { min-height: 4.5rem; padding-inline: 1.25rem; }
-          .summit-header-meta span:first-child,
-          .summit-header-dot { display: none; }
           .summit-hero {
             min-height: auto;
             display: block;

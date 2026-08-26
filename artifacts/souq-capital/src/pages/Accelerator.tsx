@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
 import ScrollReveal from "@/components/ScrollReveal";
-import SouqLogo from "@/components/SouqLogo";
+import Navbar from "@/components/Navbar";
 
 const AT_A_GLANCE_BEST_FOR = [
   "Have $1M+ in revenue",
@@ -71,65 +71,6 @@ const CORE_AREAS = [
   },
 ];
 
-function AcceleratorNavbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <nav className={`accelerator-nav ${scrolled ? "is-scrolled" : ""}`}>
-      <div className="accelerator-nav-inner">
-        {/* Breadcrumb */}
-        <div className="accelerator-breadcrumb">
-          <Link href="/" className="accelerator-logo-link">
-            <SouqLogo variant="white" className="accelerator-logo" />
-          </Link>
-          <span className="accelerator-slash">/</span>
-          <span className="accelerator-current">Operating Stack</span>
-        </div>
-
-        {/* Desktop nav */}
-        <div className="accelerator-desktop-links">
-          <a href="#at-a-glance">
-            At a Glance
-          </a>
-          <a href="#details">
-            Details
-          </a>
-          <a href="#join">
-            Join
-          </a>
-        </div>
-
-        {/* CTA + mobile toggle */}
-        <div className="accelerator-nav-actions">
-          <a href="#join" className="accelerator-nav-apply">
-            Apply
-          </a>
-          <button className="accelerator-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
-      </div>
-
-      {menuOpen && (
-        <div className="accelerator-mobile-menu">
-          <a href="#at-a-glance" onClick={() => setMenuOpen(false)}>At a Glance</a>
-          <a href="#details" onClick={() => setMenuOpen(false)}>Details</a>
-          <a href="#join" onClick={() => setMenuOpen(false)}>Join</a>
-          <a href="#join" onClick={() => setMenuOpen(false)} className="accelerator-mobile-apply">Apply</a>
-        </div>
-      )}
-    </nav>
-  );
-}
-
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -157,7 +98,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function Accelerator() {
   return (
     <div className="accelerator-page">
-      <AcceleratorNavbar />
+      <Navbar tone="dark" />
 
       {/* Hero — dark full bleed */}
       <section className="accelerator-hero">
@@ -300,10 +241,8 @@ export default function Accelerator() {
             <p className="accelerator-join-copy">
               The Souq Accelerator works with a selective group of high-growth consumer companies ready to scale with real support behind them. If that's your company, apply to start the conversation.
             </p>
-            <a href="https://forms.fillout.com/t/gTxTHeoSKwus" target="_blank" rel="noopener noreferrer">
-              <button className="accelerator-primary-button">
-                Apply to the Accelerator →
-              </button>
+            <a href="https://forms.fillout.com/t/gTxTHeoSKwus" target="_blank" rel="noopener noreferrer" className="accelerator-primary-button">
+              Apply to the Accelerator →
             </a>
           </ScrollReveal>
         </div>
@@ -316,6 +255,7 @@ export default function Accelerator() {
           <div>
             <Link href="/">Home</Link>
             <Link href="/capital">Capital</Link>
+            <Link href="/team">Team</Link>
             <Link href="/apply">Apply</Link>
           </div>
         </div>
@@ -334,49 +274,6 @@ export default function Accelerator() {
           width: min(100% - 2.5rem, 82.5rem);
           margin: 0 auto;
         }
-        .accelerator-nav {
-          position: fixed;
-          inset: 0 0 auto;
-          z-index: 50;
-          color: oklch(0.965 0.002 285);
-          background: oklch(0.155 0.004 285 / .94);
-          border-bottom: 1px solid oklch(0.27 0.005 285);
-          backdrop-filter: blur(14px);
-        }
-        .accelerator-nav-inner {
-          width: min(100% - 2.5rem, 82.5rem);
-          min-height: 5.25rem;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 2rem;
-          margin: 0 auto;
-        }
-        .accelerator-breadcrumb,
-        .accelerator-nav-actions,
-        .accelerator-desktop-links {
-          display: flex;
-          align-items: center;
-        }
-        .accelerator-breadcrumb { gap: .65rem; }
-        .accelerator-logo-link { display: inline-flex; color: inherit; text-decoration: none; }
-        .accelerator-logo { width: 7rem; }
-        .accelerator-slash { color: oklch(0.5 0.006 285); font-size: 1rem; }
-        .accelerator-current { color: oklch(0.72 0.006 285); font-size: .82rem; letter-spacing: -.02em; }
-        .accelerator-desktop-links { gap: 2.5rem; margin-left: auto; margin-right: 2.75rem; }
-        .accelerator-desktop-links a,
-        .accelerator-mobile-menu a,
-        .accelerator-footer a {
-          color: oklch(0.68 0.006 285);
-          font-size: .78rem;
-          text-decoration: none;
-          transition: color .2s ease;
-        }
-        .accelerator-desktop-links a:hover,
-        .accelerator-mobile-menu a:hover,
-        .accelerator-footer a:hover { color: oklch(0.965 0.002 285); }
-        .accelerator-nav-actions { gap: 1rem; }
-        .accelerator-nav-apply,
         .accelerator-primary-button {
           display: inline-flex;
           align-items: center;
@@ -389,15 +286,10 @@ export default function Accelerator() {
           font-weight: 600;
           transition: transform .2s ease, background .2s ease;
         }
-        .accelerator-nav-apply { min-height: 2.35rem; padding: 0 1rem; }
-        .accelerator-nav-apply:hover,
         .accelerator-primary-button:hover { background: var(--souq-peach); transform: translateY(-2px); }
-        .accelerator-menu-button { display: none; padding: .45rem; border: 0; background: transparent; }
-        .accelerator-menu-button span { display: block; width: 1.2rem; height: 1px; margin: .28rem 0; background: oklch(0.88 0.002 285); }
-        .accelerator-mobile-menu { display: none; }
         .accelerator-hero {
           position: relative;
-          padding: clamp(9rem, 18vh, 13rem) 0 clamp(5rem, 10vh, 8rem);
+          padding: clamp(5rem, 12vh, 9rem) 0 clamp(5rem, 10vh, 8rem);
           border-bottom: 1px solid oklch(0.27 0.005 285);
           background:
             linear-gradient(90deg, transparent 24.9%, oklch(0.27 0.005 285 / .4) 25%, transparent 25.1%, transparent 74.9%, oklch(0.27 0.005 285 / .4) 75%, transparent 75.1%),
@@ -554,17 +446,8 @@ export default function Accelerator() {
         .accelerator-footer-inner > div { display: flex; gap: 1.5rem; }
         .accelerator-footer a { font-family: 'Inter', sans-serif; font-size: .88rem; letter-spacing: -.02em; text-transform: none; }
         @media (max-width: 720px) {
-          .accelerator-container,
-          .accelerator-nav-inner { width: calc(100% - 2.5rem); }
-          .accelerator-nav-inner { min-height: 4.5rem; }
-          .accelerator-current { font-size: .75rem; }
-          .accelerator-desktop-links,
-          .accelerator-nav-apply { display: none; }
-          .accelerator-menu-button { display: block; }
-          .accelerator-mobile-menu { display: grid; gap: 1rem; padding: 1.25rem; border-top: 1px solid oklch(0.27 0.005 285); background: oklch(0.155 0.004 285); }
-          .accelerator-mobile-menu a { color: oklch(0.78 0.006 285); }
-          .accelerator-mobile-menu .accelerator-mobile-apply { color: oklch(0.18 0.006 285); background: var(--souq-coral); padding: .8rem 1rem; text-align: center; }
-          .accelerator-hero { padding: 7.5rem 0 4rem; }
+          .accelerator-container { width: calc(100% - 2.5rem); }
+          .accelerator-hero { padding: 4.5rem 0 4rem; }
           .accelerator-hero-inner { display: block; }
           .accelerator-hero h1 { max-width: 8ch; font-size: clamp(3.6rem, 16vw, 5rem); }
           .accelerator-hero-side { margin-top: 3rem; }
