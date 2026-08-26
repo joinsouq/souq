@@ -25,6 +25,12 @@ type SummitDetails = {
     label: string;
     items: Array<{ index: string; title: string; description: string }>;
   };
+  guests?: {
+    label: string;
+    heading: string;
+    body: string;
+    list: Array<{ name: string; company?: string; linkedin?: string }>;
+  };
   logistics: {
     label: string;
     date: string;
@@ -182,6 +188,43 @@ export default function Summit() {
             ))}
           </div>
         </section>
+
+        {details.guests?.list.length ? (
+          <section className="summit-guests">
+            <div className="summit-section-label">{details.guests.label}</div>
+            <div className="summit-guests-content">
+              <h2>{details.guests.heading}</h2>
+              <p className="summit-guests-intro">{details.guests.body}</p>
+              <ul className="summit-guests-grid">
+                {details.guests.list.map((guest, index) => {
+                  const inner = (
+                    <>
+                      {guest.company ? <strong>{guest.company}</strong> : null}
+                      <span>{guest.name}</span>
+                    </>
+                  );
+                  return (
+                    <li key={`${guest.name}-${index}`}>
+                      {guest.linkedin ? (
+                        <a
+                          className="summit-guest-card"
+                          href={guest.linkedin}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {inner}
+                          <Arrow />
+                        </a>
+                      ) : (
+                        <div className="summit-guest-card">{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </section>
+        ) : null}
 
         {details.logistics && (
           <section className="summit-logistics">
@@ -515,6 +558,77 @@ export default function Summit() {
           font-size: 1rem;
           line-height: 1.5;
         }
+        .summit-guests {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 3rem;
+          padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-guests-content h2 {
+          max-width: 22ch;
+          margin: 0 0 1.2rem;
+          font-size: clamp(2rem, 4.6vw, 4.1rem);
+          font-weight: 400;
+          line-height: .98;
+          letter-spacing: -.055em;
+        }
+        .summit-guests-intro {
+          max-width: 46rem;
+          margin: 0 0 2.4rem;
+          color: oklch(0.66 0.006 285);
+          font-size: 1.05rem;
+          line-height: 1.6;
+        }
+        .summit-guests-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+          gap: .75rem;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .summit-guest-card {
+          display: flex;
+          flex-direction: column;
+          gap: .3rem;
+          height: 100%;
+          padding: .95rem 1.05rem;
+          border: 1px solid oklch(0.27 0.005 285);
+          background: oklch(0.18 0.004 285 / .55);
+          color: inherit;
+          text-decoration: none;
+          transition: border-color .2s ease, background .2s ease, transform .2s cubic-bezier(.22,1,.36,1);
+        }
+        a.summit-guest-card {
+          cursor: pointer;
+        }
+        a.summit-guest-card:hover {
+          border-color: var(--souq-coral);
+          background: oklch(0.2 0.005 285 / .7);
+          transform: translateY(-2px);
+        }
+        .summit-guest-card strong {
+          font-size: 1rem;
+          font-weight: 500;
+          letter-spacing: -.02em;
+          line-height: 1.3;
+        }
+        .summit-guest-card span {
+          color: oklch(0.58 0.006 285);
+          font-size: .82rem;
+          line-height: 1.3;
+        }
+        a.summit-guest-card svg {
+          align-self: flex-end;
+          margin-top: -.9rem;
+          width: .7rem;
+          height: .7rem;
+          color: oklch(0.5 0.006 285);
+        }
+        a.summit-guest-card:hover svg {
+          color: var(--souq-coral);
+        }
         .summit-logistics {
           display: grid;
           grid-template-columns: 1fr 2fr;
@@ -730,13 +844,17 @@ export default function Summit() {
           .summit-intro-section,
           .summit-program,
           .summit-experience,
+          .summit-guests,
           .summit-logistics { display: block; padding: 4.5rem 1.25rem; }
           .summit-intro-copy,
           .summit-program-content,
           .summit-experience-grid,
+          .summit-guests-content,
           .summit-logistics-grid { margin-top: 2rem; }
           .summit-intro-copy h2 { font-size: 2.55rem; }
           .summit-program-content h2 { font-size: 2.55rem; }
+          .summit-guests-content h2 { font-size: 2.55rem; }
+          .summit-guests-grid { grid-template-columns: repeat(2, 1fr); }
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
