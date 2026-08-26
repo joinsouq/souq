@@ -31,6 +31,7 @@ type SummitDetails = {
     venue: string;
     venueNote: string;
     venueHref: string;
+    lumaHref: string;
     hotels: Array<{ name: string; rate: string; href: string }>;
   };
   closing: {
@@ -229,6 +230,16 @@ export default function Summit() {
                     </li>
                   ))}
                 </ul>
+              </article>
+              <article>
+                <span className="summit-card-index">EVENT LINK</span>
+                <h3>
+                  <a href={details.logistics.lumaHref} target="_blank" rel="noreferrer">
+                    View event on Luma
+                    <Arrow />
+                  </a>
+                </h3>
+                <p>Request your invitation and see the event details.</p>
               </article>
             </div>
           </section>
@@ -549,7 +560,7 @@ export default function Summit() {
         }
         .summit-logistics-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
         }
         .summit-logistics article {

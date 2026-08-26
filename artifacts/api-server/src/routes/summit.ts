@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 const router = Router();
+const lumaEventUrl = "https://luma.com/51f8g6uw";
 
 const summitDetails = {
   header: {
@@ -14,7 +15,7 @@ const summitDetails = {
     description:
       "A full day in LA for the people building the next wave of Muslim-owned businesses.",
     ctaLabel: "Request your invitation",
-    ctaHref: "mailto:yaser@joinsouq.com?subject=Souq%20Summit%20invitation",
+    ctaHref: lumaEventUrl,
     asideNumber: "09 / 12",
     aside:
       "Saturday, September 12, 2026 · Blank Space Santa Monica, Los Angeles.",
@@ -92,6 +93,7 @@ const summitDetails = {
     venue: "Blank Space Santa Monica",
     venueNote: "Los Angeles · Venue announced",
     venueHref: "https://www.google.com/maps/search/?api=1&query=Blank+Space+Santa+Monica",
+    lumaHref: lumaEventUrl,
     hotels: [
       {
         name: "Hilton",
@@ -115,7 +117,7 @@ const summitDetails = {
     title: "Request",
     emphasis: "yours.",
     ctaLabel: "Request your invitation",
-    ctaHref: "mailto:yaser@joinsouq.com?subject=Souq%20Summit%20invitation",
+    ctaHref: lumaEventUrl,
   },
   footer: {
     pillars: "Capital / Operating Stack / Summit",
