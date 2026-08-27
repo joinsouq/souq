@@ -3,61 +3,114 @@ import { Router } from "express";
 const router = Router();
 const lumaEventUrl = "https://luma.com/51f8g6uw";
 
-// Confirmed guest/company sign-ups. Souq's own team is left out here since
-// they're already featured on the Team page. Excludes exact duplicate
-// sign-ups and one clearly mismatched LinkedIn link (Anwar Jibawi's entry
-// pointed to a different attendee's profile).
-const confirmedGuests: Array<{ name: string; company?: string; linkedin?: string }> = [
-  { name: "Lauren Kim", company: "BXM Consultants", linkedin: "https://linkedin.com/in/lauren-kim-a319581" },
-  { name: "EVERYTHING BRAND", company: "EVERYTHING Studios", linkedin: "https://linkedin.com/in/abdulalimjemal" },
-  { name: "Ian Park", company: "Nominal", linkedin: "https://linkedin.com/in/ianfromindy" },
-  { name: "TURSH LLC", company: "Tursh", linkedin: "https://linkedin.com/in/meenahoshmand" },
-  { name: "Ehsaan Mesghali", company: "Fadwa Masala", linkedin: "https://linkedin.com/in/emesghali" },
-  { name: "Inam", company: "Ayn Skin House" },
-  { name: "Fatimah Waseem", company: "Atlas and Silk" },
-  { name: "Ibrahim Mimou", company: "Movements LLC", linkedin: "https://linkedin.com/in/ibrahimmimou" },
-  { name: "Noah", company: "Veriswap" },
-  { name: "Rabia Mohiuddin", company: "Siraat" },
-  { name: "Omar Nassimi", company: "PVBLIC House" },
-  { name: "Sahar Ali", company: "Celery Retail", linkedin: "https://linkedin.com/in/saharaliprofile" },
-  { name: "Mahnoor Khan", company: "Noor House" },
-  { name: "Humaira Syed", company: "Niswa Fashion", linkedin: "https://linkedin.com/in/Niswafashion" },
-  { name: "Hussein Khanafer", company: "Yara Group", linkedin: "https://linkedin.com/in/Husseink" },
-  { name: "Anwar Jibawi", company: "Anwar" },
-  { name: "Nadir Tayach", company: "Naali", linkedin: "https://linkedin.com/in/nadir-tayach" },
-  { name: "Summer Albarcha", company: "Summer Evenings" },
-  { name: "Ismail Sayeed", company: "Calligrafist LLC", linkedin: "https://linkedin.com/in/ismailsayeed" },
-  { name: "Salman Hussain", company: "Choti Koti" },
-  { name: "Yasmine Borno", company: "Hayati", linkedin: "https://linkedin.com/in/yasmine-borno-74512b116" },
-  { name: "Omar Z.", company: "Founders Law", linkedin: "https://linkedin.com/in/omar-zoubeidi-8447bb224" },
-  { name: "Layla Shaikley", company: "Wise Systems", linkedin: "https://linkedin.com/in/lshaikley" },
-  { name: "Aman Fahimullah", company: "Healthspan" },
-  { name: "Mohannad El-Khairy", linkedin: "https://linkedin.com/in/mohannadelkhairy" },
-  { name: "Mohammed Melies", company: "101 Studios / PrintYourVinyl", linkedin: "https://linkedin.com/in/mohammed-melies" },
-  { name: "Safwaan Mir", company: "Rho", linkedin: "https://linkedin.com/in/safwaanmir" },
-  { name: "Ahmed A. Mirza", company: "Cartweel", linkedin: "https://linkedin.com/in/ahmedamirza" },
-  { name: "Natalie Sabri", company: "Dough Parlour" },
-  { name: "Mohammad Afredi" },
-  { name: "Asli Sungur", company: "Purecious Jewelry" },
-  { name: "Antar Hanif", company: "IAMSHooter" },
-  { name: "Abeer Ali", company: "Neeyah" },
-  { name: "Dannah J", company: "Innate Capital / Nur House" },
-  { name: "Ahmad Abdallah", company: "Nominal · CMO" },
-  { name: "Ammar Melies", company: "GLO" },
-  { name: "Omar Snoubar", company: "elaa" },
-  { name: "Leena Snoubar", company: "elaa" },
-  { name: "Lina Idelbi", company: "Jamali" },
-  { name: "Farah", company: "Paliroots" },
-  { name: "Mouyyad Abdulhadi", company: "Pax & Benfica" },
-  { name: "Yaser Albataineh", company: "Veiled" },
-  { name: "Riaz Surti", company: "Hearthy" },
-  { name: "Rahim Siddiq", company: "Fith" },
-  { name: "Nadia Rayan", company: "RAYAN" },
-  { name: "Kareem Elgendy", company: "Veiled" },
-  { name: "Fadwa Hilili", company: "Fadwa Masala" },
-  { name: "Akram Abdallah", company: "Nominal" },
-  { name: "Khaled Atallah", company: "Noun Naturals" },
-  { name: "Steven", company: "Noun Naturals" },
+// Confirmed guest/company sign-ups, consolidated by company so a brand with
+// multiple attendees gets one card instead of a repeated company name.
+// Souq's own team is left out here since they're already featured on the
+// Team page. Excludes exact duplicate sign-ups and one clearly mismatched
+// LinkedIn link (Anwar Jibawi's entry pointed to a different attendee's
+// profile).
+// Company logos are self-hosted under souq-capital/public/logos, sourced from
+// each company's own site/store and only added where the guest's stated
+// company could be confidently matched to a real, findable brand.
+const confirmedGuests: Array<{
+  company?: string;
+  logo?: string;
+  people: Array<{ name: string; role?: string; linkedin?: string }>;
+}> = [
+  { company: "BXM Consultants", people: [{ name: "Lauren Kim", linkedin: "https://linkedin.com/in/lauren-kim-a319581" }] },
+  { company: "EVERYTHING Studios", people: [{ name: "EVERYTHING BRAND", linkedin: "https://linkedin.com/in/abdulalimjemal" }] },
+  {
+    company: "Nominal",
+    people: [
+      { name: "Ian Park", linkedin: "https://linkedin.com/in/ianfromindy" },
+      { name: "Ahmad Abdallah", role: "CMO" },
+      { name: "Akram Abdallah" },
+    ],
+  },
+  { company: "Tursh", people: [{ name: "TURSH LLC", linkedin: "https://linkedin.com/in/meenahoshmand" }] },
+  {
+    company: "Fadwa Masala",
+    logo: "logos/fadwa-masala.png",
+    people: [
+      { name: "Ehsaan Mesghali", linkedin: "https://linkedin.com/in/emesghali" },
+      { name: "Fadwa Hilili" },
+    ],
+  },
+  { company: "Ayn Skin House", people: [{ name: "Inam" }] },
+  { company: "Atlas and Silk", people: [{ name: "Fatimah Waseem" }] },
+  { company: "Movements LLC", people: [{ name: "Ibrahim Mimou", linkedin: "https://linkedin.com/in/ibrahimmimou" }] },
+  { company: "Veriswap", people: [{ name: "Noah" }] },
+  { company: "Siraat", people: [{ name: "Rabia Mohiuddin" }] },
+  { company: "PVBLIC House", people: [{ name: "Omar Nassimi" }] },
+  { company: "Celery Retail", people: [{ name: "Sahar Ali", linkedin: "https://linkedin.com/in/saharaliprofile" }] },
+  { company: "Noor House", people: [{ name: "Mahnoor Khan" }] },
+  {
+    company: "Niswa Fashion",
+    logo: "logos/niswa-fashion.png",
+    people: [{ name: "Humaira Syed", linkedin: "https://linkedin.com/in/Niswafashion" }],
+  },
+  { company: "Yara Group", people: [{ name: "Hussein Khanafer", linkedin: "https://linkedin.com/in/Husseink" }] },
+  { company: "Anwar", people: [{ name: "Anwar Jibawi" }] },
+  {
+    company: "Naali",
+    logo: "logos/naali.png",
+    people: [{ name: "Nadir Tayach", linkedin: "https://linkedin.com/in/nadir-tayach" }],
+  },
+  { company: "Summer Evenings", people: [{ name: "Summer Albarcha" }] },
+  { company: "Calligrafist LLC", people: [{ name: "Ismail Sayeed", linkedin: "https://linkedin.com/in/ismailsayeed" }] },
+  { company: "Choti Koti", people: [{ name: "Salman Hussain" }] },
+  {
+    company: "Hayati",
+    logo: "logos/hayati.png",
+    people: [{ name: "Yasmine Borno", linkedin: "https://linkedin.com/in/yasmine-borno-74512b116" }],
+  },
+  {
+    company: "Founders Law",
+    logo: "logos/founders-law.svg",
+    people: [{ name: "Omar Z.", linkedin: "https://linkedin.com/in/omar-zoubeidi-8447bb224" }],
+  },
+  {
+    company: "Wise Systems",
+    logo: "logos/wise-systems.svg",
+    people: [{ name: "Layla Shaikley", linkedin: "https://linkedin.com/in/lshaikley" }],
+  },
+  { company: "Healthspan", people: [{ name: "Aman Fahimullah" }] },
+  { people: [{ name: "Mohannad El-Khairy", linkedin: "https://linkedin.com/in/mohannadelkhairy" }] },
+  {
+    company: "101 Studios / PrintYourVinyl",
+    logo: "logos/printyourvinyl.svg",
+    people: [{ name: "Mohammed Melies", linkedin: "https://linkedin.com/in/mohammed-melies" }],
+  },
+  { company: "Rho", people: [{ name: "Safwaan Mir", linkedin: "https://linkedin.com/in/safwaanmir" }] },
+  {
+    company: "Cartweel",
+    logo: "logos/cartweel.svg",
+    people: [{ name: "Ahmed A. Mirza", linkedin: "https://linkedin.com/in/ahmedamirza" }],
+  },
+  { company: "Dough Parlour", logo: "logos/dough-parlour.png", people: [{ name: "Natalie Sabri" }] },
+  { people: [{ name: "Mohammad Afredi" }] },
+  { company: "Purecious Jewelry", logo: "logos/purecious-jewelry.png", people: [{ name: "Asli Sungur" }] },
+  { company: "IAMSHooter", people: [{ name: "Antar Hanif" }] },
+  { company: "Neeyah", people: [{ name: "Abeer Ali" }] },
+  { company: "Innate Capital / Nur House", logo: "logos/innate-capital.png", people: [{ name: "Dannah J" }] },
+  { company: "GLO", people: [{ name: "Ammar Melies" }] },
+  { company: "elaa", people: [{ name: "Omar Snoubar" }, { name: "Leena Snoubar" }] },
+  { company: "Jamali", people: [{ name: "Lina Idelbi" }] },
+  { company: "Paliroots", logo: "logos/paliroots.webp", people: [{ name: "Farah" }] },
+  { company: "Pax & Benfica", people: [{ name: "Mouyyad Abdulhadi" }] },
+  {
+    company: "Veiled",
+    logo: "logos/veiled.png",
+    people: [{ name: "Yaser Albataineh" }, { name: "Kareem Elgendy" }],
+  },
+  { company: "Hearthy", logo: "logos/hearthy.png", people: [{ name: "Riaz Surti" }] },
+  { company: "Fith", people: [{ name: "Rahim Siddiq" }] },
+  { company: "RAYAN", people: [{ name: "Nadia Rayan" }] },
+  {
+    company: "Noun Naturals",
+    logo: "logos/noun-naturals.png",
+    people: [{ name: "Khaled Atallah" }, { name: "Steven" }],
+  },
 ];
 
 const summitDetails = {

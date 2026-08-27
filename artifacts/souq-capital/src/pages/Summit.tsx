@@ -29,7 +29,11 @@ type SummitDetails = {
     label: string;
     heading: string;
     body: string;
-    list: Array<{ name: string; company?: string; linkedin?: string }>;
+    list: Array<{
+      company?: string;
+      logo?: string;
+      people: Array<{ name: string; role?: string; linkedin?: string }>;
+    }>;
   };
   logistics: {
     label: string;
@@ -197,27 +201,75 @@ export default function Summit() {
               <p className="summit-guests-intro">{details.guests.body}</p>
               <ul className="summit-guests-grid">
                 {details.guests.list.map((guest, index) => {
-                  const inner = (
-                    <>
-                      {guest.company ? <strong>{guest.company}</strong> : null}
-                      <span>{guest.name}</span>
-                    </>
-                  );
+                  const logo = guest.logo ? (
+                    <span className="summit-guest-logo">
+                      <img
+                        src={`${import.meta.env.BASE_URL}${guest.logo}`}
+                        alt=""
+                        loading="lazy"
+                      />
+                    </span>
+                  ) : null;
+                  const key = `${guest.company ?? guest.people[0]?.name}-${index}`;
+
+                  // A single-person group renders as one clickable card, same
+                  // as before. A multi-person company gets one card with a
+                  // stacked list so the company isn't repeated.
+                  if (guest.people.length === 1) {
+                    const person = guest.people[0];
+                    const inner = (
+                      <>
+                        {logo}
+                        {guest.company ? <strong>{guest.company}</strong> : null}
+                        <span>
+                          {person.name}
+                          {person.role ? ` · ${person.role}` : ""}
+                        </span>
+                      </>
+                    );
+                    return (
+                      <li key={key}>
+                        {person.linkedin ? (
+                          <a
+                            className="summit-guest-card"
+                            href={person.linkedin}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {inner}
+                            <Arrow />
+                          </a>
+                        ) : (
+                          <div className="summit-guest-card">{inner}</div>
+                        )}
+                      </li>
+                    );
+                  }
+
                   return (
-                    <li key={`${guest.name}-${index}`}>
-                      {guest.linkedin ? (
-                        <a
-                          className="summit-guest-card"
-                          href={guest.linkedin}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {inner}
-                          <Arrow />
-                        </a>
-                      ) : (
-                        <div className="summit-guest-card">{inner}</div>
-                      )}
+                    <li key={key}>
+                      <div className="summit-guest-card summit-guest-card--group">
+                        {logo}
+                        {guest.company ? <strong>{guest.company}</strong> : null}
+                        <ul className="summit-guest-people">
+                          {guest.people.map((person) => (
+                            <li key={person.name}>
+                              {person.linkedin ? (
+                                <a href={person.linkedin} target="_blank" rel="noreferrer">
+                                  {person.name}
+                                  {person.role ? ` · ${person.role}` : ""}
+                                  <Arrow />
+                                </a>
+                              ) : (
+                                <span>
+                                  {person.name}
+                                  {person.role ? ` · ${person.role}` : ""}
+                                </span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </li>
                   );
                 })}
@@ -608,6 +660,23 @@ export default function Summit() {
           background: oklch(0.2 0.005 285 / .7);
           transform: translateY(-2px);
         }
+        .summit-guest-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 2.1rem;
+          height: 2.1rem;
+          margin-bottom: .3rem;
+          border-radius: .4rem;
+          background: oklch(0.965 0.002 285);
+          overflow: hidden;
+        }
+        .summit-guest-logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: .3rem;
+        }
         .summit-guest-card strong {
           font-size: 1rem;
           font-weight: 500;
@@ -627,6 +696,46 @@ export default function Summit() {
           color: oklch(0.5 0.006 285);
         }
         a.summit-guest-card:hover svg {
+          color: var(--souq-coral);
+        }
+        .summit-guest-card--group {
+          gap: .55rem;
+        }
+        .summit-guest-people {
+          display: flex;
+          flex-direction: column;
+          gap: .3rem;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .summit-guest-people span,
+        .summit-guest-people a {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: .4rem;
+          color: oklch(0.58 0.006 285);
+          font-size: .82rem;
+          line-height: 1.3;
+        }
+        .summit-guest-people a {
+          color: oklch(0.72 0.006 285);
+          text-decoration: none;
+          transition: color .2s ease;
+        }
+        .summit-guest-people a svg {
+          flex-shrink: 0;
+          width: .65rem;
+          height: .65rem;
+          color: oklch(0.5 0.006 285);
+        }
+        .summit-guest-people a:hover {
+          color: var(--souq-coral);
+          text-decoration: underline;
+          text-underline-offset: .15em;
+        }
+        .summit-guest-people a:hover svg {
           color: var(--souq-coral);
         }
         .summit-logistics {
