@@ -212,9 +212,10 @@ export default function Summit() {
                   ) : null;
                   const key = `${guest.company ?? guest.people[0]?.name}-${index}`;
 
-                  // A single-person group renders as one clickable card, same
-                  // as before. A multi-person company gets one card with a
-                  // stacked list so the company isn't repeated.
+                  // Keep each guest card readable while making only the
+                  // person's name the LinkedIn target. A multi-person company
+                  // gets one card with a stacked list so the company isn't
+                  // repeated.
                   if (guest.people.length === 1) {
                     const person = guest.people[0];
                     const inner = (
@@ -222,26 +223,25 @@ export default function Summit() {
                         {logo}
                         {guest.company ? <strong>{guest.company}</strong> : null}
                         <span>
-                          {person.name}
+                          {person.linkedin ? (
+                            <a
+                              className="summit-guest-name-link"
+                              href={person.linkedin}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {person.name}
+                            </a>
+                          ) : (
+                            person.name
+                          )}
                           {person.role ? ` · ${person.role}` : ""}
                         </span>
                       </>
                     );
                     return (
                       <li key={key}>
-                        {person.linkedin ? (
-                          <a
-                            className="summit-guest-card"
-                            href={person.linkedin}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {inner}
-                            <Arrow />
-                          </a>
-                        ) : (
-                          <div className="summit-guest-card">{inner}</div>
-                        )}
+                        <div className="summit-guest-card">{inner}</div>
                       </li>
                     );
                   }
@@ -256,7 +256,7 @@ export default function Summit() {
                             <li key={person.name}>
                               {person.linkedin ? (
                                 <a href={person.linkedin} target="_blank" rel="noreferrer">
-                                  {person.name}
+                                  <span className="summit-guest-name-link">{person.name}</span>
                                   {person.role ? ` · ${person.role}` : ""}
                                   <Arrow />
                                 </a>
@@ -652,14 +652,6 @@ export default function Summit() {
           text-decoration: none;
           transition: border-color .2s ease, background .2s ease, transform .2s cubic-bezier(.22,1,.36,1);
         }
-        a.summit-guest-card {
-          cursor: pointer;
-        }
-        a.summit-guest-card:hover {
-          border-color: var(--souq-coral);
-          background: oklch(0.2 0.005 285 / .7);
-          transform: translateY(-2px);
-        }
         .summit-guest-logo {
           display: flex;
           align-items: center;
@@ -688,15 +680,16 @@ export default function Summit() {
           font-size: .82rem;
           line-height: 1.3;
         }
-        a.summit-guest-card svg {
-          align-self: flex-end;
-          margin-top: -.9rem;
-          width: .7rem;
-          height: .7rem;
-          color: oklch(0.5 0.006 285);
+        .summit-guest-name-link {
+          color: inherit;
+          text-decoration: underline;
+          text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+          text-underline-offset: .16em;
+          transition: color .2s ease, text-decoration-color .2s ease;
         }
-        a.summit-guest-card:hover svg {
+        .summit-guest-name-link:hover {
           color: var(--souq-coral);
+          text-decoration-color: var(--souq-coral);
         }
         .summit-guest-card--group {
           gap: .55rem;

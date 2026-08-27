@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import SouqLogo from "./SouqLogo";
 
@@ -15,7 +15,6 @@ const NAV_LINKS = [
 
 export default function Navbar({ tone = "light" }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
 
   const isLinkActive = (href: string) => location === href;
@@ -25,10 +24,6 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location]);
 
   const isDark = tone === "dark";
 
@@ -49,33 +44,23 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
     }
   };
 
-  const getMobileLinkClass = (active: boolean) => {
-    if (isDark) {
-      return `text-[13px] font-medium text-left block py-2 ${active ? "text-white font-semibold" : "text-white/60"}`;
-    } else {
-      return `text-[13px] font-medium text-left block py-2 ${active ? "text-black font-semibold" : "text-[#666666]"}`;
-    }
-  };
-
   const btnDesktopClass = isDark
-    ? "hidden md:inline-flex items-center justify-center bg-white text-[#14181A] text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-white/90 rounded-full cursor-pointer"
-    : "hidden md:inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80 rounded-full cursor-pointer";
+    ? "inline-flex items-center justify-center bg-white text-[#14181A] text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-white/90 rounded-full cursor-pointer"
+    : "inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80 rounded-full cursor-pointer";
 
-  const btnMobileClass = isDark
-    ? "inline-flex w-full items-center justify-center bg-white text-[#14181A] rounded-full text-sm font-medium px-5 py-2 cursor-pointer mt-2"
-    : "inline-flex w-full items-center justify-center border border-[#14181A] text-[#14181A] rounded-full text-sm font-medium px-5 py-2 cursor-pointer mt-2";
-
-  const hamburgerBarClass = isDark ? "bg-white" : "bg-[#14181A]";
-  const mobileMenuBgClass = isDark ? "bg-[#14181A] border-white/10" : "bg-white border-black/8";
+  const pageMenuClass = isDark
+    ? "text-white/60 hover:text-white"
+    : "text-[#666666] hover:text-black";
+  const activePageMenuClass = isDark ? "text-white font-semibold" : "text-black font-semibold";
 
   return (
     <nav
       data-testid="navbar"
       className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${navBgClass} ${borderClass}`}
     >
-      <div className="max-w-[1320px] mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-[1320px] mx-auto px-4 md:px-6 min-h-16 flex items-center justify-between">
         <Link href="/" data-testid="logo-link" className="flex items-center text-inherit no-underline">
-          <SouqLogo variant={logoVariant} className="w-[110px]" />
+          <SouqLogo variant={logoVariant} className="w-[100px] md:w-[110px]" />
         </Link>
 
         <div className="hidden md:flex items-center gap-[40px] lg:gap-[60px]">
@@ -99,34 +84,27 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
               Apply
             </span>
           </Link>
-          <button
-            className="md:hidden p-2 flex flex-col justify-center items-center w-8 h-8"
-            onClick={() => setMenuOpen(!menuOpen)}
-            data-testid="nav-mobile-menu"
-            aria-label="Toggle menu"
-            aria-expanded={menuOpen}
-          >
-            <div className={`w-5 h-0.5 mb-1 transition-all ${hamburgerBarClass} ${menuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
-            <div className={`w-5 h-0.5 mb-1 transition-all ${hamburgerBarClass} ${menuOpen ? "opacity-0" : ""}`} />
-            <div className={`w-5 h-0.5 transition-all ${hamburgerBarClass} ${menuOpen ? "-rotate-45 -translate-y-1.5" : ""}`} />
-          </button>
         </div>
       </div>
 
-      {menuOpen && (
-        <div className={`md:hidden border-t px-6 py-4 flex flex-col gap-2 ${mobileMenuBgClass}`}>
-          {NAV_LINKS.map(link => (
-            <Link key={link.href} href={link.href}>
-              <span className={getMobileLinkClass(isLinkActive(link.href))} aria-current={isLinkActive(link.href) ? "page" : undefined}>
-                {link.label}
-              </span>
-            </Link>
-          ))}
-          <Link href="/apply" className="block w-full">
-            <span className={btnMobileClass}>Apply</span>
+      <div
+        data-testid="page-menu"
+        aria-label="Page menu"
+        className={`md:hidden flex items-center gap-7 overflow-x-auto border-t px-4 py-3 whitespace-nowrap ${borderClass}`}
+        style={{ scrollbarWidth: "none" }}
+      >
+        {NAV_LINKS.map(link => (
+          <Link key={link.href} href={link.href}>
+            <span
+              data-testid={`mobile-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+              className={`text-[12px] font-medium transition-colors ${isLinkActive(link.href) ? activePageMenuClass : pageMenuClass}`}
+              aria-current={isLinkActive(link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </span>
           </Link>
-        </div>
-      )}
+        ))}
+      </div>
     </nav>
   );
 }
