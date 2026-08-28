@@ -2,55 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import SouqLogo from "@/components/SouqLogo";
-
-type SummitDetails = {
-  header: { gathering: string; year: string };
-  hero: {
-    eyebrow: string;
-    title: string;
-    emphasis: string;
-    description: string;
-    ctaLabel: string;
-    ctaHref: string;
-    asideNumber: string;
-    aside: string;
-  };
-  invitation: { label: string; heading: string; body: string };
-  program: {
-    label: string;
-    heading: string;
-    blocks: Array<{ title: string; items: string[] }>;
-  };
-  evening: {
-    label: string;
-    items: Array<{ index: string; title: string; description: string }>;
-  };
-  guests?: {
-    label: string;
-    heading: string;
-    body: string;
-    list: Array<{
-      company?: string;
-      logo?: string;
-      people: Array<{ name: string; role?: string; linkedin?: string }>;
-    }>;
-  };
-  logistics: {
-    label: string;
-    date: string;
-    rsvpDeadline: string;
-    lumaHref: string;
-    hotels?: Array<{ name: string; rate: string; href: string }>;
-  };
-  closing: {
-    eyebrow: string;
-    title: string;
-    emphasis: string;
-    ctaLabel: string;
-    ctaHref: string;
-  };
-  footer: { pillars: string; copyright: string };
-};
+import staticSummitDetails from "@/data/summit";
+import type { SummitDetails } from "@/data/summit";
 
 function Arrow() {
   return (
@@ -83,7 +36,7 @@ export default function Summit() {
       if (!response.ok) throw new Error("failed");
       setDetails((await response.json()) as SummitDetails);
     } catch {
-      setError("Summit is temporarily unavailable. Try again soon.");
+      setDetails(staticSummitDetails);
     } finally {
       setLoading(false);
     }
