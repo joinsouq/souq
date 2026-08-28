@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import { CAPITAL_TEAM, OPERATING_TEAM } from "@/data/team";
+import { OPERATING_TEAM } from "@/data/team";
 import { useLocation } from "wouter";
 
 export default function Team() {
@@ -59,47 +59,6 @@ export default function Team() {
 
           <div className="team-grid">
             {OPERATING_TEAM.map((member, i) => (
-              <ScrollReveal key={i} delay={i * 80}>
-                <div className="team-card group">
-                  <div className="team-card-image-wrap">
-                    <img
-                      src={member.img.startsWith("http") ? member.img : `${import.meta.env.BASE_URL}${member.img}`}
-                      alt={member.name}
-                      style={{ objectPosition: member.objectPosition }}
-                    />
-                    <div className="team-card-overlay"></div>
-                  </div>
-                  <div className="team-card-meta">
-                    <div className="team-card-role">
-                      <span className="team-card-role-text">{member.role}</span>
-                      {member.programs?.includes("Accelerator") ? (
-                        <span className="team-card-badge">Accelerator</span>
-                      ) : null}
-                    </div>
-                    <h3>{member.name}</h3>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SOUQ CAPITAL TEAM ── */}
-      <section id="capital" className="team-section">
-        <div className="team-container">
-          <div className="team-section-header">
-            <ScrollReveal>
-              <p className="team-label">Souq Capital</p>
-              <h2>Souq Capital</h2>
-              <p className="team-lede">
-                Investing in and working alongside the founders building the next generation of consumer brands.
-              </p>
-            </ScrollReveal>
-          </div>
-
-          <div className="team-grid">
-            {CAPITAL_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
                   <div className="team-card-image-wrap">
