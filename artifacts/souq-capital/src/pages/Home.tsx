@@ -376,7 +376,7 @@ export default function Home() {
           <ScrollReveal>
             <p className="section-label text-[#787777] mb-4">Portfolio</p>
             <p className="step-h4 text-[#14181A] mb-16">
-              $5M Invested | 13 Companies | 17 Investments
+              $8M Invested | 18 Investments
             </p>
           </ScrollReveal>
           <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
