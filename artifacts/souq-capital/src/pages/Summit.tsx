@@ -20,54 +20,13 @@ function Arrow() {
 }
 
 export default function Summit() {
-  const [details, setDetails] = useState<SummitDetails | null>(null);
   const [ready, setReady] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const details: SummitDetails = staticSummitDetails;
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setReady(true));
     return () => cancelAnimationFrame(id);
   }, []);
-
-  async function loadDetails() {
-    try {
-      const response = await fetch("/api/summit", { cache: "no-store" });
-      if (!response.ok) throw new Error("failed");
-      setDetails((await response.json()) as SummitDetails);
-    } catch {
-      setDetails(staticSummitDetails);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void loadDetails();
-  }, []);
-
-  if (!details) {
-    return (
-      <main className={`summit-page summit-content${ready ? " summit-ready" : ""}`}>
-        <Navbar tone="dark" />
-        <div className="summit-atmosphere" aria-hidden="true" />
-        <div className="summit-grain" aria-hidden="true" />
-        <div className="summit-content-rules" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="summit-shell summit-loading-shell">
-          <section className="summit-loading-state" aria-live="polite">
-            <p className="summit-kicker">Souq / Summit</p>
-            <h1>{error ? "Summit is unavailable." : "Loading Summit."}</h1>
-            <p>{error || "Preparing the room…"}</p>
-          </section>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className={`summit-page summit-content${ready ? " summit-ready" : ""}`}>
