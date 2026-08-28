@@ -102,11 +102,21 @@ export default function Team() {
             {OS_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
-                  <div className="team-os-monogram">
-                    <div className="team-os-monogram-inner">
-                      {member.initials}
+                  {member.img ? (
+                    <div className="team-card-image-wrap">
+                      <img
+                        src={`${import.meta.env.BASE_URL}${member.img}`}
+                        alt={member.name}
+                      />
+                      <div className="team-card-overlay"></div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="team-os-monogram">
+                      <div className="team-os-monogram-inner">
+                        {member.initials}
+                      </div>
+                    </div>
+                  )}
                   <div className="team-card-meta">
                     <div className="team-card-role">
                       <span className="team-card-role-text">{member.role}</span>

@@ -34,12 +34,14 @@ export const OS_TEAM = [
     name: "Kareem Elgendy",
     role: "Growth",
     programs: ["Accelerator"],
+    img: "team/kareem-elgendy.png",
     initials: "KE",
   },
   {
     name: "Yaser Albataineh",
     role: "Operations",
     programs: ["Accelerator"],
+    img: "team/yaser-albataineh.png",
     initials: "YA",
   },
 ];
