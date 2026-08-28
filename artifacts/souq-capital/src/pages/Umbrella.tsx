@@ -126,14 +126,15 @@ export default function Umbrella() {
       <style>{`
         /* ── dark base ── */
         .u-page {
-          min-height: 100svh;
+          height: 100svh; min-height: 0;
           background: oklch(0.155 0.004 285);
           color: oklch(0.965 0.002 285);
           font-family: 'Inter', ui-sans-serif, -apple-system, sans-serif;
           font-feature-settings: "cv02" 1,"cv03" 1,"cv04" 1,"ss01" 1;
           -webkit-font-smoothing: antialiased;
-          overflow-x: hidden;
+          overflow: hidden;
           position: relative;
+          display: flex; flex-direction: column;
         }
 
         /* ── ambient layers ── */
@@ -161,7 +162,7 @@ export default function Umbrella() {
         .u-shell {
           position: relative; z-index: 2;
           width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
-          min-height: 100svh; display: flex; flex-direction: column;
+           min-height: 0; flex: 1; display: flex; flex-direction: column;
           border-inline: 1px solid oklch(0.36 0.006 285);
         }
         @media (max-width:720px) { .u-shell { width:100%; border-inline:0; } }
