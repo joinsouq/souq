@@ -278,11 +278,12 @@ export default function Team() {
 
         .team-card-image-wrap {
           position: relative;
-          aspect-ratio: 3/4;
-          border-radius: .75rem;
+           width: min(100%, 12rem);
+           aspect-ratio: 1;
+           border-radius: 50%;
           overflow: hidden;
           background: #E8E8E8;
-          margin-bottom: 1.2rem;
+           margin-bottom: 1rem;
           border: 1px solid oklch(0.27 0.005 285);
         }
 
@@ -306,9 +307,10 @@ export default function Team() {
 
         /* OPERATING STACK MONOGRAMS */
         .team-os-monogram {
-          aspect-ratio: 3/4;
-          border-radius: .75rem;
-          margin-bottom: 1.2rem;
+           width: min(100%, 12rem);
+           aspect-ratio: 1;
+           border-radius: 50%;
+           margin-bottom: 1rem;
           background: oklch(0.155 0.004 285);
           border: 1px solid oklch(0.27 0.005 285);
           display: flex;
