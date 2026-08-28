@@ -1,7 +1,7 @@
 const AHMAD = {
   name: "Ahmad Saleh",
   role: "Investments",
-  programs: ["Capital", "Accelerator"],
+  programs: ["Capital"],
   img: "https://framerusercontent.com/images/X1IMUee8SEC5fnr7ZufgF5PpR4.png",
   objectPosition: "center 22%",
 };
@@ -9,7 +9,7 @@ const AHMAD = {
 const SAFEER = {
   name: "Safeer Mohiuddin",
   role: "Investments",
-  programs: ["Capital", "Accelerator"],
+  programs: ["Capital"],
   img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
   objectPosition: "center 62%",
 };
@@ -17,7 +17,7 @@ const SAFEER = {
 const BATHOOL = {
   name: "Bathool Syed",
   role: "Finance",
-  programs: ["Capital", "Accelerator"],
+  programs: ["Capital"],
   img: "https://framerusercontent.com/images/XdNBxWXW7OmyJn0KTAaUPKRjTY.jpg",
   objectPosition: "center 18%",
 };
@@ -25,7 +25,7 @@ const BATHOOL = {
 const RAZI = {
   name: "Razi Mohiuddin",
   role: "Strategy",
-  programs: ["Capital", "Accelerator"],
+  programs: ["Capital"],
   img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
   objectPosition: "center 62%",
 };
