@@ -143,7 +143,11 @@ const confirmedGuests: Array<{
   { company: "Innate Capital / Nur House", logo: "logos/innate-capital.png", people: [{ name: "Dannah J" }] },
   { company: "GLO", people: [{ name: "Ammar Melies" }] },
   { company: "Jamali", people: [{ name: "Lina Idelbi" }] },
-  { company: "RAYAN", people: [{ name: "Nadia Rayan" }] },
+  {
+    company: "RAYAN",
+    logo: "logos/rayan.png",
+    people: [{ name: "Nadia Rayan" }],
+  },
 ];
 
 const summitDetails = {

@@ -33,11 +33,13 @@ export const OS_TEAM = [
   {
     name: "Kareem Elgendy",
     role: "Growth",
+    programs: ["Accelerator"],
     initials: "KE",
   },
   {
     name: "Yaser Albataineh",
     role: "Operations",
+    programs: ["Accelerator"],
     initials: "YA",
   },
 ];
