@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import { CAPITAL_TEAM } from "@/data/team";
 
 const STEPS = [
   {
@@ -58,33 +59,6 @@ const REVIEWS = [
     company: "Skyward Building Services",
     founder: "Rudwan (President)",
     img: "https://framerusercontent.com/images/jgskvYZ0Y28pOB26fBlltLNY.png",
-  },
-];
-
-const TEAM = [
-  {
-    name: "Ahmad Saleh",
-    role: "Investments",
-    img: "https://framerusercontent.com/images/X1IMUee8SEC5fnr7ZufgF5PpR4.png",
-    objectPosition: "center 22%",
-  },
-  {
-    name: "Safeer Mohiuddin",
-    role: "Investments",
-    img: "https://framerusercontent.com/images/wlbcCEInWJWPq1JrypfGcqzv7c.png",
-    objectPosition: "center 62%",
-  },
-  {
-    name: "Bathool Syed",
-    role: "Finance",
-    img: "https://framerusercontent.com/images/XdNBxWXW7OmyJn0KTAaUPKRjTY.jpg",
-    objectPosition: "center 18%",
-  },
-  {
-    name: "Razi Mohiuddin",
-    role: "Strategy",
-    img: "https://framerusercontent.com/images/8TuXuezSSvm2mAcG6YRcxj9xU.webp",
-    objectPosition: "center 62%",
   },
 ];
 
@@ -165,14 +139,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-[#14181A]">
-      <Navbar />
+      <Navbar tone="light" />
 
       {/* ── HERO ── */}
       <section
         id="hero"
         data-testid="hero-section"
         className="relative overflow-hidden flex flex-col"
-        style={{ height: "100vh" }}
+        style={{ height: "calc(100vh - 64px)" }}
       >
         {/* Grid background lines */}
         <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
@@ -186,10 +160,10 @@ export default function Home() {
         </div>
 
         {/* Hero content */}
-        <div className="flex-1 flex flex-col justify-end capital-hero-content" style={{ zIndex: 2 }}>
-          <div className="mx-auto w-full flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-0" style={{ maxWidth: "1320px" }}>
-            {/* Souq title */}
-            <div className="md:w-[372px] md:flex-shrink-0">
+        <div className="flex-1 flex flex-col justify-end" style={{ padding: "120px 50px 160px", zIndex: 2 }}>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
+            {/* Souq title — fixed 372px */}
+            <div style={{ width: "372px", flexShrink: 0 }}>
               <h1
                 className="hero-title text-[#14181A] leading-none select-none"
                 data-testid="hero-title"
@@ -198,8 +172,8 @@ export default function Home() {
               </h1>
             </div>
 
-            {/* Tagline */}
-            <div className="flex flex-col gap-2 pb-1 md:max-w-[49%]">
+            {/* Tagline — max 49% */}
+            <div style={{ maxWidth: "49%" }} className="flex flex-col gap-2 pb-1">
               <p className="body-h3 font-semibold text-[#14181A]">
                 <strong>Fuel your growth, without debt or dilution.</strong>
                 <br />
@@ -209,7 +183,7 @@ export default function Home() {
           </div>
 
           {/* CTA row */}
-          <div className="mx-auto w-full flex justify-end pt-6" style={{ maxWidth: "1320px" }}>
+          <div style={{ maxWidth: "1320px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", paddingTop: "24px" }}>
             <button
               onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
               className="section-label text-[#14181A]/60 hover:text-[#14181A] transition-colors"
@@ -402,7 +376,7 @@ export default function Home() {
           <ScrollReveal>
             <p className="section-label text-[#787777] mb-4">Portfolio</p>
             <p className="step-h4 text-[#14181A] mb-16">
-              $5M Invested | 13 Companies | 17 Investments
+              $8M Invested | 18 Investments
             </p>
           </ScrollReveal>
           <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
@@ -499,7 +473,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TEAM ── */}
+      {/* ── TEAM TEASER ── */}
       <section
         id="team"
         data-testid="team-section"
@@ -508,7 +482,7 @@ export default function Home() {
       >
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
-            <div className="flex flex-col gap-2 mb-16">
+            <div className="flex flex-col gap-2 mb-12">
               <p className="section-label text-[#787777]">[ Team ]</p>
               <h2 className="section-h2 text-[#14181A]">The team behind Souq Capital</h2>
               <p className="body-p text-[#666]">
@@ -517,24 +491,33 @@ export default function Home() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {TEAM.map((member, i) => (
-              <ScrollReveal key={i} delay={i * 80}>
-                <div className="flex flex-col" data-testid={`team-member-${i}`}>
-                  <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-black/5 mb-5">
-                    <img
-                      src={member.img}
-                      alt={member.name}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      style={{ objectPosition: member.objectPosition }}
-                    />
-                  </div>
-                  <p className="section-label text-[#787777] mb-1">{member.role}</p>
-                  <h3 className="step-h4 text-[#14181A]">{member.name}</h3>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
+          <ScrollReveal delay={80}>
+            <div className="bg-[#F9F9F9] rounded-[32px] p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex -space-x-4 overflow-hidden">
+                {CAPITAL_TEAM.map((member, i) => (
+                  <img
+                    key={i}
+                    src={member.img}
+                    alt={member.name}
+                    className="inline-block h-20 w-20 rounded-full ring-4 ring-[#F9F9F9] object-cover"
+                    style={{ objectPosition: member.objectPosition }}
+                  />
+                ))}
+              </div>
+              <div className="flex-1 max-w-md">
+                <p className="body-p text-[#14181A] font-medium">
+                  We're founders, operators, and investors who have built, scaled, and exited consumer brands.
+                </p>
+              </div>
+              <div>
+                <Link href="/team#capital">
+                  <span className="inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 rounded-full cursor-pointer">
+                    Meet the Team
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -585,9 +568,9 @@ export default function Home() {
               <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
               <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
               <Link href="/apply" data-testid="cta-apply-btn">
-                <button className="bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm" style={{ borderRadius: "99px" }}>
+                <span className="inline-flex items-center justify-center bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm cursor-pointer" style={{ borderRadius: "99px" }}>
                   Apply
-                </button>
+                </span>
               </Link>
             </div>
           </ScrollReveal>

@@ -1,10 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
+import SouqLogo from "./SouqLogo";
 
-export default function Navbar() {
+interface NavbarProps {
+  tone?: "light" | "dark";
+}
+
+const NAV_LINKS = [
+  { label: "Capital", href: "/capital" },
+  { label: "Operating Stack", href: "/accelerator" },
+  { label: "Summit", href: "/summit" },
+  { label: "Team", href: "/team" },
+];
+
+export default function Navbar({ tone = "light" }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
+
+  const isLinkActive = (href: string) => location === href;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -12,103 +25,86 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
-    setMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  const isDark = tone === "dark";
+
+  // Use sticky to prevent content from sitting underneath, consistent across all routes
+  const navBgClass = isDark
+    ? scrolled ? "bg-[#14181A]/95 backdrop-blur-md shadow-sm" : "bg-transparent"
+    : scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-white";
+  const borderClass = isDark ? "border-white/10" : "border-black/8";
+  const logoVariant = isDark ? "white" : "black";
+
+  const linkBaseStyle = { fontSize: "13px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "1.6em" };
+
+  const getDesktopLinkClass = (active: boolean) => {
+    if (isDark) {
+      return `transition-colors cursor-pointer ${active ? "text-white font-semibold" : "text-white/60 hover:text-white"}`;
+    } else {
+      return `transition-colors cursor-pointer ${active ? "text-black font-semibold" : "text-[#666666] hover:text-black"}`;
+    }
   };
+
+  const btnDesktopClass = isDark
+    ? "inline-flex items-center justify-center bg-white text-[#14181A] text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-white/90 rounded-full cursor-pointer"
+    : "inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80 rounded-full cursor-pointer";
+
+  const pageMenuClass = isDark
+    ? "text-white/60 hover:text-white"
+    : "text-[#666666] hover:text-black";
+  const activePageMenuClass = isDark ? "text-white font-semibold" : "text-black font-semibold";
 
   return (
     <nav
       data-testid="navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
-      } border-b border-black/8`}
-      style={{ padding: "0 50px" }}
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${navBgClass} ${borderClass}`}
     >
-      <div className="mx-auto h-16 flex items-center justify-between" style={{ maxWidth: "1320px" }}>
-        {/* Logo / breadcrumb */}
-        <div className="flex items-center gap-2">
-          <Link href="/" data-testid="logo-link">
-            <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight inline-flex items-center">
-                S<svg width="11" height="11" viewBox="0 0 11 11" fill="none" className="inline-block flex-shrink-0 mx-[1px]" aria-hidden="true"><circle cx="5.5" cy="5.5" r="4.5" stroke="white" strokeWidth="1"/><line x1="1" y1="5.5" x2="10" y2="5.5" stroke="white" strokeWidth="1"/><path d="M2.8 3 Q5.5 1.8 8.2 3" stroke="white" strokeWidth="0.9" fill="none"/><path d="M2.8 8 Q5.5 9.2 8.2 8" stroke="white" strokeWidth="0.9" fill="none"/></svg>uq
+      <div className="max-w-[1320px] mx-auto px-4 md:px-6 min-h-16 flex items-center justify-between">
+        <Link href="/" data-testid="logo-link" className="flex items-center text-inherit no-underline">
+          <SouqLogo variant={logoVariant} className="h-[30px] w-auto md:h-[32px]" />
+        </Link>
+
+        <div className="hidden md:flex items-center gap-[40px] lg:gap-[60px]">
+          {NAV_LINKS.map(link => (
+            <Link key={link.href} href={link.href}>
+              <span
+                data-testid={`nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+                className={getDesktopLinkClass(isLinkActive(link.href))}
+                style={linkBaseStyle}
+                aria-current={isLinkActive(link.href) ? "page" : undefined}
+              >
+                {link.label}
               </span>
-            </div>
-          </Link>
-          <span className="text-[#ccc]" style={{ fontSize: "16px", fontWeight: 300 }}>/</span>
-          <span className="text-[#14181A]" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>Capital</span>
+            </Link>
+          ))}
         </div>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-[84px]">
-          <button
-            onClick={() => scrollTo("about")}
-            data-testid="nav-about"
-            className="text-[#666666] hover:text-black transition-colors"
-            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-          >
-            About
-          </button>
-          <button
-            onClick={() => scrollTo("how-it-works")}
-            data-testid="nav-how-it-works"
-            className="text-[#666666] hover:text-black transition-colors"
-            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-          >
-            How it Works?
-          </button>
-          <button
-            onClick={() => scrollTo("team")}
-            data-testid="nav-team"
-            className="text-[#666666] hover:text-black transition-colors"
-            style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-          >
-            Team
-          </button>
-          <Link href="/accelerator">
-            <span
-              data-testid="nav-accelerator"
-              className="text-[#666666] hover:text-black transition-colors cursor-pointer"
-              style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: "2em" }}
-            >
-              Accelerator
+        <div className="flex items-center gap-4">
+          <Link href="/apply" data-testid="nav-apply-btn">
+            <span className={btnDesktopClass}>
+              Apply
             </span>
           </Link>
         </div>
-
-        {/* CTA */}
-        <div className="flex items-center gap-3">
-          <Link href="/apply" data-testid="nav-apply-btn">
-            <button className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80" style={{ borderRadius: "99px" }}>
-              Apply
-            </button>
-          </Link>
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-            data-testid="nav-mobile-menu"
-          >
-            <div className="w-5 h-0.5 bg-[#14181A] mb-1 transition-all" />
-            <div className="w-5 h-0.5 bg-[#14181A] mb-1" />
-            <div className="w-5 h-0.5 bg-[#14181A]" />
-          </button>
-        </div>
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-white border-t border-black/8 px-6 py-4 flex flex-col gap-4">
-          <button onClick={() => scrollTo("about")} className="text-sm font-medium text-left">About</button>
-          <button onClick={() => scrollTo("how-it-works")} className="text-sm font-medium text-left">How it Works?</button>
-          <button onClick={() => scrollTo("team")} className="text-sm font-medium text-left">Team</button>
-          <button onClick={() => scrollTo("accelerator")} className="text-sm font-medium text-left">Accelerator</button>
-          <Link href="/apply">
-            <button className="w-full border border-[#14181A] text-[#14181A] text-sm font-medium px-5 py-2 rounded-lg">Apply</button>
+      <div
+        data-testid="page-menu"
+        aria-label="Page menu"
+        className={`md:hidden flex items-center gap-7 overflow-x-auto border-t px-4 py-3 whitespace-nowrap ${borderClass}`}
+        style={{ scrollbarWidth: "none" }}
+      >
+        {NAV_LINKS.map(link => (
+          <Link key={link.href} href={link.href}>
+            <span
+              data-testid={`mobile-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+              className={`text-[12px] font-medium transition-colors ${isLinkActive(link.href) ? activePageMenuClass : pageMenuClass}`}
+              aria-current={isLinkActive(link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </span>
           </Link>
-        </div>
-      )}
+        ))}
+      </div>
     </nav>
   );
 }

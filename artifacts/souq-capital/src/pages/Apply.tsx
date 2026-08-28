@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 export default function Apply() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
+      <Navbar tone="light" />
       <main className="flex-1">
         {/* Hero */}
         <section className="border-b border-black/8 pt-32 pb-16 px-6">

@@ -57,6 +57,11 @@
 
   --app-font-sans: 'Inter', sans-serif;
   --app-font-heading: 'Instrument Sans', sans-serif;
+  --souq-coral: #ff653d;
+  --souq-coral-soft: #ff8966;
+  --souq-peach: #ffc98e;
+  --souq-blue: #c7dfe8;
+  --souq-blue-deep: #91bacb;
   --radius: 0.5rem;
   font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;

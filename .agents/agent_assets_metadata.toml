@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Ic43UbEGgs9G2pgfRmVQi"
+uri = "file://souq-logo.png"
+type = "image"
+title = "Souq Logo"
+description = "Arch mark + Souq wordmark on dark background, 800×240px PNG"

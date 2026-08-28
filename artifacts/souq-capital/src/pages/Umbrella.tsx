@@ -1,183 +1,261 @@
-import { Link } from "wouter";
-import ScrollReveal from "@/components/ScrollReveal";
+import { useState, useEffect, useRef } from "react";
+import Navbar from "@/components/Navbar";
 
-const PILLARS = [
-  {
-    tag: "Working Capital",
-    name: "Capital",
-    description:
-      "Fuel your growth, without debt or dilution.\nWe fund what drives your business — and only win when you do.",
-    href: "/capital",
-    cta: "Apply for capital",
-  },
-  {
-    tag: "Growth Program",
-    name: "Accelerator",
-    description:
-      "The team required to take a brand from 6 to 7 figures is very different. You can't do it all and taking time away from product and creative sucks your energy. We advise or fractionally operate your business across operations, fulfillment, media buying and finance.",
-    href: "/accelerator",
-    cta: "Learn more",
-  },
-  {
-    tag: "Fulfillment",
-    name: "3PL",
-    description:
-      "Fulfillment run by operators, not middlemen. 1.2M+ orders shipped per year. Same-day by 12pm ET. Built for DTC brands in fashion, supplements, and beverage.",
-    href: "mailto:yaser@joinsouq.com",
-    cta: "Get a quote",
-    external: true,
-  },
+const WORDS = [
+  "natural haircare brand",
+  "modestwear brand",
+  "ice cream brand",
+  "specialty coffee brand",
+  "clean skincare brand",
+  "fine fragrance brand",
+  "home goods brand",
+  "wellness brand",
+  "jewelry brand",
+  "activewear brand",
 ];
 
 export default function Umbrella() {
+  const [ready,     setReady]     = useState(false);
+  const [wordIdx,   setWordIdx]   = useState(0);
+  const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
+  const washRef = useRef<HTMLDivElement>(null);
+
+  /* entrance */
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  /* ambient wash tracks pointer */
+  useEffect(() => {
+    const wash = washRef.current;
+    if (!wash || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    let tx = 50, ty = 22, cx = 50, cy = 22, raf: number | null = null;
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth)  * 100;
+      ty = (e.clientY / window.innerHeight) * 100;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    function tick() {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      wash!.style.setProperty("--mx", cx.toFixed(2) + "%");
+      wash!.style.setProperty("--my", cy.toFixed(2) + "%");
+      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1)
+        ? requestAnimationFrame(tick) : null;
+    }
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
+  /* word rotator */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => {
+      setWordIdx(prev => {
+        const next = (prev + 1) % WORDS.length;
+        setPrevIdx(prev);
+        setTimeout(() => setPrevIdx(null), 650);
+        return next;
+      });
+    }, 2600);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white text-[#14181A]">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/8" style={{ padding: "0 50px" }}>
-        <div
-          className="mx-auto h-16 flex items-center justify-between"
-          style={{ maxWidth: "1320px" }}
-        >
-          <Link href="/">
-            <div className="flex items-center cursor-pointer">
-              <span className="bg-[#14181A] text-white font-bold text-sm px-3 py-1.5 rounded-lg tracking-tight inline-flex items-center">
-                S<svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="inline-block flex-shrink-0 mx-[1px]" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.5" stroke="white" strokeWidth="1"/><ellipse cx="6.5" cy="6.5" rx="2.8" ry="5.5" stroke="white" strokeWidth="1"/><line x1="1" y1="6.5" x2="12" y2="6.5" stroke="white" strokeWidth="1"/></svg>uq
-              </span>
-            </div>
-          </Link>
+    <div
+      data-ready={ready}
+      className="u-page"
+    >
+      <Navbar tone="dark" />
 
-          <div className="hidden md:flex items-center gap-10">
-            <Link href="/capital">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                Capital
-              </span>
-            </Link>
-            <Link href="/accelerator">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                Accelerator
-              </span>
-            </Link>
-            <Link href="/3pl">
-              <span
-                className="text-[#666] hover:text-black transition-colors cursor-pointer"
-                style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}
-              >
-                3PL
-              </span>
-            </Link>
-          </div>
+      {/* ── ambient wash ── */}
+      <div
+        ref={washRef}
+        aria-hidden="true"
+        className="u-wash"
+        style={{ opacity: ready ? 1 : 0 }}
+      />
 
-          <Link href="/apply">
-            <button
-              className="hidden md:block bg-[#14181A] text-white text-sm font-medium px-5 py-2 hover:bg-black/80 transition-all"
-              style={{ borderRadius: "99px" }}
-            >
-              Apply
-            </button>
-          </Link>
-        </div>
-      </nav>
+      {/* ── film grain ── */}
+      <div aria-hidden="true" className="u-grain" />
 
-      {/* Hero */}
-      <section className="umbrella-hero-section">
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <ScrollReveal>
-            <h1 className="umbrella-hero-title">
-              Scaling the next generation of brands.
-            </h1>
-            <p className="text-[#787777] mt-6" style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "-0.01em" }}>
-              from the Founders of Souq Capital and Veiled
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* ── Swiss column rules ── */}
+      <div aria-hidden="true" className="u-rules">
+        <span /><span /><span /><span />
+      </div>
 
-      {/* Three pillars */}
-      <section style={{ padding: "0 50px 140px" }}>
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {PILLARS.map((pillar, i) => (
-              <ScrollReveal key={pillar.name} delay={i * 100}>
-                <div className="border border-black/8 rounded-2xl p-10 flex flex-col gap-8 h-full hover:border-black/20 transition-colors duration-200">
-                  <div className="flex flex-col gap-2">
-                    <p className="section-label text-[#787777]">{pillar.tag}</p>
-                    <h2
-                      style={{
-                        fontSize: "32px",
-                        fontWeight: 600,
-                        letterSpacing: "-1px",
-                        lineHeight: 1.2,
-                        fontFamily: "Inter, sans-serif",
-                      }}
-                    >
-                      Souq {pillar.name}
-                    </h2>
-                  </div>
+      {/* ── shell ── */}
+      <div className="u-shell">
 
-                  <p className="text-[#555]" style={{ fontSize: "18px", lineHeight: 1.6, whiteSpace: "pre-line", flex: 1 }}>
-                    {pillar.description}
-                  </p>
-
-                  {"external" in pillar && pillar.external ? (
-                    <a href={pillar.href}>
-                      <button
-                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
-                        style={{ borderRadius: "99px" }}
-                      >
-                        {pillar.cta} →
-                      </button>
-                    </a>
-                  ) : (
-                    <Link href={pillar.href}>
-                      <button
-                        className="bg-[#14181A] text-white text-sm font-medium px-5 py-2.5 hover:bg-black/80 transition-colors w-full"
-                        style={{ borderRadius: "99px" }}
-                      >
-                        {pillar.cta} →
-                      </button>
-                    </Link>
-                  )}
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-black/8 py-8" style={{ padding: "32px 50px" }}>
-        <div
-          className="mx-auto flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ maxWidth: "1320px" }}
-        >
-          <span className="section-label text-[#787777]">
-            © {new Date().getFullYear()} Souq. All rights reserved.
-          </span>
-          <div className="flex items-center gap-6">
-            <Link href="/capital">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                Capital
+        {/* hero */}
+        <main className="u-pad u-main">
+          <h1 className={`u-h1 u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "85ms" } as React.CSSProperties}>
+            One place to build a{" "}
+            {/* rotator */}
+            <span style={{ whiteSpace: "nowrap" }}>
+              <span className="u-rotator" aria-hidden="true">
+                {/* outgoing word */}
+                {prevIdx !== null && (
+                  <span key={`out-${prevIdx}`} className="u-word u-word-out">
+                    {WORDS[prevIdx]}
+                  </span>
+                )}
+                {/* current word */}
+                <span key={`in-${wordIdx}`} className="u-word u-word-in">
+                  {WORDS[wordIdx]}
+                </span>
+                <span className="u-underline" />
               </span>
-            </Link>
-            <Link href="/capital#accelerator">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                Accelerator
-              </span>
-            </Link>
-            <Link href="/3pl">
-              <span className="section-label text-[#787777] hover:text-[#14181A] transition-colors cursor-pointer">
-                3PL
-              </span>
-            </Link>
-          </div>
-        </div>
-      </footer>
+              <span className="sr-only">{WORDS[wordIdx]}</span>.
+            </span>
+          </h1>
+
+          <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
+            Souq is the one-stop shop for CPG and SMB businesses — growth
+            capital, the operating stack, and industry veterans at your
+            disposal.
+          </p>
+
+        </main>
+
+      </div>
+
+
+      <style>{`
+        /* ── dark base ── */
+        .u-page {
+          min-height: 100svh;
+          background: oklch(0.155 0.004 285);
+          color: oklch(0.965 0.002 285);
+          font-family: 'Inter', ui-sans-serif, -apple-system, sans-serif;
+          font-feature-settings: "cv02" 1,"cv03" 1,"cv04" 1,"ss01" 1;
+          -webkit-font-smoothing: antialiased;
+          overflow-x: hidden;
+          position: relative;
+        }
+
+        /* ── ambient layers ── */
+        .u-wash {
+          position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
+          background:
+            radial-gradient(38vmax 38vmax at var(--mx,50%) var(--my,22%), color-mix(in srgb, var(--souq-coral) 12%, transparent), transparent 68%),
+            radial-gradient(30vmax 30vmax at 12% 84%, color-mix(in srgb, var(--souq-blue) 10%, transparent), transparent 70%);
+          transition: opacity .8s ease; will-change: background;
+        }
+        .u-grain {
+          position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .03;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        .u-rules {
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          display: grid; grid-template-columns: repeat(4,1fr);
+          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
+        }
+        .u-rules span { border-left: 1px solid oklch(0.27 0.005 285); opacity: .55; }
+        .u-rules span:first-child { border-left-color: oklch(0.36 0.006 285); opacity: .8; }
+        @media (max-width:720px) { .u-rules { display:none; } }
+
+        /* shell */
+        .u-shell {
+          position: relative; z-index: 2;
+          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
+          min-height: 100svh; display: flex; flex-direction: column;
+          border-inline: 1px solid oklch(0.36 0.006 285);
+        }
+        @media (max-width:720px) { .u-shell { width:100%; border-inline:0; } }
+        .u-pad { padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
+
+        /* main */
+        .u-main {
+          flex: 1; display: flex; flex-direction: column; justify-content: center;
+          padding-block: clamp(2rem, 6vh, 5rem);
+        }
+        .u-eyebrow {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+          color: oklch(0.45 0.006 285); margin: 0 0 clamp(1.5rem,4vh,2.5rem);
+        }
+        .u-h1 {
+          margin: 0;
+          font-size: clamp(2.6rem, 7.4vw, 5.9rem);
+          line-height: .96; letter-spacing: -0.045em; font-weight: 400; max-width: 22ch;
+        }
+        .u-sub {
+          margin: clamp(1.25rem,3vh,1.75rem) 0 0; max-width: 46ch;
+           font-size: clamp(1.2rem, 1.55vw, 1.35rem);
+          line-height: 1.55; color: oklch(0.66 0.006 285); letter-spacing: -0.011em;
+        }
+        .u-sub strong { color: oklch(0.965 0.002 285); font-weight: 500; }
+
+        /* rotator */
+        .u-rotator {
+          position: relative; display: inline-block; vertical-align: bottom;
+          overflow: hidden; padding-bottom: .24em; margin-bottom: -.24em;
+        }
+        .u-word {
+          display: inline-block; white-space: nowrap; font-style: italic; font-weight: 400;
+        }
+        .u-word-in  { animation: u-word-in  .52s cubic-bezier(.32,.72,0,1) both; }
+        .u-word-out {
+          position: absolute; left: 0; top: 0;
+          animation: u-word-out .52s cubic-bezier(.32,.72,0,1) both;
+        }
+        @keyframes u-word-in  { from { transform: translateY(140%); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes u-word-out { from { transform: none; opacity: 1; } to { transform: translateY(-140%); opacity: 0; } }
+        .u-underline {
+          position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
+          background: var(--souq-coral); opacity: .8;
+        }
+
+        /* triad */
+        .u-triad {
+          display: grid; grid-template-columns: repeat(3,1fr);
+          border-top: 1px solid oklch(0.27 0.005 285);
+        }
+        @media (max-width:600px) { .u-triad { grid-template-columns: 1fr; } }
+        .u-triad-item {
+          position: relative; padding: 1.25rem 0;
+          display: flex; align-items: center;
+          text-decoration: none; color: inherit; cursor: pointer;
+          overflow: hidden;
+        }
+        .u-triad-border { border-left: 1px solid oklch(0.27 0.005 285); padding-left: 1.15rem; }
+        @media (max-width:600px) {
+          .u-triad-border { border-left: 0; padding-left: 0; border-top: 1px solid oklch(0.27 0.005 285); }
+        }
+        .u-triad-item::after {
+          content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+          background: oklch(0.965 0.002 285);
+          transform: scaleX(0); transform-origin: left;
+          transition: transform .55s cubic-bezier(.22,1,.36,1);
+        }
+        .u-triad-item:hover::after { transform: scaleX(1); }
+        .u-triad-lbl { font-size: 1.2rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; flex: 1; }
+        .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
+        .u-triad-arrow { flex: none; color: oklch(0.45 0.006 285); opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
+        .u-triad-item:hover .u-triad-arrow { opacity: 1; transform: none; color: oklch(0.965 0.002 285); }
+        @media (max-width:720px) {
+          .u-triad-arrow { opacity: 1; transform: none; }
+          .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
+        }
+
+        /* entrance */
+        .u-reveal { opacity: 0; transform: translateY(14px); }
+        .u-vis { animation: u-reveal .95s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
+        @keyframes u-reveal { to { opacity: 1; transform: none; } }
+
+        /* utils */
+        .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+
+        /* reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .u-reveal, .u-vis { opacity:1 !important; transform:none !important; animation:none !important; }
+          .u-wash { display:none; }
+          .u-word-in, .u-word-out { animation:none !important; }
+        }
+      `}</style>
     </div>
   );
 }
