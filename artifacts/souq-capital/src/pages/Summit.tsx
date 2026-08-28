@@ -634,7 +634,7 @@ export default function Summit() {
         }
         .summit-guests-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: .75rem;
           margin: 0;
           padding: 0;
@@ -937,6 +937,11 @@ export default function Summit() {
           white-space: nowrap;
           border: 0;
         }
+        @media (max-width: 1040px) {
+          .summit-guests-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
         @media (max-width: 720px) {
           .summit-content-rules { display: none; }
           .summit-shell { width: 100%; }
@@ -960,7 +965,7 @@ export default function Summit() {
           .summit-intro-copy h2 { font-size: 2.55rem; }
           .summit-program-content h2 { font-size: 2.55rem; }
           .summit-guests-content h2 { font-size: 2.55rem; }
-          .summit-guests-grid { grid-template-columns: repeat(2, 1fr); }
+          .summit-guests-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }

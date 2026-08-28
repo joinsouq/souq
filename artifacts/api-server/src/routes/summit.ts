@@ -36,13 +36,25 @@ const confirmedGuests: Array<{
       { name: "Fadwa Hilili" },
     ],
   },
-  { company: "Ayn Skin House", people: [{ name: "Inam" }] },
+  {
+    company: "Ayn Skin House",
+    logo: "logos/ayn-skin-house.png",
+    people: [{ name: "Inam" }],
+  },
   { company: "Atlas and Silk", people: [{ name: "Fatimah Waseem" }] },
   { company: "Movements LLC", people: [{ name: "Ibrahim Mimou", linkedin: "https://linkedin.com/in/ibrahimmimou" }] },
-  { company: "Veriswap", people: [{ name: "Noah" }] },
+  {
+    company: "Veriswap",
+    logo: "logos/veriswap.png",
+    people: [{ name: "Noah" }],
+  },
   { company: "Siraat", people: [{ name: "Rabia Mohiuddin" }] },
   { company: "PVBLIC House", people: [{ name: "Omar Nassimi" }] },
-  { company: "Celery Retail", people: [{ name: "Sahar Ali", linkedin: "https://linkedin.com/in/saharaliprofile" }] },
+  {
+    company: "Celery Retail",
+    logo: "logos/celery-retail.png",
+    people: [{ name: "Sahar Ali", linkedin: "https://linkedin.com/in/saharaliprofile" }],
+  },
   { company: "Noor House", people: [{ name: "Mahnoor Khan" }] },
   {
     company: "Niswa Fashion",
