@@ -17,17 +17,55 @@ const confirmedGuests: Array<{
   logo?: string;
   people: Array<{ name: string; role?: string; linkedin?: string }>;
 }> = [
-  { company: "BXM Consultants", people: [{ name: "Lauren Kim", linkedin: "https://linkedin.com/in/lauren-kim-a319581" }] },
-  { company: "EVERYTHING Studios", people: [{ name: "EVERYTHING BRAND", linkedin: "https://linkedin.com/in/abdulalimjemal" }] },
+  {
+    company: "Elaa",
+    logo: "logos/elaa.webp",
+    people: [{ name: "Omar Snoubar" }, { name: "Leena Snoubar" }],
+  },
+  {
+    company: "Fith",
+    logo: "logos/fith.png",
+    people: [{ name: "Rahim Siddiq" }],
+  },
+  {
+    company: "Hearthy",
+    logo: "logos/hearthy.png",
+    people: [{ name: "Riaz Surti" }],
+  },
+  {
+    company: "Veiled",
+    logo: "logos/veiled.png",
+    people: [{ name: "Yaser Albataineh" }, { name: "Kareem Elgendy" }],
+  },
+  {
+    company: "Noun Naturals",
+    logo: "logos/noun-naturals.png",
+    people: [{ name: "Khaled Atallah" }, { name: "Steven" }],
+  },
+  {
+    company: "Pax & Beneficia",
+    logo: "logos/pax-beneficia.svg",
+    people: [{ name: "Mouyyad Abdulhadi" }],
+  },
+  {
+    company: "Paliroots",
+    logo: "logos/paliroots.webp",
+    people: [{ name: "Farah" }],
+  },
+  {
+    company: "Naali",
+    logo: "logos/naali.png",
+    people: [{ name: "Nadir Tayach", linkedin: "https://linkedin.com/in/nadir-tayach" }],
+  },
   {
     company: "Nominal",
+    logo: "logos/nominal.png",
     people: [
       { name: "Ian Park", linkedin: "https://linkedin.com/in/ianfromindy" },
       { name: "Ahmad Abdallah", role: "CMO" },
       { name: "Akram Abdallah" },
     ],
   },
-  { company: "Tursh", people: [{ name: "TURSH LLC", linkedin: "https://linkedin.com/in/meenahoshmand" }] },
   {
     company: "Fadwa Masala",
     logo: "logos/fadwa-masala.png",
@@ -36,6 +74,9 @@ const confirmedGuests: Array<{
       { name: "Fadwa Hilili" },
     ],
   },
+  { company: "BXM Consultants", people: [{ name: "Lauren Kim", linkedin: "https://linkedin.com/in/lauren-kim-a319581" }] },
+  { company: "EVERYTHING Studios", people: [{ name: "EVERYTHING BRAND", linkedin: "https://linkedin.com/in/abdulalimjemal" }] },
+  { company: "Tursh", people: [{ name: "TURSH LLC", linkedin: "https://linkedin.com/in/meenahoshmand" }] },
   {
     company: "Ayn Skin House",
     logo: "logos/ayn-skin-house.png",
@@ -63,11 +104,6 @@ const confirmedGuests: Array<{
   },
   { company: "Yara Group", people: [{ name: "Hussein Khanafer", linkedin: "https://linkedin.com/in/Husseink" }] },
   { company: "Anwar", people: [{ name: "Anwar Jibawi" }] },
-  {
-    company: "Naali",
-    logo: "logos/naali.png",
-    people: [{ name: "Nadir Tayach", linkedin: "https://linkedin.com/in/nadir-tayach" }],
-  },
   { company: "Summer Evenings", people: [{ name: "Summer Albarcha" }] },
   { company: "Calligrafist LLC", people: [{ name: "Ismail Sayeed", linkedin: "https://linkedin.com/in/ismailsayeed" }] },
   { company: "Choti Koti", people: [{ name: "Salman Hussain" }] },
@@ -106,23 +142,8 @@ const confirmedGuests: Array<{
   { company: "Neeyah", people: [{ name: "Abeer Ali" }] },
   { company: "Innate Capital / Nur House", logo: "logos/innate-capital.png", people: [{ name: "Dannah J" }] },
   { company: "GLO", people: [{ name: "Ammar Melies" }] },
-  { company: "elaa", people: [{ name: "Omar Snoubar" }, { name: "Leena Snoubar" }] },
   { company: "Jamali", people: [{ name: "Lina Idelbi" }] },
-  { company: "Paliroots", logo: "logos/paliroots.webp", people: [{ name: "Farah" }] },
-  { company: "Pax & Benfica", people: [{ name: "Mouyyad Abdulhadi" }] },
-  {
-    company: "Veiled",
-    logo: "logos/veiled.png",
-    people: [{ name: "Yaser Albataineh" }, { name: "Kareem Elgendy" }],
-  },
-  { company: "Hearthy", logo: "logos/hearthy.png", people: [{ name: "Riaz Surti" }] },
-  { company: "Fith", people: [{ name: "Rahim Siddiq" }] },
   { company: "RAYAN", people: [{ name: "Nadia Rayan" }] },
-  {
-    company: "Noun Naturals",
-    logo: "logos/noun-naturals.png",
-    people: [{ name: "Khaled Atallah" }, { name: "Steven" }],
-  },
 ];
 
 const summitDetails = {
