@@ -47,10 +47,10 @@ export default function Team() {
         <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
           <ScrollReveal>
             <div className="flex flex-col gap-2 mb-16">
-              <p className="section-label text-[#787777]">[ Souq Capital ]</p>
-              <h2 className="section-h2 text-[#14181A]">Investment Team</h2>
+              <p className="section-label text-[#787777]">[ Souq Capital + Accelerator ]</p>
+              <h2 className="section-h2 text-[#14181A]">Investment & Accelerator Team</h2>
               <p className="body-p text-[#666] max-w-2xl">
-                10+ years experience | 10 investment funds | 6 completed | $40M+ raised | 300+ investors
+                Investing in and working alongside the founders building the next generation of consumer brands.
               </p>
             </div>
           </ScrollReveal>
@@ -67,7 +67,14 @@ export default function Team() {
                       style={{ objectPosition: member.objectPosition }}
                     />
                   </div>
-                  <p className="section-label text-[#787777] mb-1">{member.role}</p>
+                   <div className="flex items-center gap-2 flex-wrap mb-1">
+                     <p className="section-label text-[#787777]">{member.role}</p>
+                     {member.programs?.includes("Accelerator") ? (
+                       <span className="inline-flex items-center rounded-full bg-[#ff653d]/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#d84b2a]">
+                         Accelerator
+                       </span>
+                     ) : null}
+                   </div>
                   <h3 className="step-h4 text-[#14181A]">{member.name}</h3>
                 </div>
               </ScrollReveal>

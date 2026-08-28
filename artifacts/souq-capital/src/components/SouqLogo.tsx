@@ -14,7 +14,7 @@ export default function SouqLogo({
     <img
       src={variant === "white" ? whiteLogo : blackLogo}
       alt="Souq"
-      className={`block h-auto ${className}`}
+      className={`block max-w-full ${className}`}
     />
   );
 }

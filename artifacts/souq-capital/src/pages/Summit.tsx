@@ -907,6 +907,10 @@ export default function Summit() {
           text-transform: none;
           letter-spacing: -.035em;
         }
+        .summit-logo-image {
+          width: 8rem;
+          height: auto;
+        }
         .summit-reveal {
           opacity: 0;
           transform: translateY(1rem);

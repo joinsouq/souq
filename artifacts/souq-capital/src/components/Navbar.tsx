@@ -60,7 +60,7 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
     >
       <div className="max-w-[1320px] mx-auto px-4 md:px-6 min-h-16 flex items-center justify-between">
         <Link href="/" data-testid="logo-link" className="flex items-center text-inherit no-underline">
-          <SouqLogo variant={logoVariant} className="w-[100px] md:w-[110px]" />
+          <SouqLogo variant={logoVariant} className="h-[30px] w-auto md:h-[32px]" />
         </Link>
 
         <div className="hidden md:flex items-center gap-[40px] lg:gap-[60px]">
