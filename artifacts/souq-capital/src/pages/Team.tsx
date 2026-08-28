@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import { CAPITAL_TEAM, OS_TEAM } from "@/data/team";
+import { CAPITAL_TEAM, OPERATING_TEAM } from "@/data/team";
 import { useLocation } from "wouter";
 
 export default function Team() {
@@ -44,26 +44,26 @@ export default function Team() {
         </div>
       </section>
 
-      {/* ── SOUQ CAPITAL TEAM ── */}
-      <section id="capital" className="team-section">
+      {/* ── SOUQ OPERATING STACK ── */}
+      <section id="operating-stack" className="team-section team-section-os">
         <div className="team-container">
           <div className="team-section-header">
             <ScrollReveal>
-              <p className="team-label">Souq Capital + Accelerator</p>
-              <h2>Investment & Accelerator</h2>
+              <p className="team-label" style={{ color: "var(--souq-coral)" }}>Souq · Accelerator</p>
+              <h2>Souq Operating Stack</h2>
               <p className="team-lede">
-                Investing in and working alongside the founders building the next generation of consumer brands.
+                The core team working alongside founders to build, scale, and lead the next generation of consumer brands.
               </p>
             </ScrollReveal>
           </div>
 
           <div className="team-grid">
-            {CAPITAL_TEAM.map((member, i) => (
+            {OPERATING_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
                   <div className="team-card-image-wrap">
                     <img
-                      src={member.img}
+                      src={member.img.startsWith("http") ? member.img : `${import.meta.env.BASE_URL}${member.img}`}
                       alt={member.name}
                       style={{ objectPosition: member.objectPosition }}
                     />
@@ -85,38 +85,31 @@ export default function Team() {
         </div>
       </section>
 
-      {/* ── OPERATING STACK TEAM ── */}
-      <section id="operating-stack" className="team-section team-section-os">
+      {/* ── SOUQ CAPITAL TEAM ── */}
+      <section id="capital" className="team-section">
         <div className="team-container">
           <div className="team-section-header">
             <ScrollReveal>
-              <p className="team-label" style={{ color: "var(--souq-coral)" }}>Operating Stack</p>
-              <h2>Advisory & Growth</h2>
+              <p className="team-label">Souq Capital</p>
+              <h2>Souq Capital</h2>
               <p className="team-lede">
-                Operators scaling consumer brands to market leaders with hands-on expertise in operations and growth.
+                Investing in and working alongside the founders building the next generation of consumer brands.
               </p>
             </ScrollReveal>
           </div>
 
           <div className="team-grid">
-            {OS_TEAM.map((member, i) => (
+            {CAPITAL_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
-                  {member.img ? (
-                    <div className="team-card-image-wrap">
-                      <img
-                        src={`${import.meta.env.BASE_URL}${member.img}`}
-                        alt={member.name}
-                      />
-                      <div className="team-card-overlay"></div>
-                    </div>
-                  ) : (
-                    <div className="team-os-monogram">
-                      <div className="team-os-monogram-inner">
-                        {member.initials}
-                      </div>
-                    </div>
-                  )}
+                  <div className="team-card-image-wrap">
+                    <img
+                      src={member.img.startsWith("http") ? member.img : `${import.meta.env.BASE_URL}${member.img}`}
+                      alt={member.name}
+                      style={{ objectPosition: member.objectPosition }}
+                    />
+                    <div className="team-card-overlay"></div>
+                  </div>
                   <div className="team-card-meta">
                     <div className="team-card-role">
                       <span className="team-card-role-text">{member.role}</span>
