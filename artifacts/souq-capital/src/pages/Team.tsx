@@ -420,8 +420,8 @@ export default function Team() {
             margin-top: 1rem;
           }
           .team-grid {
-            grid-template-columns: repeat(1, 1fr);
-            gap: 3rem;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2.5rem 1rem;
           }
           .team-section {
             padding: 4.5rem 0;

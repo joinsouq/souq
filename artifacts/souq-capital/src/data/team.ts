@@ -48,6 +48,15 @@ const YASER = {
   initials: "YA",
 };
 
-export const OPERATING_TEAM = [AHMAD, KAREEM, SAFEER, YASER, BATHOOL, RAZI];
+const UMER = {
+  name: "Umer Khan",
+  role: "Advisor",
+  programs: [],
+  img: "team/umer-khan.png",
+  objectPosition: "center 50%",
+  initials: "UK",
+};
+
+export const OPERATING_TEAM = [AHMAD, KAREEM, SAFEER, YASER, BATHOOL, RAZI, UMER];
 
 export const CAPITAL_TEAM = [SAFEER, AHMAD, RAZI, BATHOOL];
