@@ -4,9 +4,9 @@ const AHMAD = {
   programs: ["Capital"],
   img: "team/cutout-ahmad.webp",
   objectPosition: "center 22%",
-  portraitScale: 1,
+  portraitScale: 1.04,
   portraitOffsetY: "0px",
-  portraitHoverScale: 1.05,
+  portraitHoverScale: 1.08,
 };
 
 const SAFEER = {
@@ -15,9 +15,9 @@ const SAFEER = {
   programs: ["Capital"],
   img: "team/cutout-safeer.webp",
   objectPosition: "center 62%",
-  portraitScale: 0.92,
-  portraitOffsetY: "12px",
-  portraitHoverScale: 0.96,
+  portraitScale: 0.96,
+  portraitOffsetY: "10px",
+  portraitHoverScale: 1,
 };
 
 const BATHOOL = {
@@ -26,9 +26,9 @@ const BATHOOL = {
   programs: ["Capital"],
   img: "team/cutout-bathool.webp",
   objectPosition: "center 18%",
-  portraitScale: 1,
+  portraitScale: 0.98,
   portraitOffsetY: "0px",
-  portraitHoverScale: 1.05,
+  portraitHoverScale: 1.04,
 };
 
 const RAZI = {
@@ -37,9 +37,9 @@ const RAZI = {
   programs: ["Capital"],
   img: "team/cutout-razi.webp",
   objectPosition: "center 62%",
-  portraitScale: 0.88,
-  portraitOffsetY: "12px",
-  portraitHoverScale: 0.92,
+  portraitScale: 0.94,
+  portraitOffsetY: "10px",
+  portraitHoverScale: 0.98,
 };
 
 const KAREEM = {
@@ -48,9 +48,9 @@ const KAREEM = {
   programs: ["Accelerator"],
   img: "team/cutout-kareem.webp",
   objectPosition: "center 36%",
-  portraitScale: 1,
+  portraitScale: 1.04,
   portraitOffsetY: "0px",
-  portraitHoverScale: 1.05,
+  portraitHoverScale: 1.08,
   initials: "KE",
 };
 
@@ -60,9 +60,9 @@ const YASER = {
   programs: ["Accelerator"],
   img: "team/cutout-yaser.webp",
   objectPosition: "center 50%",
-  portraitScale: 1,
-  portraitOffsetY: "0px",
-  portraitHoverScale: 1.05,
+  portraitScale: 0.96,
+  portraitOffsetY: "-4px",
+  portraitHoverScale: 1,
   initials: "YA",
 };
 
@@ -72,9 +72,9 @@ const UMER = {
   programs: [],
   img: "team/cutout-umer.webp",
   objectPosition: "center 50%",
-  portraitScale: 1,
+  portraitScale: 0.9,
   portraitOffsetY: "0px",
-  portraitHoverScale: 1.05,
+  portraitHoverScale: 0.95,
   initials: "UK",
 };
 
