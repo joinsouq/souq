@@ -60,10 +60,7 @@ export default function Team() {
             {OPERATING_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
-                  <div
-                    className="team-card-image-wrap"
-                    style={{ background: member.portraitBackground }}
-                  >
+                  <div className="team-card-image-wrap">
                     <img
                       src={member.img.startsWith("http") ? member.img : `${import.meta.env.BASE_URL}${member.img}`}
                       alt={member.name}
@@ -248,7 +245,9 @@ export default function Team() {
            flex: 0 0 auto;
            border-radius: 50%;
           overflow: hidden;
-          background: #E8E8E8;
+          background:
+            radial-gradient(circle at 50% 28%, rgba(255, 255, 255, .9), transparent 42%),
+            linear-gradient(145deg, var(--souq-blue) 0%, #edf6ff 100%);
            margin-bottom: 1rem;
            border: 1px solid var(--team-border);
         }
