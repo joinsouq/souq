@@ -56,6 +56,7 @@
   --accent-foreground: 210 15% 9%;
 
   --app-font-sans: 'Inter', sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --app-font-heading: 'Instrument Sans', sans-serif;
   --souq-coral: #ff653d;
   --souq-coral-soft: #ff8966;

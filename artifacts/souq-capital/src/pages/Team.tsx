@@ -33,7 +33,7 @@ export default function Team() {
           <div>
             <ScrollReveal>
               <p className="team-eyebrow">Souq · The Collective</p>
-              <h1>The people behind<br/><em>the capital.</em></h1>
+              <h1>The people behind<br/><em>Souq.</em></h1>
             </ScrollReveal>
           </div>
           <div className="team-hero-side">
@@ -44,15 +44,14 @@ export default function Team() {
         </div>
       </section>
 
-      {/* ── SOUQ OPERATING STACK ── */}
-      <section id="operating-stack" className="team-section team-section-os">
+       {/* ── SOUQ TEAM ── */}
+       <section id="leadership" className="team-section team-section-leadership">
         <div className="team-container">
           <div className="team-section-header">
             <ScrollReveal>
-              <p className="team-label" style={{ color: "var(--souq-coral)" }}>Souq · Accelerator</p>
-              <h2>Souq Operating Stack</h2>
+               <h2>Leadership</h2>
               <p className="team-lede">
-                The core team working alongside founders to build, scale, and lead the next generation of consumer brands.
+                 Investors, operators, and builders working across capital, growth, and operations to help the next generation of consumer brands scale.
               </p>
             </ScrollReveal>
           </div>
@@ -61,11 +60,19 @@ export default function Team() {
             {OPERATING_TEAM.map((member, i) => (
               <ScrollReveal key={i} delay={i * 80}>
                 <div className="team-card group">
-                  <div className="team-card-image-wrap">
+                  <div
+                    className="team-card-image-wrap"
+                    style={{ background: member.portraitBackground }}
+                  >
                     <img
                       src={member.img.startsWith("http") ? member.img : `${import.meta.env.BASE_URL}${member.img}`}
                       alt={member.name}
-                      style={{ objectPosition: member.objectPosition }}
+                      style={{
+                        objectPosition: member.objectPosition,
+                        "--portrait-scale": member.portraitScale,
+                        "--portrait-offset-y": member.portraitOffsetY,
+                        "--portrait-hover-scale": member.portraitHoverScale,
+                      } as React.CSSProperties}
                     />
                     <div className="team-card-overlay"></div>
                   </div>
@@ -91,10 +98,16 @@ export default function Team() {
 
       <style>{`
         .team-page {
+          --team-bg: #17181a;
+          --team-surface: #1c1d20;
+          --team-text: #f5f5f6;
+          --team-muted: rgba(245, 245, 246, .68);
+          --team-subtle: rgba(245, 245, 246, .42);
+          --team-border: rgba(245, 245, 246, .12);
           min-height: 100svh;
-          background: oklch(0.155 0.004 285);
-          color: oklch(0.965 0.002 285);
-          font-family: 'Inter', ui-sans-serif, -apple-system, sans-serif;
+           background: var(--team-bg);
+           color: var(--team-text);
+           font-family: var(--app-font-sans);
           font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "ss01" 1;
           -webkit-font-smoothing: antialiased;
           overflow-x: hidden;
@@ -131,7 +144,7 @@ export default function Team() {
         .team-hero {
           position: relative;
           padding: clamp(5rem, 12vh, 9rem) 0 clamp(4rem, 8vh, 6rem);
-          border-bottom: 1px solid oklch(0.27 0.005 285);
+           border-bottom: 1px solid var(--team-border);
         }
 
         .team-hero-inner {
@@ -141,11 +154,10 @@ export default function Team() {
           align-items: end;
         }
 
-        .team-eyebrow,
-        .team-label {
+         .team-eyebrow {
           margin: 0 0 1.5rem;
-          color: oklch(0.55 0.006 285);
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
+           color: var(--team-subtle);
+           font-family: var(--app-font-mono);
           font-size: .78rem;
           letter-spacing: .1em;
           line-height: 1.4;
@@ -177,7 +189,7 @@ export default function Team() {
 
         .team-hero-side p {
           margin: 0;
-          color: oklch(0.7 0.006 285);
+           color: var(--team-muted);
           font-size: clamp(1.1rem, 1.8vw, 1.35rem);
           letter-spacing: -.03em;
           line-height: 1.4;
@@ -186,12 +198,12 @@ export default function Team() {
         /* SECTIONS */
         .team-section {
           padding: clamp(5rem, 10vw, 8rem) 0;
-          border-bottom: 1px solid oklch(0.27 0.005 285);
+           border-bottom: 1px solid var(--team-border);
           scroll-margin-top: 5rem;
         }
         
-        .team-section-os {
-          background: oklch(0.18 0.004 285);
+        .team-section-leadership {
+          background: var(--team-surface);
         }
 
         .team-section-header {
@@ -210,7 +222,7 @@ export default function Team() {
         .team-lede {
           max-width: 38rem;
           margin: 0;
-          color: oklch(0.66 0.006 285);
+           color: var(--team-muted);
           font-size: clamp(1.1rem, 1.5vw, 1.25rem);
           line-height: 1.6;
         }
@@ -225,6 +237,7 @@ export default function Team() {
         .team-card {
           display: flex;
           flex-direction: column;
+           align-items: flex-start;
           cursor: pointer;
         }
 
@@ -232,28 +245,31 @@ export default function Team() {
           position: relative;
            width: min(100%, 12rem);
            aspect-ratio: 1;
+           flex: 0 0 auto;
            border-radius: 50%;
           overflow: hidden;
           background: #E8E8E8;
            margin-bottom: 1rem;
-          border: 1px solid oklch(0.27 0.005 285);
+           border: 1px solid var(--team-border);
         }
 
         .team-card-image-wrap img {
+           display: block;
           width: 100%;
           height: 100%;
           object-fit: cover;
+           transform: translateY(var(--portrait-offset-y, 0px)) scale(var(--portrait-scale, 1));
           transition: transform .7s cubic-bezier(.22,1,.36,1);
         }
 
         .team-card:hover .team-card-image-wrap img {
-          transform: scale(1.05);
+           transform: translateY(var(--portrait-offset-y, 0px)) scale(var(--portrait-hover-scale, 1.05));
         }
 
         .team-card-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, oklch(0.155 0.004 285 / .25) 0%, transparent 40%);
+           background: linear-gradient(to top, color-mix(in srgb, var(--team-bg) 25%, transparent) 0%, transparent 40%);
           pointer-events: none;
         }
 
@@ -261,10 +277,12 @@ export default function Team() {
         .team-os-monogram {
            width: min(100%, 12rem);
            aspect-ratio: 1;
+           flex: 0 0 auto;
            border-radius: 50%;
+           align-self: flex-start;
            margin-bottom: 1rem;
-          background: oklch(0.155 0.004 285);
-          border: 1px solid oklch(0.27 0.005 285);
+           background: var(--team-bg);
+           border: 1px solid var(--team-border);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -274,15 +292,15 @@ export default function Team() {
         }
 
         .team-card:hover .team-os-monogram {
-          border-color: oklch(0.48 0.006 285);
-          background: oklch(0.22 0.005 285 / .4);
+           border-color: rgba(245, 245, 246, .3);
+           background: color-mix(in srgb, var(--team-surface) 80%, transparent);
         }
 
         .team-os-monogram::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at center, oklch(0.27 0.005 285 / .6) 0%, transparent 70%);
+           background: radial-gradient(circle at center, color-mix(in srgb, var(--team-border) 60%, transparent) 0%, transparent 70%);
           opacity: 0;
           transition: opacity .4s ease;
         }
@@ -294,10 +312,10 @@ export default function Team() {
         .team-os-monogram-inner {
           position: relative;
           z-index: 1;
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
+           font-family: var(--app-font-mono);
           font-size: clamp(3rem, 5vw, 4.5rem);
           font-weight: 300;
-          color: oklch(0.55 0.006 285);
+           color: var(--team-subtle);
           letter-spacing: -.05em;
           transition: color .4s ease, transform .4s cubic-bezier(.22,1,.36,1);
         }
@@ -322,11 +340,11 @@ export default function Team() {
         }
 
         .team-card-role-text {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
+           font-family: var(--app-font-mono);
           font-size: .75rem;
           text-transform: uppercase;
           letter-spacing: .08em;
-          color: oklch(0.55 0.006 285);
+           color: var(--team-subtle);
         }
 
         .team-card-badge {
@@ -336,7 +354,7 @@ export default function Team() {
           border-radius: 1rem;
           background: color-mix(in srgb, var(--souq-coral) 15%, transparent);
           color: var(--souq-coral);
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
+           font-family: var(--app-font-mono);
           font-size: .65rem;
           font-weight: 600;
           text-transform: uppercase;
@@ -348,7 +366,7 @@ export default function Team() {
           font-size: 1.25rem;
           font-weight: 500;
           letter-spacing: -.03em;
-          color: oklch(0.965 0.002 285);
+           color: var(--team-text);
         }
 
         .team-footer-wrap {
