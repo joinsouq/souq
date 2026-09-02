@@ -484,7 +484,7 @@ export default function Home() {
           <ScrollReveal>
             <div className="flex flex-col gap-2 mb-12">
               <p className="section-label text-[#787777]">[ Team ]</p>
-              <h2 className="section-h2 text-[#14181A]">The team behind Souq Capital</h2>
+               <h2 className="section-h2 text-[#14181A]">The team behind Souq</h2>
               <p className="body-p text-[#666]">
                 10+ years experience | 10 investment funds | 6 completed | $40M+ raised | 300+ investors
               </p>
@@ -510,7 +510,7 @@ export default function Home() {
                 </p>
               </div>
               <div>
-                <Link href="/team#capital">
+                <Link href="/team#leadership">
                   <span className="inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 rounded-full cursor-pointer">
                     Meet the Team
                   </span>

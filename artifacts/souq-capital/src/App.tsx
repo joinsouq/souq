@@ -1,4 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { useEffect } from "react";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import Umbrella from "@/pages/Umbrella";
 import Capital from "@/pages/Home";
 import Apply from "@/pages/Apply";
@@ -8,8 +9,18 @@ import Team from "@/pages/Team";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const [location] = useLocation();
+  const normalizedLocation =
+    location === "/" ? location : location.replace(/\/+$/, "");
+
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+
   return (
-    <Switch>
+    <Switch location={normalizedLocation}>
       <Route path="/" component={Umbrella} />
       <Route path="/capital" component={Capital} />
       <Route path="/accelerator" component={Accelerator} />

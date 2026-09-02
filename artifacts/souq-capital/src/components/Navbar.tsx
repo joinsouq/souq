@@ -45,8 +45,8 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
   };
 
   const btnDesktopClass = isDark
-    ? "inline-flex items-center justify-center bg-white text-[#14181A] text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-white/90 rounded-full cursor-pointer"
-    : "inline-flex items-center justify-center bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80 rounded-full cursor-pointer";
+    ? "inline-flex min-h-11 items-center justify-center bg-white text-[#14181A] text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-white/90 rounded-full cursor-pointer"
+    : "inline-flex min-h-11 items-center justify-center bg-[#14181A] text-white text-sm font-medium px-5 py-2 transition-all duration-200 hover:bg-black/80 rounded-full cursor-pointer";
 
   const pageMenuClass = isDark
     ? "text-white/60 hover:text-white"
@@ -90,14 +90,14 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
       <div
         data-testid="page-menu"
         aria-label="Page menu"
-        className={`md:hidden flex items-center gap-7 overflow-x-auto border-t px-4 py-3 whitespace-nowrap ${borderClass}`}
+        className={`md:hidden flex items-center gap-7 overflow-x-auto border-t px-4 py-0 whitespace-nowrap ${borderClass}`}
         style={{ scrollbarWidth: "none" }}
       >
         {NAV_LINKS.map(link => (
-          <Link key={link.href} href={link.href}>
+          <Link key={link.href} href={link.href} className="inline-flex min-h-11 min-w-11 items-center justify-center px-2">
             <span
               data-testid={`mobile-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-              className={`text-[12px] font-medium transition-colors ${isLinkActive(link.href) ? activePageMenuClass : pageMenuClass}`}
+              className={`inline-flex min-h-11 min-w-11 items-center justify-center px-2 text-[12px] font-medium transition-colors ${isLinkActive(link.href) ? activePageMenuClass : pageMenuClass}`}
               aria-current={isLinkActive(link.href) ? "page" : undefined}
             >
               {link.label}

@@ -217,12 +217,10 @@ export default function Summit() {
                   <ul className="summit-hotel-list">
                     {details.logistics.hotels.map((hotel) => (
                       <li key={hotel.name}>
-                        <span className="summit-hotel-name">
-                          <strong>{hotel.name}</strong>
-                          <span>{hotel.rate}</span>
-                        </span>
+                        <strong className="summit-hotel-name">{hotel.name}</strong>
+                        <span className="summit-hotel-rate">{hotel.rate}</span>
                         <a href={hotel.href} target="_blank" rel="noreferrer">
-                          Open in Google Maps
+                          <span>Open in Google Maps</span>
                           <Arrow />
                         </a>
                       </li>
@@ -689,6 +687,7 @@ export default function Summit() {
         .summit-hotels-card {
           grid-column: 1 / -1;
           min-height: 0 !important;
+           min-width: 0;
         }
         .summit-hotels-card h3 {
           margin: .8rem 0 .7rem;
@@ -705,10 +704,11 @@ export default function Summit() {
           list-style: none;
         }
         .summit-hotel-list li {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+           display: grid;
+           grid-template-columns: minmax(8rem, 1.15fr) minmax(7rem, .85fr) minmax(0, 2fr);
+           align-items: center;
           gap: 1.5rem;
+           min-width: 0;
           padding: .9rem 0;
           border-top: 1px solid oklch(0.27 0.005 285);
         }
@@ -716,25 +716,31 @@ export default function Summit() {
           border-bottom: 1px solid oklch(0.27 0.005 285);
         }
         .summit-hotel-name {
-          display: inline-flex;
-          align-items: baseline;
-          gap: .8rem;
+           min-width: 0;
           color: oklch(0.86 0.006 285);
-        }
-        .summit-hotel-name strong {
           font-size: 1.05rem;
           font-weight: 500;
+           line-height: 1.3;
         }
-        .summit-hotel-name > span {
+         .summit-hotel-rate {
           color: var(--souq-coral);
           font-family: 'JetBrains Mono', ui-monospace, monospace;
           font-size: .8rem;
+           white-space: nowrap;
         }
         .summit-hotel-list a {
-          flex: none;
+           display: flex;
+           align-items: center;
+           justify-content: space-between;
+           min-width: 0;
+           width: 100%;
+           gap: .75rem;
           color: oklch(0.72 0.006 285);
           font-size: .95rem;
         }
+         .summit-hotel-list a span {
+           min-width: 0;
+         }
         .summit-hotel-list a:hover {
           color: var(--souq-coral);
         }
@@ -775,10 +781,11 @@ export default function Summit() {
           font-size: 1rem;
         }
         .summit-logistics .summit-hotel-list li {
-          display: flex;
+           display: grid;
+           grid-template-columns: minmax(8rem, 1.15fr) minmax(7rem, .85fr) minmax(0, 2fr);
           align-items: center;
-          justify-content: space-between;
           gap: 1.5rem;
+           min-width: 0;
           padding: .9rem 0;
           border-top: 1px solid oklch(0.27 0.005 285);
           border-bottom: 0;
@@ -882,7 +889,15 @@ export default function Summit() {
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
           .summit-hotels-card { grid-column: auto; }
-          .summit-logistics .summit-hotel-list li { align-items: flex-start; flex-direction: column; gap: .5rem; }
+           .summit-logistics .summit-hotel-list li {
+             grid-template-columns: minmax(0, 1fr) auto;
+             align-items: baseline;
+             gap: .5rem 1rem;
+           }
+           .summit-logistics .summit-hotel-list a {
+             grid-column: 1 / -1;
+             align-items: center;
+           }
           .summit-logistics .summit-hotel-list a { font-size: 1rem; }
           .summit-program article {
             display: block;
