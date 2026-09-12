@@ -31,11 +31,6 @@ export type SummitDetails = {
       }>;
     }>;
   };
-  program: {
-    label: string;
-    heading: string;
-    blocks: Array<{ title: string; items: string[] }>;
-  };
   evening: {
     label: string;
     items: Array<{ index: string; title: string; description: string }>;
@@ -382,7 +377,8 @@ const summitDetails: SummitDetails = {
             end: "3:20 PM",
             duration: "20 min",
             segment: "Fireside Chat: Coming in as an Outsider",
-            speakers: "Aziza El Wanni, Founder of The Potion Studio · Nadir Tayach",
+            speakers:
+              "Aziza El Wanni, Founder of The Potion Studio · Nadir Tayach, Founder of Naali",
             description: "Entering new markets and distribution channels.",
           },
           {
@@ -398,7 +394,8 @@ const summitDetails: SummitDetails = {
             end: "4:30 PM",
             duration: "40 min",
             segment: "Panel: The View from the Other Side",
-            speakers: "Yaser · Leena Snoubar · Karam · Ebrahim · Abir Syed",
+            speakers:
+              "Yaser Albataineh, Co-Founder of Veiled · Leena Snoubar, Founder of Ella · Karam · Ebrahim · Abir Syed",
             description: "What founders can learn from operators and domain leaders.",
           },
           {
@@ -408,46 +405,6 @@ const summitDetails: SummitDetails = {
             segment: "Closing & Networking",
             speakers: "Ahmad",
           },
-        ],
-      },
-    ],
-  },
-  program: {
-    label: "The program",
-    heading: "A working day with people who know the work.",
-    blocks: [
-      {
-        title: "Morning",
-        items: [
-          "Doors and coffee",
-          "Welcome",
-          "Fireside: Marketing and Media",
-          "Hot Seat: a founder's challenge, solved live by the room",
-          "Fireside: Capital & Islamic finance",
-          "Benchmarking Roundtables, grouped by stage",
-        ],
-      },
-      {
-        title: "Midday",
-        items: [
-          "Lunch, brand activations, and pre-matched 1:1 meetings",
-        ],
-      },
-      {
-        title: "Afternoon",
-        items: [
-          "Fireside: Operations and Fulfillment",
-          "Hot Seat: a founder's challenge, solved live by the room",
-          "Fireside: Leadership and Growth",
-          "Live Brand Teardown",
-          "Keynote",
-          "Closing reflection",
-        ],
-      },
-      {
-        title: "Running all day",
-        items: [
-          "Souq Office Hours: 1:1 sessions with the Souq capital, 3PL, media, and financial ops teams",
         ],
       },
     ],

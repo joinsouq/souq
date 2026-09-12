@@ -134,30 +134,6 @@ export default function Summit() {
           </div>
         </section>
 
-        <section className="summit-program">
-          <div className="summit-section-label">{details.program.label}</div>
-          <div className="summit-program-content">
-            <h2>{details.program.heading}</h2>
-            <div className="summit-program-grid">
-              {details.program.blocks.map((block, index) => (
-                <article key={block.title}>
-                  <div className="summit-program-block-heading">
-                    <span className="summit-card-index">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3>{block.title}</h3>
-                  </div>
-                  <ul>
-                    {block.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="summit-experience">
           <div className="summit-section-label">{details.evening.label}</div>
           <div className="summit-experience-grid">
@@ -638,68 +614,6 @@ export default function Summit() {
           grid-template-columns: repeat(3, 1fr);
           gap: 1rem;
         }
-        .summit-program {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 3rem;
-          padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
-          background: oklch(0.95 0.008 80);
-          color: oklch(0.19 0.006 285);
-        }
-        .summit-program .summit-section-label { color: oklch(0.48 0.008 285); }
-        .summit-program-content h2 {
-          max-width: 21ch;
-          margin: 0 0 2.4rem;
-          font-size: clamp(2rem, 4.6vw, 4.1rem);
-          font-weight: 400;
-          line-height: .98;
-          letter-spacing: -.055em;
-        }
-        .summit-program-grid {
-          display: grid;
-          border-top: 1px solid oklch(0.23 0.006 285 / .22);
-        }
-        .summit-program article {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 1rem;
-          align-items: start;
-          padding: 1.35rem 0;
-          border-bottom: 1px solid oklch(0.23 0.006 285 / .22);
-        }
-        .summit-program-block-heading {
-          display: flex;
-          align-items: baseline;
-          gap: .75rem;
-          margin-bottom: 1.25rem;
-        }
-        .summit-program .summit-card-index { color: var(--souq-coral); }
-        .summit-program article h3 {
-          margin: 0;
-          font-size: 1.2rem;
-          font-weight: 500;
-          letter-spacing: -.035em;
-        }
-        .summit-program ul {
-          display: grid;
-          gap: .7rem;
-          margin: 0;
-          padding: 0;
-          list-style: none;
-          color: oklch(0.38 0.008 285);
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-        .summit-program li {
-          display: flex;
-          align-items: flex-start;
-          gap: .6rem;
-        }
-        .summit-program li::before {
-          content: "—";
-          color: var(--souq-coral);
-          flex: none;
-        }
         .summit-experience article {
           min-height: 15rem;
           display: flex;
@@ -1074,22 +988,18 @@ export default function Summit() {
           .summit-hero-aside { margin-top: 4rem; }
           .summit-intro-section,
            .summit-agenda,
-          .summit-program,
           .summit-experience,
           .summit-guests,
           .summit-logistics { display: block; padding: 4.5rem 1.25rem; }
           .summit-intro-copy,
            .summit-agenda-content,
-          .summit-program-content,
           .summit-experience-grid,
           .summit-guests-content,
           .summit-logistics-grid { margin-top: 2rem; }
           .summit-intro-copy h2 { font-size: 2.55rem; }
            .summit-agenda-content h2 { font-size: 2.55rem; }
-          .summit-program-content h2 { font-size: 2.55rem; }
           .summit-guests-content h2 { font-size: 2.55rem; }
           .summit-guests-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
            .summit-agenda-group-heading {
@@ -1123,12 +1033,6 @@ export default function Summit() {
              align-items: center;
            }
           .summit-logistics .summit-hotel-list a { font-size: 1rem; }
-          .summit-program article {
-            display: block;
-            min-height: 0;
-          }
-          .summit-program-block-heading { margin-bottom: 1rem; }
-          .summit-program article,
           .summit-logistics article { min-height: 0; }
           .summit-experience article { min-height: 12rem; }
           .summit-closing { padding: 6rem 1.25rem; }
