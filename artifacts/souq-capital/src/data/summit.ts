@@ -13,6 +13,24 @@ export type SummitDetails = {
     aside: string;
   };
   invitation: { label: string; heading: string; body: string };
+  agenda: {
+    label: string;
+    heading: string;
+    groups: Array<{
+      label: string;
+      time: string;
+      items: Array<{
+        start: string;
+        end: string;
+        duration: string;
+        segment: string;
+        speakers?: string;
+        description?: string;
+        singleLineDescription?: boolean;
+        kind?: "session" | "break";
+      }>;
+    }>;
+  };
   program: {
     label: string;
     heading: string;
@@ -207,6 +225,192 @@ const summitDetails: SummitDetails = {
     heading: "A room full of people in the work.",
     body:
       "Founders bringing brands and businesses to the next stage. Operators building the systems behind them. Creators helping good companies get noticed. Come ready to share what’s working and what isn’t.",
+  },
+  agenda: {
+    label: "Run of show",
+    heading: "Saturday’s schedule.",
+    groups: [
+      {
+        label: "Opening",
+        time: "9:00 AM–11:10 AM",
+        items: [
+          {
+            start: "9:00 AM",
+            end: "9:55 AM",
+            duration: "55 min",
+            segment: "Doors & Coffee",
+            description: "Registration and check-in.",
+          },
+          {
+            start: "9:55 AM",
+            end: "10:00 AM",
+            duration: "5 min",
+            segment: "Welcome & Housekeeping",
+            speakers: "Bathool Syed, Partner",
+          },
+          {
+            start: "10:00 AM",
+            end: "10:20 AM",
+            duration: "20 min",
+            segment: "Fireside Chat: Building with Ihsan",
+            speakers: "Sh. Umer Khan, Sharia Advisor · Safeer Mohiuddin, Partner",
+            description: "Striving for excellence in every aspect of our lives.",
+          },
+          {
+            start: "10:20 AM",
+            end: "10:30 AM",
+            duration: "10 min",
+            segment: "Welcome & Souq Blueprint",
+            speakers: "Ahmad Saleh, Partner",
+            description: "Souq’s plans for the year ahead.",
+          },
+          {
+            start: "10:30 AM",
+            end: "10:50 AM",
+            duration: "20 min",
+            segment: "Fireside Chat: Mastering Your Craft",
+            speakers: "Faraz Zaidi, Founder of Profound · Asli Sungur, Founder of Purecious",
+            description: "Product, brand, and craftsmanship.",
+          },
+          {
+            start: "10:50 AM",
+            end: "11:10 AM",
+            duration: "20 min",
+            segment: "Fireside Chat: Letting Go",
+            speakers:
+              "Yaser Albataineh, Co-Founder of Veiled · Akram Abdallah, Co-Founder of Nominal",
+            description: "The founder journey, picking your team, and knowing your limits.",
+            singleLineDescription: true,
+          },
+        ],
+      },
+      {
+        label: "Choose Your Track",
+        time: "11:20 AM–12:00 PM · choose one track",
+        items: [
+          {
+            start: "11:20 AM",
+            end: "11:50 AM",
+            duration: "30 min",
+            segment: "Track A: Production Ideation to Creation",
+            speakers:
+              "Lauren Kim, Head of Merchandising at Souq · Akram Abdallah, Co-Founder of Nominal",
+            description: "The lifecycle of a product: idea → sample → MOQ → mass production.",
+          },
+          {
+            start: "11:20 AM",
+            end: "11:50 AM",
+            duration: "30 min",
+            segment: "Track B: Media & Storytelling",
+            speakers:
+              "Shahbaz Khan, Head of Global Player Social & Content Strategy at NFL · Ahmad Abdallah, CMO of Nominal",
+            description:
+              "How startups can use the power of storytelling to compete with industry.",
+            singleLineDescription: true,
+          },
+        ],
+      },
+      {
+        label: "Lunch & Dhuhr",
+        time: "11:50 AM–1:00 PM",
+        items: [
+          {
+            start: "11:50 AM",
+            end: "12:50 PM",
+            duration: "60 min",
+            segment: "Lunch",
+          },
+          {
+            start: "12:50 PM",
+            end: "1:00 PM",
+            duration: "10 min",
+            segment: "Dhuhr",
+          },
+        ],
+      },
+      {
+        label: "Founder Superpowers & Kryptonite",
+        time: "1:00 PM–2:20 PM",
+        items: [
+          {
+            start: "1:00 PM",
+            end: "1:20 PM",
+            duration: "20 min",
+            segment: "Creator to Brand",
+            speakers: "Summer Albarcha, Founder of Summer Evenings",
+            description: "Turning an audience into a business.",
+          },
+          {
+            start: "1:20 PM",
+            end: "1:40 PM",
+            duration: "20 min",
+            segment: "Ambition & Discipline",
+            speakers: "Khaled Atallah, Founder of Noun",
+            description: "How ambition and discipline shape a founder’s work.",
+          },
+          {
+            start: "1:40 PM",
+            end: "2:00 PM",
+            duration: "20 min",
+            segment: "Ops First, Marketing Second",
+            speakers: "Fadwa Hillili, Founder of Fadwa Masala",
+            description: "Operating and marketing a growing brand.",
+          },
+          {
+            start: "2:00 PM",
+            end: "2:20 PM",
+            duration: "20 min",
+            segment: "Phases of a Business, When to Do What",
+            speakers: "Razi Mohiuddin, Partner",
+            description: "What to focus on at each stage of a company.",
+          },
+        ],
+      },
+      {
+        label: "Building the Business",
+        time: "2:20 PM–5:30 PM",
+        items: [
+          {
+            start: "2:20 PM",
+            end: "3:00 PM",
+            duration: "40 min",
+            segment: "Break",
+            kind: "break",
+          },
+          {
+            start: "3:00 PM",
+            end: "3:20 PM",
+            duration: "20 min",
+            segment: "Fireside Chat: Coming in as an Outsider",
+            speakers: "Aziza El Wanni, Founder of The Potion Studio · Nadir Tayach",
+            description: "Entering new markets and distribution channels.",
+          },
+          {
+            start: "3:20 PM",
+            end: "3:50 PM",
+            duration: "30 min",
+            segment: "Workshop: DTC Growth Teardown",
+            speakers: "Kareem Elgendy",
+            description: "A live DTC growth teardown.",
+          },
+          {
+            start: "3:50 PM",
+            end: "4:30 PM",
+            duration: "40 min",
+            segment: "Panel: The View from the Other Side",
+            speakers: "Yaser · Leena Snoubar · Karam · Ebrahim · Abir Syed",
+            description: "What founders can learn from operators and domain leaders.",
+          },
+          {
+            start: "4:30 PM",
+            end: "5:30 PM",
+            duration: "60 min",
+            segment: "Closing & Networking",
+            speakers: "Ahmad",
+          },
+        ],
+      },
+    ],
   },
   program: {
     label: "The program",

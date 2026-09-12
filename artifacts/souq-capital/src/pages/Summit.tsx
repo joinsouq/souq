@@ -68,6 +68,72 @@ export default function Summit() {
           </div>
         </section>
 
+        <section className="summit-agenda">
+          <div className="summit-section-label">{details.agenda.label}</div>
+          <div className="summit-agenda-content">
+            <h2>{details.agenda.heading}</h2>
+            <div className="summit-agenda-groups">
+              {details.agenda.groups.map((group, groupIndex) => (
+                <section className="summit-agenda-group" key={group.label}>
+                  {groupIndex > 0 ? (
+                    <header className="summit-agenda-group-heading">
+                      <div>
+                        <span className="summit-card-index">
+                          {String(groupIndex).padStart(2, "0")}
+                        </span>
+                        <h3>{group.label}</h3>
+                      </div>
+                      <p>{group.time}</p>
+                    </header>
+                  ) : null}
+                  <div className="summit-agenda-items">
+                    {group.items.map((item) =>
+                      item.kind === "break" ? (
+                        <div className="summit-agenda-break" key={`${group.label}-${item.segment}`}>
+                          <span>{item.segment}</span>
+                          <time>
+                            {item.start}–{item.end}
+                          </time>
+                        </div>
+                      ) : (
+                        <article
+                          className="summit-agenda-item"
+                          key={`${group.label}-${item.start}-${item.segment}`}
+                        >
+                          <time>
+                            <span>{item.start}</span>
+                            <span>{item.end}</span>
+                          </time>
+                          <div className="summit-agenda-item-main">
+                            <div className="summit-agenda-item-heading">
+                              <h4>{item.segment}</h4>
+                            </div>
+                            {item.speakers ? (
+                              <p className="summit-agenda-meta">
+                                <strong>Featuring</strong>
+                                {item.speakers}
+                              </p>
+                            ) : null}
+                            {item.description ? (
+                              <p
+                                className={`summit-agenda-description${
+                                  item.singleLineDescription ? " summit-agenda-description-single-line" : ""
+                                }`}
+                              >
+                                {item.description}
+                              </p>
+                            ) : null}
+                          </div>
+                        </article>
+                      ),
+                    )}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="summit-program">
           <div className="summit-section-label">{details.program.label}</div>
           <div className="summit-program-content">
@@ -431,6 +497,141 @@ export default function Summit() {
           color: oklch(0.66 0.006 285);
           font-size: 1.15rem;
           line-height: 1.65;
+        }
+        .summit-agenda {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 3rem;
+          padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 4vw, 3.5rem);
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-agenda-content {
+          min-width: 0;
+        }
+        .summit-agenda-content h2 {
+          max-width: 18ch;
+          margin: 0 0 1.8rem;
+          font-size: clamp(2rem, 4.6vw, 4.1rem);
+          font-weight: 400;
+          line-height: .98;
+          letter-spacing: -.055em;
+        }
+        .summit-agenda-groups {
+          display: grid;
+          gap: 2.8rem;
+          margin-top: 3.5rem;
+        }
+        .summit-agenda-group {
+          min-width: 0;
+          border-top: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-agenda-group-heading {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: 1.1rem 0;
+        }
+        .summit-agenda-group-heading > div {
+          display: flex;
+          align-items: baseline;
+          gap: .75rem;
+          min-width: 0;
+        }
+        .summit-agenda-group-heading h3 {
+          margin: 0;
+          font-size: 1.25rem;
+          font-weight: 500;
+          letter-spacing: -.035em;
+        }
+        .summit-agenda-group-heading p {
+          flex: none;
+          margin: 0;
+          color: oklch(0.58 0.006 285);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .7rem;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+        }
+        .summit-agenda-items {
+          border-top: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-agenda-item {
+          display: grid;
+          grid-template-columns: 6.5rem minmax(0, 1fr);
+          gap: 1.5rem;
+          padding: 1.3rem 0;
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+        }
+        .summit-agenda-item > time {
+          display: grid;
+          align-content: start;
+          gap: .2rem;
+          color: var(--souq-coral);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .72rem;
+          letter-spacing: .03em;
+          line-height: 1.35;
+        }
+        .summit-agenda-item > time span:last-child {
+          color: oklch(0.5 0.006 285);
+        }
+        .summit-agenda-item-main {
+          min-width: 0;
+        }
+        .summit-agenda-item-heading {
+          display: block;
+        }
+        .summit-agenda-item-heading h4 {
+          margin: 0;
+          font-size: 1.1rem;
+          font-weight: 500;
+          line-height: 1.25;
+          letter-spacing: -.025em;
+        }
+        .summit-agenda-meta,
+        .summit-agenda-description {
+          margin: .55rem 0 0;
+          color: oklch(0.62 0.006 285);
+          font-size: .88rem;
+          line-height: 1.45;
+        }
+        .summit-agenda-meta strong {
+          margin-right: .45rem;
+          color: oklch(0.47 0.006 285);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .64rem;
+          font-weight: 400;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+        .summit-agenda-description {
+          max-width: 48ch;
+          color: oklch(0.72 0.006 285);
+        }
+        @media (min-width: 721px) {
+          .summit-agenda-description-single-line {
+            max-width: none;
+            white-space: nowrap;
+          }
+        }
+        .summit-agenda-break {
+          display: flex;
+          align-items: center;
+          gap: .8rem;
+          padding: .8rem 0;
+          border-bottom: 1px solid oklch(0.27 0.005 285);
+          color: oklch(0.52 0.006 285);
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: .7rem;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+        .summit-agenda-break span:first-child {
+          color: var(--souq-coral);
+        }
+        .summit-agenda-break time {
+          margin-left: auto;
         }
         .summit-experience-grid {
           display: grid;
@@ -872,22 +1073,45 @@ export default function Summit() {
           .summit-title { font-size: clamp(3.9rem, 17vw, 6rem); }
           .summit-hero-aside { margin-top: 4rem; }
           .summit-intro-section,
+           .summit-agenda,
           .summit-program,
           .summit-experience,
           .summit-guests,
           .summit-logistics { display: block; padding: 4.5rem 1.25rem; }
           .summit-intro-copy,
+           .summit-agenda-content,
           .summit-program-content,
           .summit-experience-grid,
           .summit-guests-content,
           .summit-logistics-grid { margin-top: 2rem; }
           .summit-intro-copy h2 { font-size: 2.55rem; }
+           .summit-agenda-content h2 { font-size: 2.55rem; }
           .summit-program-content h2 { font-size: 2.55rem; }
           .summit-guests-content h2 { font-size: 2.55rem; }
           .summit-guests-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .summit-program-grid,
           .summit-experience-grid,
           .summit-logistics-grid { grid-template-columns: 1fr; }
+           .summit-agenda-group-heading {
+             display: block;
+           }
+           .summit-agenda-group-heading p {
+             margin-top: .55rem;
+           }
+           .summit-agenda-item {
+             grid-template-columns: 1fr;
+             gap: .7rem;
+           }
+           .summit-agenda-item > time {
+             display: flex;
+             align-items: baseline;
+             gap: .5rem;
+           }
+           .summit-agenda-item > time span + span::before {
+             content: "—";
+             margin-right: .5rem;
+             color: oklch(0.42 0.006 285);
+           }
           .summit-hotels-card { grid-column: auto; }
            .summit-logistics .summit-hotel-list li {
              grid-template-columns: minmax(0, 1fr) auto;
