@@ -1,5 +1,3 @@
-const lumaEventUrl = "https://luma.com/51f8g6uw";
-
 export type SummitDetails = {
   header: { gathering: string; year: string };
   hero: {
@@ -7,8 +5,6 @@ export type SummitDetails = {
     title: string;
     emphasis: string;
     description: string;
-    ctaLabel: string;
-    ctaHref: string;
     asideNumber: string;
     aside: string;
   };
@@ -44,20 +40,6 @@ export type SummitDetails = {
       logo?: string;
       people: Array<{ name: string; role?: string; linkedin?: string }>;
     }>;
-  };
-  logistics: {
-    label: string;
-    date: string;
-    rsvpDeadline: string;
-    lumaHref: string;
-    hotels?: Array<{ name: string; rate: string; href: string }>;
-  };
-  closing: {
-    eyebrow: string;
-    title: string;
-    emphasis: string;
-    ctaLabel: string;
-    ctaHref: string;
   };
   footer: { pillars: string; copyright: string };
 };
@@ -209,11 +191,8 @@ const summitDetails: SummitDetails = {
     emphasis: "Forum.",
     description:
       "A Saturday for Muslim founders, operators, and creators who want to compare notes, make useful connections, and move the work forward.",
-    ctaLabel: "Request your invitation",
-    ctaHref: lumaEventUrl,
     asideNumber: "09 / 12",
-    aside:
-      "Saturday, September 12, 2026 · Full event details on Luma.",
+    aside: "Saturday, September 12, 2026",
   },
   invitation: {
     label: "The room",
@@ -386,7 +365,7 @@ const summitDetails: SummitDetails = {
             end: "3:50 PM",
             duration: "30 min",
             segment: "Workshop: DTC Growth Teardown",
-            speakers: "Kareem Elgendy",
+            speakers: "Kareem Elgendy, CEO of Veiled & Partner, Souq Accelerator",
             description: "A live DTC growth teardown.",
           },
           {
@@ -395,7 +374,7 @@ const summitDetails: SummitDetails = {
             duration: "40 min",
             segment: "Panel: The View from the Other Side",
             speakers:
-              "Yaser Albataineh, Co-Founder of Veiled · Leena Snoubar, Founder of Ella · Karam · Ebrahim · Abir Syed",
+              "Yaser Albataineh, Co-Founder of Veiled · Leena Snoubar, Founder of Ella · Karam Saleh, Founder of Orijinal · Ebrahim Qattous, Founder · Abir Syed",
             description: "What founders can learn from operators and domain leaders.",
           },
           {
@@ -403,7 +382,7 @@ const summitDetails: SummitDetails = {
             end: "5:30 PM",
             duration: "60 min",
             segment: "Closing & Networking",
-            speakers: "Ahmad",
+            speakers: "Ahmad Saleh, Partner",
           },
         ],
       },
@@ -434,36 +413,6 @@ const summitDetails: SummitDetails = {
     heading: "Founders and teams already confirmed.",
     body: "A growing list of the founders, operators, and brands joining September 12. More guests and speakers are confirmed every week.",
     list: confirmedGuests,
-  },
-  logistics: {
-    label: "Event details",
-    date: "Saturday, September 12, 2026",
-    rsvpDeadline: "RSVP by August 25",
-    lumaHref: lumaEventUrl,
-    hotels: [
-      {
-        name: "Hilton",
-        rate: "$319/night",
-        href: "https://www.google.com/maps/search/?api=1&query=Hilton+Santa+Monica",
-      },
-      {
-        name: "The Georgian",
-        rate: "$425/night",
-        href: "https://www.google.com/maps/search/?api=1&query=The+Georgian+Santa+Monica",
-      },
-      {
-        name: "The Proper",
-        rate: "$475/night",
-        href: "https://www.google.com/maps/search/?api=1&query=Santa+Monica+Proper+Hotel",
-      },
-    ],
-  },
-  closing: {
-    eyebrow: "By invitation · Seats limited",
-    title: "Request",
-    emphasis: "yours.",
-    ctaLabel: "Request your invitation",
-    ctaHref: lumaEventUrl,
   },
   footer: {
     pillars: "Capital / Operating Stack / Summit",
