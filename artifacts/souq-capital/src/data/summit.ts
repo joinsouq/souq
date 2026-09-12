@@ -8,7 +8,6 @@ export type SummitDetails = {
     asideNumber: string;
     aside: string;
   };
-  invitation: { label: string; heading: string; body: string };
   agenda: {
     label: string;
     heading: string;
@@ -92,7 +91,7 @@ const confirmedGuests = [
     logo: "logos/nominal.png",
     people: [
       { name: "Ian Park", linkedin: "https://linkedin.com/in/ianfromindy" },
-      { name: "Ahmad Abdallah", role: "CMO" },
+      { name: "Ahmad Abdallah" },
       { name: "Akram Abdallah" },
     ],
   },
@@ -193,12 +192,6 @@ const summitDetails: SummitDetails = {
       "A Saturday for Muslim founders, operators, and creators who want to compare notes, make useful connections, and move the work forward.",
     asideNumber: "09 / 12",
     aside: "Saturday, September 12, 2026",
-  },
-  invitation: {
-    label: "The room",
-    heading: "A room full of people in the work.",
-    body:
-      "Founders bringing brands and businesses to the next stage. Operators building the systems behind them. Creators helping good companies get noticed. Come ready to share what’s working and what isn’t.",
   },
   agenda: {
     label: "Run of show",

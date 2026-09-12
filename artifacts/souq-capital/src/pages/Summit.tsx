@@ -56,14 +56,6 @@ export default function Summit() {
           </div>
         </section>
 
-        <section className="summit-intro-section">
-          <div className="summit-section-label">{details.invitation.label}</div>
-          <div className="summit-intro-copy">
-            <h2>{details.invitation.heading}</h2>
-            <p>{details.invitation.body}</p>
-          </div>
-        </section>
-
         <section className="summit-agenda">
           <div className="summit-section-label">{details.agenda.label}</div>
           <div className="summit-agenda-content">
@@ -357,7 +349,6 @@ export default function Summit() {
           font-size: 1.1rem;
           line-height: 1.55;
         }
-        .summit-intro-section,
         .summit-experience {
           display: grid;
           grid-template-columns: 1fr 2fr;
@@ -377,22 +368,6 @@ export default function Summit() {
           letter-spacing: -.045em;
           line-height: 1;
           text-transform: none;
-        }
-        .summit-intro-copy { max-width: 45rem; }
-        .summit-intro-copy h2 {
-          max-width: 18ch;
-          margin: 0 0 1.8rem;
-          font-size: clamp(2rem, 4.6vw, 4.1rem);
-          font-weight: 400;
-          line-height: .98;
-          letter-spacing: -.055em;
-        }
-        .summit-intro-copy p {
-          max-width: 49ch;
-          margin: 0;
-          color: oklch(0.66 0.006 285);
-          font-size: 1.15rem;
-          line-height: 1.65;
         }
         .summit-agenda {
           display: grid;
@@ -740,16 +715,13 @@ export default function Summit() {
           }
           .summit-title { font-size: clamp(3.9rem, 17vw, 6rem); }
           .summit-hero-aside { margin-top: 4rem; }
-          .summit-intro-section,
-           .summit-agenda,
+          .summit-agenda,
           .summit-experience,
           .summit-guests { display: block; padding: 4.5rem 1.25rem; }
-          .summit-intro-copy,
-           .summit-agenda-content,
+          .summit-agenda-content,
           .summit-experience-grid,
           .summit-guests-content { margin-top: 2rem; }
-          .summit-intro-copy h2 { font-size: 2.55rem; }
-           .summit-agenda-content h2 { font-size: 2.55rem; }
+          .summit-agenda-content h2 { font-size: 2.55rem; }
           .summit-guests-content h2 { font-size: 2.55rem; }
           .summit-guests-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .summit-experience-grid { grid-template-columns: 1fr; }

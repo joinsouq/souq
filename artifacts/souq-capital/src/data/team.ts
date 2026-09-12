@@ -66,6 +66,18 @@ const YASER = {
   initials: "YA",
 };
 
+const LAUREN = {
+  name: "Lauren Kim",
+  role: "Merchandising",
+  programs: ["Accelerator"],
+  img: "team/cutout-lauren.png",
+  objectPosition: "center 28%",
+  portraitScale: 1.06,
+  portraitOffsetY: "6px",
+  portraitHoverScale: 1.1,
+  initials: "LK",
+};
+
 const UMER = {
   name: "Umer Khan",
   role: "Advisor",
@@ -78,6 +90,6 @@ const UMER = {
   initials: "UK",
 };
 
-export const OPERATING_TEAM = [AHMAD, SAFEER, BATHOOL, RAZI, UMER, KAREEM, YASER];
+export const OPERATING_TEAM = [AHMAD, SAFEER, BATHOOL, RAZI, UMER, KAREEM, YASER, LAUREN];
 
 export const CAPITAL_TEAM = [SAFEER, AHMAD, RAZI, BATHOOL];
