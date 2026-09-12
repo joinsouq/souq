@@ -227,7 +227,7 @@ const summitDetails: SummitDetails = {
             start: "10:20 AM",
             end: "10:30 AM",
             duration: "10 min",
-            segment: "Welcome & Souq Blueprint",
+            segment: "Souq Blueprint",
             speakers: "Ahmad Saleh, Partner",
             description: "Souq’s plans for the year ahead.",
           },
@@ -236,7 +236,7 @@ const summitDetails: SummitDetails = {
             end: "10:50 AM",
             duration: "20 min",
             segment: "Fireside Chat: Mastering Your Craft",
-            speakers: "Faraz Zaidi, Founder of Profound · Asli Sungur, Founder of Purecious",
+            speakers: "Faraz Zaidi · Profound; Asli Sungur · Purecious",
             description: "Product, brand, and craftsmanship.",
           },
           {
@@ -244,8 +244,7 @@ const summitDetails: SummitDetails = {
             end: "11:10 AM",
             duration: "20 min",
             segment: "Fireside Chat: Letting Go",
-            speakers:
-              "Yaser Albataineh, Co-Founder of Veiled · Akram Abdallah, Co-Founder of Nominal",
+            speakers: "Yaser Albataineh · Veiled; Akram Abdallah · Nominal",
             description: "The founder journey, picking your team, and knowing your limits.",
             singleLineDescription: true,
           },
@@ -261,7 +260,7 @@ const summitDetails: SummitDetails = {
             duration: "30 min",
             segment: "Track A: Production Ideation to Creation",
             speakers:
-              "Lauren Kim, Head of Merchandising at Souq · Akram Abdallah, Co-Founder of Nominal",
+              "Lauren Kim, Head of Merchandising at Souq; Akram Abdallah · Nominal",
             description: "The lifecycle of a product: idea → sample → MOQ → mass production.",
           },
           {
@@ -304,7 +303,8 @@ const summitDetails: SummitDetails = {
             end: "1:20 PM",
             duration: "20 min",
             segment: "Creator to Brand",
-            speakers: "Summer Albarcha, Founder of Summer Evenings",
+            speakers:
+              "Summer Albarcha · Summer Evenings; Leena Snoubar · Elaa; Layla Shaikley · Wise Systems (Mod.)",
             description: "Turning an audience into a business.",
           },
           {
@@ -312,15 +312,15 @@ const summitDetails: SummitDetails = {
             end: "1:40 PM",
             duration: "20 min",
             segment: "Ambition & Discipline",
-            speakers: "Khaled Atallah, Founder of Noun",
+            speakers: "Khaled Atallah · Noun Naturals",
             description: "How ambition and discipline shape a founder’s work.",
           },
           {
             start: "1:40 PM",
             end: "2:00 PM",
             duration: "20 min",
-            segment: "Ops First, Marketing Second",
-            speakers: "Fadwa Hillili, Founder of Fadwa Masala",
+            segment: "Finding the Balance",
+            speakers: "Fadwa Hillili · Fadwa Masala",
             description: "Operating and marketing a growing brand.",
           },
           {
@@ -349,8 +349,7 @@ const summitDetails: SummitDetails = {
             end: "3:20 PM",
             duration: "20 min",
             segment: "Fireside Chat: Coming in as an Outsider",
-            speakers:
-              "Aziza El Wanni, Founder of The Potion Studio · Nadir Tayach, Founder of Naali",
+            speakers: "Aziza El Wanni · The Potion Studio; Nadir Tayach · Naali",
             description: "Entering new markets and distribution channels.",
           },
           {
@@ -367,7 +366,7 @@ const summitDetails: SummitDetails = {
             duration: "40 min",
             segment: "Panel: The View from the Other Side",
             speakers:
-              "Yaser Albataineh, Co-Founder of Veiled · Leena Snoubar, Founder of Ella · Karam Saleh, Founder of Orijinal · Ebrahim Qattous, Founder · Abir Syed",
+              "Yaser Albataineh · Veiled; Leena Snoubar · Elaa; Karam Saleh · Orijinal; Ebrahim Qattous; Abir Syed",
             description: "What founders can learn from operators and domain leaders.",
           },
           {
