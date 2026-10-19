@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import Navbar from "@/components/Navbar";
+import { useEffect, useState, type CSSProperties } from "react";
+import { Link } from "wouter";
+import SitePage from "@/components/SitePage";
+import { CAPITAL, LEVELS, SERVICES } from "@/data/offerings";
 
 const WORDS = [
   "natural haircare brand",
@@ -14,249 +16,190 @@ const WORDS = [
   "activewear brand",
 ];
 
-export default function Umbrella() {
-  const [ready,     setReady]     = useState(false);
-  const [wordIdx,   setWordIdx]   = useState(0);
-  const [prevIdx,   setPrevIdx]   = useState<number | null>(null);
-  const washRef = useRef<HTMLDivElement>(null);
+function Rotator() {
+  const [idx, setIdx] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
 
-  /* entrance */
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setReady(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  /* ambient wash tracks pointer */
-  useEffect(() => {
-    const wash = washRef.current;
-    if (!wash || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-    let tx = 50, ty = 22, cx = 50, cy = 22, raf: number | null = null;
-    const onMove = (e: PointerEvent) => {
-      tx = (e.clientX / window.innerWidth)  * 100;
-      ty = (e.clientY / window.innerHeight) * 100;
-      if (!raf) raf = requestAnimationFrame(tick);
-    };
-    function tick() {
-      cx += (tx - cx) * 0.06;
-      cy += (ty - cy) * 0.06;
-      wash!.style.setProperty("--mx", cx.toFixed(2) + "%");
-      wash!.style.setProperty("--my", cy.toFixed(2) + "%");
-      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1)
-        ? requestAnimationFrame(tick) : null;
-    }
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, []);
-
-  /* word rotator */
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => {
-      setWordIdx(prev => {
-        const next = (prev + 1) % WORDS.length;
-        setPrevIdx(prev);
-        setTimeout(() => setPrevIdx(null), 650);
-        return next;
+      setIdx((p) => {
+        setPrev(p);
+        setTimeout(() => setPrev(null), 650);
+        return (p + 1) % WORDS.length;
       });
     }, 2600);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div
-      data-ready={ready}
-      className="u-page"
-    >
-      <Navbar tone="dark" />
+    <span className="home-rot-wrap">
+      <span className="home-rot" aria-hidden="true">
+        {prev !== null && <span key={`o${prev}`} className="home-word home-word-out">{WORDS[prev]}.</span>}
+        <span key={`i${idx}`} className="home-word home-word-in">{WORDS[idx]}.</span>
+        <span className="home-rot-line" />
+      </span>
+      <span className="sr-only">{WORDS[idx]}.</span>
+    </span>
+  );
+}
 
-      {/* ── ambient wash ── */}
-      <div
-        ref={washRef}
-        aria-hidden="true"
-        className="u-wash"
-        style={{ opacity: ready ? 1 : 0 }}
-      />
-
-      {/* ── film grain ── */}
-      <div aria-hidden="true" className="u-grain" />
-
-      {/* ── Swiss column rules ── */}
-      <div aria-hidden="true" className="u-rules">
-        <span /><span /><span /><span />
-      </div>
-
-      {/* ── shell ── */}
-      <div className="u-shell">
-
-        {/* hero */}
-        <main className="u-pad u-main">
-          <h1 className={`u-h1 u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "85ms" } as React.CSSProperties}>
-            One place to build a{" "}
-            {/* rotator */}
-            <span style={{ whiteSpace: "nowrap" }}>
-              <span className="u-rotator" aria-hidden="true">
-                {/* outgoing word */}
-                {prevIdx !== null && (
-                  <span key={`out-${prevIdx}`} className="u-word u-word-out">
-                    {WORDS[prevIdx]}
-                  </span>
-                )}
-                {/* current word */}
-                <span key={`in-${wordIdx}`} className="u-word u-word-in">
-                  {WORDS[wordIdx]}
-                </span>
-                <span className="u-underline" />
-              </span>
-              <span className="sr-only">{WORDS[wordIdx]}</span>.
-            </span>
+export default function Umbrella() {
+  return (
+    <SitePage>
+      <div className="sq-wrap">
+        {/* Hero */}
+        <section className="home-hero">
+          <h1 className="sq-display home-title">
+            One place to build a <Rotator />
           </h1>
-
-          <p className={`u-sub u-reveal${ready ? " u-vis" : ""}`} style={{ "--d": "170ms" } as React.CSSProperties}>
-            Souq is the one-stop shop for CPG and SMB businesses — growth
-            capital, the operating stack, and industry veterans at your
-            disposal.
+          <p className="sq-lede home-sub">
+            Souq gives consumer brands growth capital, an operating team for hire, and operators who
+            have scaled brands before. Use one piece or all of it.
           </p>
+          <div className="sq-actions home-cta">
+            <Link href="/apply" className="sq-btn sq-btn-primary">Apply</Link>
+            <Link href="/community" className="sq-btn sq-btn-ghost">Join the community</Link>
+          </div>
+        </section>
 
-        </main>
+        {/* Levels, drawn as a staircase: each step is a deeper engagement */}
+        <section className="sq-section" aria-labelledby="levels-title">
+          <div className="sq-head">
+            <h2 id="levels-title" className="sq-h2">Work with Souq as closely as you need.</h2>
+            <p className="sq-body">
+              Start in the community, hire us for a single job, or bring us in to run the back end.
+              Each step goes deeper, and you can start at whichever one fits.
+            </p>
+          </div>
 
+          <ol className="home-stairs">
+            {LEVELS.map((level, i) => (
+              <li key={level.id} className="home-step" style={{ "--depth": i + 1 } as CSSProperties}>
+                <h3 className="sq-h3">{level.name}</h3>
+                <p className="home-step-summary">{level.summary}</p>
+                <p className="sq-small">{level.forWho}</p>
+                <Link href={level.href} className="sq-link home-step-link">{level.cta}</Link>
+              </li>
+            ))}
+          </ol>
+
+          <div className="home-capital">
+            <div>
+              <h3 className="sq-h3">{CAPITAL.name}</h3>
+              <p className="sq-small" style={{ marginTop: ".5rem" }}>Runs alongside every level</p>
+            </div>
+            <p className="sq-body">{CAPITAL.summary} {CAPITAL.forWho}</p>
+            <Link href={CAPITAL.href} className="sq-link">{CAPITAL.cta}</Link>
+          </div>
+        </section>
+
+        {/* Services */}
+        <section className="sq-section" aria-labelledby="services-title">
+          <div className="sq-head">
+            <h2 id="services-title" className="sq-h2">Hire us for one job.</h2>
+            <div>
+              <p className="sq-body">
+                Each service has a set scope, an owner on our side, and a price you see before you start.
+                Pass-through costs like ad spend and postage are always listed separately.
+              </p>
+              <p style={{ marginTop: "1.5rem" }}>
+                <Link href="/services" className="sq-link">See all services</Link>
+              </p>
+            </div>
+          </div>
+          <ul className="sq-service-grid" role="list">
+            {SERVICES.map((s) => (
+              <li key={s.id} className="sq-service">
+                <h3 className="sq-h3">{s.name}</h3>
+                <p>{s.summary}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Close */}
+        <section className="sq-section home-close">
+          <h2 className="sq-h2">Not sure where you fit?</h2>
+          <p className="sq-lede" style={{ marginTop: "1.25rem" }}>
+            Tell us what is going on in the business. We read every application and point you to the right place.
+          </p>
+          <div className="sq-actions" style={{ marginTop: "2rem" }}>
+            <Link href="/apply" className="sq-btn sq-btn-primary">Apply</Link>
+            <Link href="/team" className="sq-btn sq-btn-ghost">Meet the team</Link>
+          </div>
+        </section>
       </div>
-
 
       <style>{`
-        /* ── dark base ── */
-        .u-page {
-          height: 100svh; min-height: 0;
-          background: oklch(0.155 0.004 285);
-          color: oklch(0.965 0.002 285);
-          font-family: 'Inter', ui-sans-serif, -apple-system, sans-serif;
-          font-feature-settings: "cv02" 1,"cv03" 1,"cv04" 1,"ss01" 1;
-          -webkit-font-smoothing: antialiased;
-          overflow: hidden;
-          position: relative;
-          display: flex; flex-direction: column;
+        .home-hero {
+          min-height: calc(100svh - 4rem);
+          display: flex; flex-direction: column; justify-content: center;
+          padding: clamp(3rem, 8vh, 6rem) var(--sq-pad);
         }
+        @media (max-width: 1023px) { .home-hero { min-height: 0; padding-block: 4.5rem; } }
+        .home-title { max-width: 15ch; }
+        .home-sub { margin-top: clamp(1.5rem, 3vh, 2rem); }
+        .home-cta { margin-top: clamp(2rem, 4vh, 2.75rem); }
 
-        /* ── ambient layers ── */
-        .u-wash {
-          position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
-          background:
-            radial-gradient(38vmax 38vmax at var(--mx,50%) var(--my,22%), color-mix(in srgb, var(--souq-coral) 12%, transparent), transparent 68%),
-            radial-gradient(30vmax 30vmax at 12% 84%, color-mix(in srgb, var(--souq-blue) 10%, transparent), transparent 70%);
-          transition: opacity .8s ease; will-change: background;
-        }
-        .u-grain {
-          position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .03;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-        .u-rules {
-          position: fixed; inset: 0; z-index: 0; pointer-events: none;
-          display: grid; grid-template-columns: repeat(4,1fr);
-          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
-        }
-        .u-rules span { border-left: 1px solid oklch(0.27 0.005 285); opacity: .55; }
-        .u-rules span:first-child { border-left-color: oklch(0.36 0.006 285); opacity: .8; }
-        @media (max-width:720px) { .u-rules { display:none; } }
-
-        /* shell */
-        .u-shell {
-          position: relative; z-index: 2;
-          width: min(calc(100% - 3rem), 76rem); margin-inline: auto;
-           min-height: 0; flex: 1; display: flex; flex-direction: column;
-          border-inline: 1px solid oklch(0.36 0.006 285);
-        }
-        @media (max-width:720px) { .u-shell { width:100%; border-inline:0; } }
-        .u-pad { padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
-
-        /* main */
-        .u-main {
-          flex: 1; display: flex; flex-direction: column; justify-content: center;
-          padding-block: clamp(2rem, 6vh, 5rem);
-        }
-        .u-eyebrow {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
-          color: oklch(0.45 0.006 285); margin: 0 0 clamp(1.5rem,4vh,2.5rem);
-        }
-        .u-h1 {
-          margin: 0;
-          font-size: clamp(2.6rem, 7.4vw, 5.9rem);
-          line-height: .96; letter-spacing: -0.045em; font-weight: 400; max-width: 22ch;
-        }
-        .u-sub {
-          margin: clamp(1.25rem,3vh,1.75rem) 0 0; max-width: 46ch;
-           font-size: clamp(1.2rem, 1.55vw, 1.35rem);
-          line-height: 1.55; color: oklch(0.66 0.006 285); letter-spacing: -0.011em;
-        }
-        .u-sub strong { color: oklch(0.965 0.002 285); font-weight: 500; }
-
-        /* rotator */
-        .u-rotator {
+        .home-rot-wrap { white-space: nowrap; }
+        .home-rot {
           position: relative; display: inline-block; vertical-align: bottom;
-          overflow: hidden; padding-bottom: .24em; margin-bottom: -.24em;
+          overflow: hidden; padding-bottom: .22em; margin-bottom: -.22em;
         }
-        .u-word {
-          display: inline-block; white-space: nowrap; font-style: italic; font-weight: 400;
-        }
-        .u-word-in  { animation: u-word-in  .52s cubic-bezier(.32,.72,0,1) both; }
-        .u-word-out {
-          position: absolute; left: 0; top: 0;
-          animation: u-word-out .52s cubic-bezier(.32,.72,0,1) both;
-        }
-        @keyframes u-word-in  { from { transform: translateY(140%); opacity: 0; } to { transform: none; opacity: 1; } }
-        @keyframes u-word-out { from { transform: none; opacity: 1; } to { transform: translateY(-140%); opacity: 0; } }
-        .u-underline {
-          position: absolute; left: 0; right: 0; bottom: .06em; height: 2px;
-          background: var(--souq-coral); opacity: .8;
-        }
+        .home-word { display: inline-block; white-space: nowrap; font-style: italic; }
+        .home-word-in { animation: home-in .52s cubic-bezier(.32,.72,0,1) both; }
+        .home-word-out { position: absolute; left: 0; top: 0; animation: home-out .52s cubic-bezier(.32,.72,0,1) both; }
+        @keyframes home-in { from { transform: translateY(140%); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes home-out { to { transform: translateY(-140%); opacity: 0; } }
+        .home-rot-line { position: absolute; left: 0; right: .35em; bottom: .05em; height: 2px; background: var(--souq-coral); }
+        @media (max-width: 640px) { .home-rot-wrap { white-space: normal; } .home-word { white-space: normal; } }
 
-        /* triad */
-        .u-triad {
-          display: grid; grid-template-columns: repeat(3,1fr);
-          border-top: 1px solid oklch(0.27 0.005 285);
+        /* Staircase: spans the full grid width so steps sit exactly on the column rules */
+        .home-stairs {
+          list-style: none; padding: 0; margin: 0 calc(-1 * var(--sq-pad));
+          display: grid; grid-template-columns: repeat(4, 1fr); align-items: end;
         }
-        @media (max-width:600px) { .u-triad { grid-template-columns: 1fr; } }
-        .u-triad-item {
-          position: relative; padding: 1.25rem 0;
-          display: flex; align-items: center;
-          text-decoration: none; color: inherit; cursor: pointer;
-          overflow: hidden;
+        .home-step {
+          --h: calc(15rem + var(--depth) * 3.25rem);
+          min-height: var(--h);
+          display: flex; flex-direction: column; gap: .9rem;
+          padding: 1.5rem clamp(1rem, 1.8vw, 1.75rem) 1.6rem;
+          border-top: 2px solid color-mix(in srgb, var(--souq-coral) calc(var(--depth) * 24%), var(--sq-line));
+          background: linear-gradient(to bottom,
+            color-mix(in srgb, var(--souq-coral) calc(var(--depth) * 3.5%), transparent),
+            transparent 85%);
         }
-        .u-triad-border { border-left: 1px solid oklch(0.27 0.005 285); padding-left: 1.15rem; }
-        @media (max-width:600px) {
-          .u-triad-border { border-left: 0; padding-left: 0; border-top: 1px solid oklch(0.27 0.005 285); }
-        }
-        .u-triad-item::after {
-          content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
-          background: oklch(0.965 0.002 285);
-          transform: scaleX(0); transform-origin: left;
-          transition: transform .55s cubic-bezier(.22,1,.36,1);
-        }
-        .u-triad-item:hover::after { transform: scaleX(1); }
-        .u-triad-lbl { font-size: 1.2rem; letter-spacing: -0.012em; color: oklch(0.66 0.006 285); transition: color .3s ease; flex: 1; }
-        .u-triad-item:hover .u-triad-lbl { color: oklch(0.965 0.002 285); }
-        .u-triad-arrow { flex: none; color: oklch(0.45 0.006 285); opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s cubic-bezier(.22,1,.36,1), color .3s ease; }
-        .u-triad-item:hover .u-triad-arrow { opacity: 1; transform: none; color: oklch(0.965 0.002 285); }
-        @media (max-width:720px) {
-          .u-triad-arrow { opacity: 1; transform: none; }
-          .u-main { padding-block: clamp(1.5rem, 4vh, 2.5rem); }
-        }
+        .home-step-summary { margin: 0; color: var(--sq-muted); font-size: .975rem; line-height: 1.55; }
+        .home-step-link { margin-top: auto; align-self: flex-start; }
 
-        /* entrance */
-        .u-reveal { opacity: 0; transform: translateY(14px); }
-        .u-vis { animation: u-reveal .95s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
-        @keyframes u-reveal { to { opacity: 1; transform: none; } }
+        .home-capital {
+          margin: 0 calc(-1 * var(--sq-pad));
+          display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1.5rem;
+          align-items: center;
+          padding: 1.75rem clamp(1rem, 1.8vw, 1.75rem);
+          border-top: 1px solid color-mix(in srgb, var(--souq-blue) 45%, var(--sq-line));
+          border-bottom: 1px solid var(--sq-line);
+          background: color-mix(in srgb, var(--souq-blue) 5%, transparent);
+        }
+        .home-capital .sq-link { justify-self: end; }
 
-        /* utils */
-        .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+        .home-close { padding-bottom: clamp(5rem, 12vw, 9rem); }
 
-        /* reduced motion */
+        @media (max-width: 900px) {
+          .home-stairs { grid-template-columns: 1fr 1fr; row-gap: 0; }
+          .home-step { --h: auto; }
+          .home-capital { grid-template-columns: 1fr; }
+          .home-capital .sq-link { justify-self: start; }
+        }
+        @media (max-width: 560px) {
+          .home-stairs { grid-template-columns: 1fr; }
+          .home-step { gap: .7rem; }
+        }
         @media (prefers-reduced-motion: reduce) {
-          .u-reveal, .u-vis { opacity:1 !important; transform:none !important; animation:none !important; }
-          .u-wash { display:none; }
-          .u-word-in, .u-word-out { animation:none !important; }
+          .home-word-in, .home-word-out { animation: none; }
         }
       `}</style>
-    </div>
+    </SitePage>
   );
 }

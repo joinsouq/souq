@@ -8,9 +8,12 @@ interface NavbarProps {
 
 const NAV_LINKS = [
   { label: "Capital", href: "/capital" },
-  { label: "Operating Stack", href: "/accelerator" },
+  { label: "Services", href: "/services" },
+  { label: "Accelerator", href: "/accelerator" },
+  { label: "Community", href: "/community" },
   { label: "Summit", href: "/summit" },
   { label: "Team", href: "/team" },
+  { label: "Careers", href: "/careers" },
 ];
 
 export default function Navbar({ tone = "light" }: NavbarProps) {
@@ -60,10 +63,10 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
     >
       <div className="max-w-[1320px] mx-auto px-4 md:px-6 min-h-16 flex items-center justify-between">
         <Link href="/" data-testid="logo-link" className="flex items-center text-inherit no-underline">
-          <SouqLogo variant={logoVariant} className="h-[30px] w-auto md:h-[32px]" />
+          <SouqLogo variant={logoVariant} className="h-[28px] w-auto lg:h-[30px]" />
         </Link>
 
-        <div className="hidden md:flex items-center gap-[40px] lg:gap-[60px]">
+        <div className="hidden lg:flex items-center gap-[28px] xl:gap-[40px]">
           {NAV_LINKS.map(link => (
             <Link key={link.href} href={link.href}>
               <span
@@ -90,11 +93,11 @@ export default function Navbar({ tone = "light" }: NavbarProps) {
       <div
         data-testid="page-menu"
         aria-label="Page menu"
-        className={`md:hidden flex items-center gap-7 overflow-x-auto border-t px-4 py-0 whitespace-nowrap ${borderClass}`}
+        className={`lg:hidden flex items-center gap-2 overflow-x-auto border-t px-4 py-0 whitespace-nowrap ${borderClass}`}
         style={{ scrollbarWidth: "none" }}
       >
         {NAV_LINKS.map(link => (
-          <Link key={link.href} href={link.href} className="inline-flex min-h-11 min-w-11 items-center justify-center px-2">
+          <Link key={link.href} href={link.href} className="inline-flex shrink-0 min-h-11 items-center justify-center">
             <span
               data-testid={`mobile-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
               className={`inline-flex min-h-11 min-w-11 items-center justify-center px-2 text-[12px] font-medium transition-colors ${isLinkActive(link.href) ? activePageMenuClass : pageMenuClass}`}

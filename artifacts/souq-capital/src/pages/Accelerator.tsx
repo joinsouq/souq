@@ -104,7 +104,7 @@ export default function Accelerator() {
       <section className="accelerator-hero">
         <div className="accelerator-container accelerator-hero-inner">
           <div>
-            <p className="accelerator-eyebrow">Souq · Operating Stack · 2026</p>
+            <p className="accelerator-eyebrow">Souq Accelerator, 2026</p>
             <h1>2026 Souq Accelerator Program</h1>
           </div>
           <div className="accelerator-hero-side">

@@ -392,7 +392,7 @@ const summitDetails: SummitDetails = {
     list: confirmedGuests,
   },
   footer: {
-    pillars: "Capital / Operating Stack / Summit",
+    pillars: "Capital / Services / Accelerator / Community",
     copyright: `© ${new Date().getFullYear()} Souq`,
   },
 };

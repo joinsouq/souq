@@ -6,6 +6,9 @@ import Apply from "@/pages/Apply";
 import Accelerator from "@/pages/Accelerator";
 import Summit from "@/pages/Summit";
 import Team from "@/pages/Team";
+import Services from "@/pages/Services";
+import Community from "@/pages/Community";
+import Careers from "@/pages/Careers";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -27,6 +30,9 @@ function Router() {
       <Route path="/summit" component={Summit} />
       <Route path="/apply" component={Apply} />
       <Route path="/team" component={Team} />
+      <Route path="/services" component={Services} />
+      <Route path="/community" component={Community} />
+      <Route path="/careers" component={Careers} />
       <Route component={NotFound} />
     </Switch>
   );
