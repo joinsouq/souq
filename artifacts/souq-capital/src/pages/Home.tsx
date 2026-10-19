@@ -346,7 +346,7 @@ export default function Home() {
                 <div className="flex flex-col gap-3">
                   {[
                     "Bank Loans: High interest rates, Conflicts of interest",
-                    "Venture Capital: Debt-ridden, Variable payback, Conflicts of interest",
+                    "Venture Capital: Equity dilution, Loss of control, Conflicts of interest",
                     "RBF / Lending Platforms: High interest rates, Rigid use (mostly inventory), Misaligned Values",
                     "Credit Cards / LOC: High interest rates, Variable payback, Rigid use, Conflicts of interest",
                   ].map((item) => (
@@ -531,7 +531,7 @@ export default function Home() {
           <ScrollReveal>
             <div className="flex flex-col gap-2 mb-12">
               <p className="section-label text-[#787777]">[ FAQs ]</p>
-              <h2 className="section-h2 text-[#14181A]">Frequently Ask Questions</h2>
+              <h2 className="section-h2 text-[#14181A]">Frequently Asked Questions</h2>
               <p className="body-p text-[#666]">
                 Find answers to common questions about our services, process, and how Souq can help you achieve your goals.
               </p>

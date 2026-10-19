@@ -189,13 +189,13 @@ const summitDetails: SummitDetails = {
     title: "The Founders",
     emphasis: "Forum.",
     description:
-      "A Saturday for Muslim founders, operators, and creators who want to compare notes, make useful connections, and move the work forward.",
+      "A Saturday for Muslim founders, operators, and creators to compare notes, make useful connections, and move the work forward.",
     asideNumber: "09 / 12",
-    aside: "Saturday, September 12, 2026",
+    aside: "Saturday, September 12, 2026 · Thank you for joining us",
   },
   agenda: {
     label: "Run of show",
-    heading: "Saturday’s schedule.",
+    heading: "How the day ran.",
     groups: [
       {
         label: "Opening",
@@ -386,9 +386,9 @@ const summitDetails: SummitDetails = {
     ],
   },
   guests: {
-    label: "Confirmed guests",
-    heading: "Founders and teams already confirmed.",
-    body: "A growing list of the founders, operators, and brands joining September 12. More guests and speakers are confirmed every week.",
+    label: "In the room",
+    heading: "The founders and teams who joined us.",
+    body: "Thank you to the founders, operators, and brands who spent September 12 with us. Join the Souq community to hear about the next one.",
     list: confirmedGuests,
   },
   footer: {

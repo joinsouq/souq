@@ -1,5 +1,5 @@
-import blackLogo from "@assets/Sou_Logo-Text_(Black)_1787879812675.png";
-import whiteLogo from "@assets/Souq_Logo-_Text_(White)_1787879812675.png";
+import blackLogo from "@/assets/souq-wordmark-black.png";
+import whiteLogo from "@/assets/souq-wordmark-white.png";
 
 type SouqLogoProps = {
   variant?: "black" | "white";

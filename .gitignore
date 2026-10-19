@@ -47,3 +47,9 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Chat uploads and Vercel local state (keep private files out of this public repo)
+attached_assets/
+.vercel
+.env*
+!.env.example
