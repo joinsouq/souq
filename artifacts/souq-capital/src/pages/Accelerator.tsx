@@ -1,471 +1,289 @@
-import { useState } from "react";
 import { Link } from "wouter";
-import ScrollReveal from "@/components/ScrollReveal";
-import Navbar from "@/components/Navbar";
+import SitePage from "@/components/SitePage";
+import { SERVICES } from "@/data/offerings";
+import { OPERATING_TEAM } from "@/data/team";
 
-const AT_A_GLANCE_BEST_FOR = [
-  "Have $1M+ in revenue",
-  "Are led by a strong founder-operator",
-  "Have a $75M+ addressable market",
-  "Are scaling in the U.S. or entering the U.S. market",
-  "Have clear product differentiation (apparel is highly selective)",
+const PATHS = [
+  {
+    name: "Accelerator",
+    line: "We advise. Your team does the work.",
+    body: "A diagnostic, a 90-day plan, monthly working sessions, and quarterly reviews with operators who have scaled consumer brands.",
+    href: "#how-it-works",
+  },
+  {
+    name: "Operating Partnership",
+    line: "We run part of the back end for you.",
+    body: "A named Souq operating lead takes over an agreed part of the business day to day. You keep the brand, product, and final say.",
+    href: "#operating-partnership",
+  },
 ];
 
-const AT_A_GLANCE_WHAT_YOU_GET = [
-  "Monthly financial and cash flow reviews",
-  "Marketing and ad spend calibration",
-  "Manufacturing and supply chain guidance",
-  "Dedicated advisor access via Slack",
-  "Quarterly strategic reviews",
-  "Access to a vetted execution network",
-  "Private founder community + annual summit",
+const STEPS = [
+  { title: "Diagnostic", body: "We go through your numbers, inventory, ads, fulfillment, and content, and name the few things holding growth back." },
+  { title: "90-day plan", body: "A short, specific plan with owners and targets, built with you, not handed to you." },
+  { title: "Monthly sessions", body: "Working sessions on the plan, plus a shared Slack channel with the team between calls." },
+  { title: "Quarterly reviews", body: "A full review of results against the plan, and the next quarter's priorities." },
+];
+
+const INCLUDED = [
+  "The diagnostic and a 90-day plan",
+  "Monthly working sessions with a lead partner",
+  "A shared Slack channel with the team",
+  "Monthly review of financials and cash flow",
+  "Ad spend checked against industry benchmarks",
+  "Inventory, sourcing, and manufacturing guidance",
+  "Quarterly strategy reviews",
+  "The founder community and the annual Summit",
+];
+
+const FOCUS = [
+  { title: "Finance and cash", body: "Monthly financials, cash flow, forecasting, and how much capital the plan really needs." },
+  { title: "Marketing", body: "Ad spend against results, funnel and conversion, and what to stop doing." },
+  { title: "Product and inventory", body: "Buying, forecasting, sourcing, and manufacturing, so cash isn't stuck on the shelf." },
+  { title: "Strategy", body: "Channels, pricing, and where the next stage of growth comes from." },
+];
+
+const OP_POINTS = [
+  "A named operating lead on our side",
+  "A written scope: which parts of the business we run, and the targets",
+  "Our service teams do the work, so there's nothing to hire or manage",
+  "A weekly operating rhythm with you",
+  "A base fee plus a share of revenue, so we earn more only when you grow",
 ];
 
 const FAQS = [
-  {
-    q: "What is the Souq Accelerator?",
-    a: "The Souq Accelerator is a founder-first growth program designed to help consumer brands move from early traction to scalable, market-leading businesses.\n\nMany promising brands don't fail because of ambition — they fail because founders are forced to navigate growth, operations, and capital efficiency alone. Souq exists to close that gap with practical, hands-on support from experienced operators.\n\nThis is an advisory-led accelerator with real execution behind it — not generic advice or short-term tactics.",
-  },
-  {
-    q: "Who is it for?",
-    a: "We work with a small, selective group of consumer brands that show strong fundamentals and clear potential to scale.\n\nIdeal companies typically have $1M+ in existing revenue, an exceptional founder-operator, a large defensible market opportunity ($75M+), clear product differentiation, and are either global brands entering the U.S. or U.S.-based brands scaling further. Apparel brands are considered on a highly selective basis.",
-  },
-  {
-    q: "How does the program work?",
-    a: "Souq is designed to stay close to founders while respecting their time.\n\nProgram structure includes monthly check-in calls with async advisor access, quarterly comprehensive strategy reviews, a dedicated Slack channel with the advisory team, a private Slack community with other Accelerator founders, an annual Founder Summit for high-growth brand builders, and a 30 and 60-day execution roadmap with a lead partner.\n\nThis model is built for ongoing momentum, not one-off advice.",
-  },
+  { q: "Who is the Accelerator for?", a: "Consumer brands with real traction, usually $1M or more a year, led by a founder who runs the business day to day, with a product that stands apart. If you're earlier, a single service or office hours is often the better first step." },
+  { q: "What's the difference between the Accelerator and an Operating Partnership?", a: "In the Accelerator, we advise and your team carries out the plan. In an Operating Partnership, a Souq operating lead and our service teams run an agreed part of the business for you." },
+  { q: "What does it cost?", a: "It depends on the scope. We walk through pricing on the intro call, once we understand where the business is and what you need." },
+  { q: "Do I have to use your service teams?", a: "No. Accelerator brands can bring in any service when they need execution, each with its own scope and price, but it's never required." },
+  { q: "Can I get funding too?", a: "Yes. Souq Capital runs alongside the Accelerator, and many brands use both. You can say so on the application." },
+  { q: "How selective is it?", a: "We work with a small group of brands at a time so every founder gets real attention. We read every application closely." },
 ];
-
-const CORE_AREAS = [
-  {
-    label: "Financial Operations",
-    items: [
-      "Monthly review of financials and cash flow",
-      "Capital efficiency and forecasting support",
-      "Accounting and finance guidance",
-    ],
-  },
-  {
-    label: "Marketing",
-    items: [
-      "Review of ad spend vs. results with industry benchmarks",
-      "Paid acquisition and funnel optimization",
-      "Strategic calibration for growth-stage brands",
-    ],
-  },
-  {
-    label: "Product & Manufacturing",
-    items: [
-      "Manufacturing strategy and supply chain guidance",
-      "Inventory planning, forecasting, and management",
-      "Support across sourcing and production decisions",
-    ],
-  },
-  {
-    label: "Business Strategy",
-    items: [
-      "Overall growth and operating strategy",
-      "Quarterly deep-dive reviews with the Accelerator team",
-      "Annual strategic kickoff to align goals and priorities",
-    ],
-  },
-];
-
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div
-      className="accelerator-faq-item"
-      onClick={() => setOpen((o) => !o)}
-    >
-      <div className="accelerator-faq-question">
-        <p>{q}</p>
-        <span>{open ? "−" : "+"}</span>
-      </div>
-      {open && (
-        <div className="accelerator-faq-answer">
-          {a.split("\n\n").map((para, i) => (
-            <p key={i}>
-              {para}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function Accelerator() {
+  const team = OPERATING_TEAM.filter((m) => m.programs.includes("Accelerator"));
   return (
-    <div className="accelerator-page">
-      <Navbar tone="dark" />
-
-      {/* Hero — dark full bleed */}
-      <section className="accelerator-hero">
-        <div className="accelerator-container accelerator-hero-inner">
-          <div>
-            <p className="accelerator-eyebrow">Souq Accelerator, 2026</p>
-            <h1>2026 Souq Accelerator Program</h1>
+    <SitePage>
+      <div className="sq-wrap">
+        <section className="sq-page-hero">
+          <p className="acc-kicker">Souq Accelerator</p>
+          <h1 className="sq-display" style={{ maxWidth: "13ch" }}>Operators in your corner, every month.</h1>
+          <p className="sq-lede">
+            A plan, monthly working sessions, and people who have scaled consumer brands before. When you
+            need hands on the work, our service teams are already in the room.
+          </p>
+          <div className="sq-actions">
+            <Link href="/apply/accelerator" className="sq-btn sq-btn-primary">Apply to the Accelerator</Link>
+            <Link href="/apply/talk" className="sq-btn sq-btn-ghost">Talk to us first</Link>
           </div>
-          <div className="accelerator-hero-side">
-            <p>Accelerating consumer brands to market leaders.</p>
-            <span>Advisory-led support, built around the work.</span>
-          </div>
+        </section>
 
-          {/* Tab pills */}
-          <div className="accelerator-hero-links">
-            {[
-              { label: "At a Glance", href: "#at-a-glance" },
-              { label: "Give Me the Details", href: "#details" },
-              { label: "Join the Accelerator", href: "#join" },
-            ].map((tab) => (
-              <a
-                key={tab.label}
-                href={tab.href}
-              >
-                {tab.label}
-                <span>↘</span>
+        <section className="sq-section" aria-labelledby="acc-paths" style={{ paddingTop: 0, borderTop: 0 }}>
+          <h2 id="acc-paths" className="sr-only">Two ways to work with us</h2>
+          <div className="acc-paths">
+            {PATHS.map((p) => (
+              <a key={p.name} href={p.href} className="acc-path">
+                <h3 className="sq-h3">{p.name}</h3>
+                <p className="acc-path-line">{p.line}</p>
+                <p className="sq-body">{p.body}</p>
+                <span className="sq-link" style={{ marginTop: "auto", alignSelf: "flex-start" }}>How it works</span>
               </a>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* At a Glance */}
-      <section id="at-a-glance" className="accelerator-section accelerator-glance">
-        <div className="accelerator-container">
-          <ScrollReveal>
-            <p className="accelerator-label">At a Glance</p>
-            <p className="accelerator-lede">
-              Souq Accelerator is a high-touch, advisory-led program for consumer brand founders who are ready to scale.
-            </p>
-          </ScrollReveal>
-
-          <div className="accelerator-columns">
-            <ScrollReveal>
-              <h3>
-                Best for brands that:
-              </h3>
-              <ul>
-                {AT_A_GLANCE_BEST_FOR.map((item) => (
-                  <li key={item}>
-                    <span />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </ScrollReveal>
-
-            <ScrollReveal delay={100}>
-              <h3>
-                What you get:
-              </h3>
-              <ul>
-                {AT_A_GLANCE_WHAT_YOU_GET.map((item) => (
-                  <li key={item}>
-                    <span />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </ScrollReveal>
+        <section id="how-it-works" className="sq-section" aria-labelledby="acc-how">
+          <div className="sq-head">
+            <h2 id="acc-how" className="sq-h2">How the Accelerator works.</h2>
+            <p className="sq-body">Built for ongoing momentum, not one-off advice. Each quarter starts from where the last one landed.</p>
           </div>
-
-          <ScrollReveal>
-            <p className="accelerator-callout">
-              Souq is built for founders who want real execution, aligned incentives, and long-term brand growth.
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Give me the Details */}
-      <section id="details" className="accelerator-section accelerator-details">
-        <div className="accelerator-container">
-          <ScrollReveal>
-            <p className="accelerator-label">The details</p>
-            <p className="accelerator-lede">
-              How the Accelerator works, where we focus, and what founders can expect.
-            </p>
-          </ScrollReveal>
-
-          {/* FAQ accordion */}
-          <ScrollReveal>
-            <div className="accelerator-faq">
-              {FAQS.map((faq) => (
-                <FaqItem key={faq.q} {...faq} />
-              ))}
-            </div>
-          </ScrollReveal>
-
-          {/* Core Areas */}
-          <ScrollReveal>
-            <h3 className="accelerator-subheading">
-              Core Areas of Support
-            </h3>
-          </ScrollReveal>
-          <div className="accelerator-core-grid">
-            {CORE_AREAS.map((area, i) => (
-              <ScrollReveal key={area.label} delay={i * 80}>
-                <div className="accelerator-core-card">
-                  <p className="accelerator-label">{area.label}</p>
-                  <ul>
-                    {area.items.map((item) => (
-                      <li key={item}>
-                        <span />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </ScrollReveal>
+          <ol className="acc-steps">
+            {STEPS.map((s, i) => (
+              <li key={s.title}>
+                <span className="acc-num">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="sq-h3">{s.title}</h3>
+                <p className="sq-body">{s.body}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="acc-focus">
+            {FOCUS.map((f) => (
+              <div key={f.title}>
+                <h3 className="sq-h3" style={{ fontSize: "1.05rem" }}>{f.title}</h3>
+                <p className="sq-body">{f.body}</p>
+              </div>
             ))}
           </div>
+        </section>
 
-          <ScrollReveal>
-            <p className="accelerator-network-note">
-              Founders are supported by a trusted network that can execute at every stage of growth.
+        <section id="whats-included" className="sq-section" aria-labelledby="acc-included">
+          <div className="sq-head">
+            <h2 id="acc-included" className="sq-h2">What's included.</h2>
+            <p className="sq-body">
+              Everything on the left comes with the Accelerator. When you need execution, add any of our service
+              teams. Each has its own scope and price, quoted before you start.
             </p>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Join the Accelerator */}
-      <section id="join" className="accelerator-section accelerator-join">
-        <div className="accelerator-container">
-          <ScrollReveal>
-            <p className="accelerator-label">For high-growth companies</p>
-            <h2>
-              Ready to become a market leader?
-            </h2>
-            <p className="accelerator-join-copy">
-              The Souq Accelerator works with a selective group of high-growth consumer companies ready to scale with real support behind them. If that's your company, apply to start the conversation.
-            </p>
-            <a href="/apply/accelerator" className="accelerator-primary-button">
-              Apply to the Accelerator →
-            </a>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="accelerator-footer">
-        <div className="accelerator-container accelerator-footer-inner">
-          <span>© {new Date().getFullYear()} Souq. All rights reserved.</span>
-          <div>
-            <Link href="/">Home</Link>
-            <Link href="/capital">Capital</Link>
-            <Link href="/team">Team</Link>
-            <Link href="/apply">Apply</Link>
           </div>
-        </div>
-      </footer>
+          <div className="acc-included">
+            <div>
+              <h3 className="acc-col-title">In every Accelerator plan</h3>
+              <ul role="list" className="acc-ticks">
+                {INCLUDED.map((x) => <li key={x}>{x}</li>)}
+              </ul>
+            </div>
+            <div>
+              <h3 className="acc-col-title">Add a service team</h3>
+              <ul role="list" className="acc-services">
+                {SERVICES.map((s) => (
+                  <li key={s.id}>
+                    <Link href={`/services#${s.id}`}>
+                      <span className="sq-h3" style={{ fontSize: "1rem" }}>{s.name}</span>
+                      <span className="acc-svc-summary">{s.summary}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="operating-partnership" className="sq-section acc-op" aria-labelledby="acc-op">
+          <div>
+            <p className="acc-kicker">Operating Partnership</p>
+            <h2 id="acc-op" className="sq-h2">When you're ready to hand over the back end.</h2>
+            <p className="sq-lede" style={{ marginTop: "1.5rem" }}>
+              Some founders don't need more advice. They need the operating load off their plate. In an Operating
+              Partnership, a Souq operating lead runs an agreed part of the business, like fulfillment, inventory,
+              finance, or media, with our service teams doing the work.
+            </p>
+            <p className="sq-body" style={{ marginTop: "1rem" }}>You keep the brand, the product, and the final say.</p>
+            <div className="sq-actions" style={{ marginTop: "2rem" }}>
+              <Link href="/apply/talk" className="sq-btn sq-btn-primary">Talk to us about it</Link>
+            </div>
+          </div>
+          <ul role="list" className="acc-ticks acc-op-list">
+            {OP_POINTS.map((x) => <li key={x}>{x}</li>)}
+          </ul>
+        </section>
+
+        {team.length > 0 && (
+          <section className="sq-section acc-team" aria-labelledby="acc-team">
+            <div>
+              <h2 id="acc-team" className="sq-h2">Who you work with.</h2>
+              <p className="sq-body" style={{ marginTop: "1.25rem" }}>
+                Operators who have built and scaled consumer brands, alongside the Souq investment team.
+              </p>
+              <p style={{ marginTop: "1.75rem" }}><Link href="/team" className="sq-link">Meet the whole team</Link></p>
+            </div>
+            <ul className="acc-faces" role="list">
+              {team.map((m) => (
+                <li key={m.name}>
+                  <img src={`${import.meta.env.BASE_URL}${m.img}`} alt="" loading="lazy" style={{ objectPosition: m.objectPosition }} />
+                  <span className="sq-h3" style={{ fontSize: "1rem" }}>{m.name}</span>
+                  <span className="sq-small">{m.role}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section className="sq-section" aria-labelledby="acc-faq">
+          <div className="sq-head">
+            <h2 id="acc-faq" className="sq-h2">Questions.</h2>
+          </div>
+          <div className="acc-faq">
+            {FAQS.map((f) => (
+              <details key={f.q}>
+                <summary><span className="sq-h3">{f.q}</span><span className="acc-plus" aria-hidden="true" /></summary>
+                <p className="sq-body">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="sq-section acc-close">
+          <h2 className="sq-h2">Ready to build the next stage?</h2>
+          <p className="sq-lede" style={{ marginTop: "1.25rem" }}>
+            The application takes about fifteen minutes, and we read every one.
+          </p>
+          <div className="sq-actions" style={{ marginTop: "2rem" }}>
+            <Link href="/apply/accelerator" className="sq-btn sq-btn-primary">Apply to the Accelerator</Link>
+            <Link href="/services" className="sq-btn sq-btn-ghost">Just need one service?</Link>
+          </div>
+        </section>
+      </div>
+
       <style>{`
-        .accelerator-page {
-          min-height: 100svh;
-          overflow-x: hidden;
-          background: oklch(0.155 0.004 285);
-          color: oklch(0.965 0.002 285);
-          font-family: 'Inter', ui-sans-serif, -apple-system, sans-serif;
-          font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "ss01" 1;
-          -webkit-font-smoothing: antialiased;
+        .acc-kicker { margin: 0 0 1.5rem; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--souq-coral); }
+
+        .acc-paths { display: grid; grid-template-columns: 1fr 1fr; margin: 0 calc(-1 * var(--sq-pad)); border-top: 1px solid var(--sq-line); border-bottom: 1px solid var(--sq-line); }
+        .acc-path { display: flex; flex-direction: column; gap: .8rem; padding: 1.75rem clamp(1rem, 1.8vw, 1.75rem) 2rem; text-decoration: none; transition: background-color .2s ease; }
+        .acc-path + .acc-path { border-left: 1px solid var(--sq-line); background: linear-gradient(to bottom, color-mix(in srgb, var(--souq-coral) 7%, transparent), transparent 85%); }
+        .acc-path:hover { background-color: color-mix(in srgb, var(--souq-coral) 6%, transparent); }
+        .acc-path-line { margin: 0; font-size: clamp(1.25rem, 2vw, 1.6rem); letter-spacing: -0.025em; line-height: 1.25; }
+
+        .acc-steps { list-style: none; padding: 0; margin: 0 calc(-1 * var(--sq-pad)); display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--sq-line); }
+        .acc-steps li { display: flex; flex-direction: column; gap: .75rem; padding: 1.5rem clamp(1rem, 1.8vw, 1.75rem); }
+        .acc-steps li + li { border-left: 1px solid var(--sq-line); }
+        .acc-num { font-size: .85rem; color: var(--souq-coral); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+
+        .acc-focus { margin: 3.5rem calc(-1 * var(--sq-pad)) 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--sq-line); }
+        .acc-focus > div { display: flex; flex-direction: column; gap: .6rem; padding: 1.4rem clamp(1rem, 1.8vw, 1.75rem); }
+        .acc-focus > div + div { border-left: 1px solid var(--sq-line); }
+
+        .acc-included { display: grid; grid-template-columns: 1fr 1fr; margin: 0 calc(-1 * var(--sq-pad)); border-top: 1px solid var(--sq-line); }
+        .acc-included > div { padding: 1.75rem clamp(1rem, 1.8vw, 1.75rem) 0; }
+        .acc-included > div + div { border-left: 1px solid var(--sq-line); }
+        .acc-col-title { margin: 0 0 1.25rem; font-size: .85rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--sq-faint); }
+        .acc-ticks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .85rem; }
+        .acc-ticks li { position: relative; padding-left: 1.6rem; font-size: 1rem; line-height: 1.45; }
+        .acc-ticks li::before { content: ""; position: absolute; left: 0; top: .3em; width: .7rem; height: .4rem; border-left: 1.5px solid var(--souq-coral); border-bottom: 1.5px solid var(--souq-coral); transform: rotate(-45deg); }
+        .acc-services { list-style: none; margin: 0 calc(-1 * clamp(1rem, 1.8vw, 1.75rem)); padding: 0; }
+        .acc-services li { border-top: 1px solid var(--sq-line); }
+        .acc-services a { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1rem; padding: 1rem clamp(1rem, 1.8vw, 1.75rem); text-decoration: none; transition: background-color .2s ease; }
+        .acc-services a:hover { background: color-mix(in srgb, var(--souq-coral) 6%, transparent); }
+        .acc-services a:hover .sq-h3 { color: var(--souq-peach); }
+        .acc-svc-summary { color: var(--sq-muted); font-size: .925rem; line-height: 1.5; }
+
+        .acc-op { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: center; background: linear-gradient(135deg, color-mix(in srgb, var(--souq-coral) 9%, transparent), transparent 60%); }
+        .acc-op-list { padding: 1.75rem; border: 1px solid var(--sq-line-strong); border-radius: 6px; background: color-mix(in srgb, var(--sq-ink) 70%, transparent); }
+
+        .acc-team { display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem; align-items: start; }
+        .acc-faces { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .acc-faces li { display: flex; flex-direction: column; gap: .3rem; }
+        .acc-faces img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; background: var(--sq-ink-2); margin-bottom: .6rem; filter: grayscale(1); transition: filter .3s ease; }
+        .acc-faces li:hover img { filter: none; }
+
+        .acc-faq { border-top: 1px solid var(--sq-line); margin: 0 calc(-1 * var(--sq-pad)); }
+        .acc-faq details { border-bottom: 1px solid var(--sq-line); }
+        .acc-faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.4rem clamp(1rem, 1.8vw, 1.75rem); }
+        .acc-faq summary::-webkit-details-marker { display: none; }
+        .acc-faq summary:hover .sq-h3 { color: var(--souq-peach); }
+        .acc-faq details p { padding: 0 clamp(1rem, 1.8vw, 1.75rem) 1.6rem; }
+        .acc-plus { position: relative; width: .9rem; height: .9rem; flex: none; }
+        .acc-plus::before, .acc-plus::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--sq-muted); transition: transform .25s ease; }
+        .acc-plus::after { transform: rotate(90deg); }
+        .acc-faq details[open] .acc-plus::after { transform: rotate(0deg); }
+
+        .acc-close { padding-bottom: clamp(5rem, 12vw, 9rem); }
+        #how-it-works, #whats-included, #operating-partnership { scroll-margin-top: 5rem; }
+
+        @media (max-width: 1000px) {
+          .acc-steps, .acc-focus { grid-template-columns: 1fr 1fr; }
+          .acc-steps li, .acc-focus > div { border-bottom: 1px solid var(--sq-line); }
+          .acc-steps li + li, .acc-focus > div + div { border-left: 0; }
+          .acc-steps li:nth-child(even), .acc-focus > div:nth-child(even) { border-left: 1px solid var(--sq-line); }
+          .acc-op, .acc-team { grid-template-columns: 1fr; }
         }
-        .accelerator-container {
-          width: min(100% - 2.5rem, 82.5rem);
-          margin: 0 auto;
-        }
-        .accelerator-primary-button {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          color: oklch(0.18 0.006 285);
-          background: var(--souq-coral);
-          border: 0;
-          text-decoration: none;
-          font-size: .8rem;
-          font-weight: 600;
-          transition: transform .2s ease, background .2s ease;
-        }
-        .accelerator-primary-button:hover { background: var(--souq-peach); transform: translateY(-2px); }
-        .accelerator-hero {
-          position: relative;
-          padding: clamp(5rem, 12vh, 9rem) 0 clamp(5rem, 10vh, 8rem);
-          border-bottom: 1px solid oklch(0.27 0.005 285);
-          background:
-            linear-gradient(90deg, transparent 24.9%, oklch(0.27 0.005 285 / .4) 25%, transparent 25.1%, transparent 74.9%, oklch(0.27 0.005 285 / .4) 75%, transparent 75.1%),
-            radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--souq-coral) 22%, transparent), transparent 30rem);
-        }
-        .accelerator-hero-inner {
-          display: grid;
-          grid-template-columns: 1.4fr .6fr;
-          gap: 3rem;
-          align-items: end;
-        }
-        .accelerator-eyebrow,
-        .accelerator-label {
-          margin: 0 0 1.5rem;
-          color: var(--souq-coral);
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: .78rem;
-          letter-spacing: .1em;
-          line-height: 1.4;
-          text-transform: uppercase;
-        }
-        .accelerator-hero h1 {
-          max-width: 11ch;
-          margin: 0;
-          font-size: clamp(4rem, 8.6vw, 8rem);
-          font-weight: 400;
-          letter-spacing: -.08em;
-          line-height: .88;
-        }
-        .accelerator-hero-side { max-width: 20rem; padding-bottom: .3rem; }
-        .accelerator-hero-side p {
-          margin: 0 0 1rem;
-          color: oklch(0.9 0.002 285);
-          font-size: clamp(1.1rem, 1.8vw, 1.45rem);
-          letter-spacing: -.045em;
-          line-height: 1.1;
-        }
-        .accelerator-hero-side span { color: oklch(0.58 0.006 285); font-size: 1rem; line-height: 1.5; }
-        .accelerator-hero-links {
-          grid-column: 1 / -1;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1.5rem;
-          margin-top: 3rem;
-          padding-top: 1rem;
-          border-top: 1px solid oklch(0.27 0.005 285);
-        }
-        .accelerator-hero-links a {
-          display: inline-flex;
-          align-items: center;
-          gap: .55rem;
-          color: oklch(0.68 0.006 285);
-          font-size: .92rem;
-          text-decoration: none;
-          transition: color .2s ease;
-        }
-        .accelerator-hero-links a:hover { color: oklch(0.965 0.002 285); }
-        .accelerator-hero-links span { color: var(--souq-coral); }
-        .accelerator-section { border-bottom: 1px solid oklch(0.27 0.005 285); }
-        .accelerator-glance { padding: clamp(5rem, 10vw, 8rem) 0; }
-        .accelerator-lede {
-          max-width: 38rem;
-          margin: 0 0 4.5rem;
-          color: oklch(0.73 0.006 285);
-          font-size: clamp(1.4rem, 2.8vw, 2.25rem);
-          letter-spacing: -.055em;
-          line-height: 1.05;
-        }
-        .accelerator-columns {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 3rem;
-        }
-        .accelerator-columns > div { padding-top: 1.25rem; border-top: 1px solid oklch(0.27 0.005 285); }
-        .accelerator-columns h3,
-        .accelerator-subheading {
-          margin: 0 0 1.5rem;
-          color: oklch(0.94 0.002 285);
-          font-size: 1.1rem;
-          font-weight: 500;
-          letter-spacing: -.035em;
-        }
-        .accelerator-columns ul,
-        .accelerator-core-card ul {
-          display: grid;
-          gap: .8rem;
-          margin: 0;
-          padding: 0;
-          list-style: none;
-        }
-        .accelerator-columns li,
-        .accelerator-core-card li {
-          display: flex;
-          align-items: flex-start;
-          gap: .65rem;
-          color: oklch(0.68 0.006 285);
-          font-size: 1rem;
-          line-height: 1.45;
-        }
-        .accelerator-columns li > span:first-child,
-        .accelerator-core-card li > span:first-child {
-          flex: none;
-          width: .32rem;
-          height: .32rem;
-          margin-top: .45rem;
-          border-radius: 50%;
-          background: var(--souq-coral);
-        }
-        .accelerator-callout {
-          max-width: 34rem;
-          margin: 4.5rem 0 0;
-          color: oklch(0.9 0.002 285);
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-        .accelerator-details { padding: clamp(5rem, 10vw, 8rem) 0; background: oklch(0.18 0.004 285); }
-        .accelerator-details .accelerator-lede { margin-bottom: 3.5rem; }
-        .accelerator-faq { margin-bottom: 5rem; border-top: 1px solid oklch(0.27 0.005 285); }
-        .accelerator-faq-item { border-bottom: 1px solid oklch(0.27 0.005 285); cursor: pointer; }
-        .accelerator-faq-question {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-          padding: 1.35rem 0;
-        }
-        .accelerator-faq-question p { margin: 0; color: oklch(0.92 0.002 285); font-size: 1.1rem; letter-spacing: -.025em; }
-        .accelerator-faq-question span { color: var(--souq-coral); font-size: 1.35rem; }
-        .accelerator-faq-answer { max-width: 46rem; padding: 0 3rem 1.5rem 0; color: oklch(0.65 0.006 285); }
-        .accelerator-faq-answer p { margin: 0 0 .9rem; font-size: 1rem; line-height: 1.65; }
-        .accelerator-faq-answer p:last-child { margin-bottom: 0; }
-        .accelerator-subheading { margin-bottom: 1.75rem; }
-        .accelerator-core-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          border-top: 1px solid oklch(0.27 0.005 285);
-          border-left: 1px solid oklch(0.27 0.005 285);
-        }
-        .accelerator-core-card {
-          min-height: 15rem;
-          padding: 1.5rem;
-          border-right: 1px solid oklch(0.27 0.005 285);
-          border-bottom: 1px solid oklch(0.27 0.005 285);
-        }
-        .accelerator-core-card .accelerator-label { margin-bottom: 2.5rem; color: oklch(0.58 0.006 285); }
-        .accelerator-network-note { margin: 2.5rem 0 0; color: oklch(0.62 0.006 285); font-size: 1rem; line-height: 1.5; }
-        .accelerator-join { padding: clamp(6rem, 13vw, 10rem) 0; text-align: center; }
-        .accelerator-join .accelerator-label { color: var(--souq-coral); }
-        .accelerator-join h2 { margin: 0 auto 1.5rem; font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 400; letter-spacing: -.08em; line-height: .9; }
-        .accelerator-join-copy { max-width: 31rem; margin: 0 auto 2.5rem; color: oklch(0.65 0.006 285); font-size: 1.15rem; line-height: 1.6; }
-        .accelerator-primary-button { padding: 1rem 1.25rem; cursor: pointer; }
-        .accelerator-footer { color: oklch(0.48 0.006 285); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; }
-        .accelerator-footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem 0 2rem; }
-        .accelerator-footer-inner > div { display: flex; gap: 1.5rem; }
-        .accelerator-footer a { font-family: 'Inter', sans-serif; font-size: .88rem; letter-spacing: -.02em; text-transform: none; }
-        @media (max-width: 720px) {
-          .accelerator-container { width: calc(100% - 2.5rem); }
-          .accelerator-hero { padding: 4.5rem 0 4rem; }
-          .accelerator-hero-inner { display: block; }
-          .accelerator-hero h1 { max-width: 8ch; font-size: clamp(3.6rem, 16vw, 5rem); }
-          .accelerator-hero-side { margin-top: 3rem; }
-          .accelerator-hero-links { margin-top: 3rem; gap: 1rem 1.4rem; }
-          .accelerator-glance,
-          .accelerator-details { padding: 4.5rem 0; }
-          .accelerator-lede { margin-bottom: 3rem; font-size: 2.2rem; }
-          .accelerator-columns,
-          .accelerator-core-grid { grid-template-columns: 1fr; }
-          .accelerator-columns { gap: 2.5rem; }
-          .accelerator-core-card { min-height: 0; padding: 1.25rem; }
-          .accelerator-core-card .accelerator-label { margin-bottom: 1.75rem; }
-          .accelerator-faq { margin-bottom: 4rem; }
-          .accelerator-faq-answer { padding-right: 0; }
-          .accelerator-join { padding: 6rem 0; }
-          .accelerator-footer-inner { align-items: flex-start; flex-direction: column; }
+        @media (max-width: 760px) {
+          .acc-paths, .acc-included, .acc-steps, .acc-focus { grid-template-columns: 1fr; }
+          .acc-path + .acc-path, .acc-included > div + div { border-left: 0; border-top: 1px solid var(--sq-line); }
+          .acc-included > div + div { margin-top: 2rem; }
+          .acc-steps li:nth-child(even), .acc-focus > div:nth-child(even) { border-left: 0; }
+          .acc-services a { grid-template-columns: 1fr; gap: .3rem; }
+          .acc-faces { grid-template-columns: 1fr 1fr; }
         }
       `}</style>
-    </div>
+    </SitePage>
   );
 }
