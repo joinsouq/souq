@@ -1,5 +1,10 @@
 // /api/documents: the private document page a founder gets after the intro call.
-//   GET  ?ref&t           -> who this link belongs to, and what's already uploaded
+//   Opening the page takes the private link plus a one-time code emailed to the
+//   founder (see _lib/access.ts). The browser then sends "x-doc-session".
+//   GET  ?ref&t           -> without a session: where the code will go
+//                            with a session: company, uploads so far, and progress
+//   POST {action:"sendCode"}   -> emails the founder a code
+//   POST {action:"verifyCode"} -> checks it and returns a session token
 //   POST {action:"upload"} -> a one-time Drive upload URL for one file
 //   POST {action:"finish"} -> saves their written answers, notes what's in and
 //                              what's missing on the Asana card, moves the card,
@@ -10,7 +15,8 @@ import {
   parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
 import { runUnderwriting } from "./_lib/underwrite.js";
-import { documentsReceived, sendEmail } from "./_lib/email.js";
+import { documentsReceived, accessCode, sendEmail } from "./_lib/email.js";
+import { newCode, checkCode, newSession, checkSession, codesEnabled, maskEmail, progressFor } from "./_lib/access.js";
 import { waitUntil } from "@vercel/functions";
 
 type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
@@ -24,6 +30,16 @@ const QUESTIONS_FORM: IntakeForm = {
 
 const slotOf = (fileName: string) => DOC_SLOTS.find((s) => fileName.startsWith(`${s.label} - `));
 
+/** Founder name and email from the card ("Contact: Name, role · email · phone"). */
+function founderContact(notes: unknown): { name: string; email: string } | null {
+  const m = String(notes || "").match(/Contact:\s*([^,·\n]+)[^·\n]*·\s*([^\s·]+@[^\s·]+)/);
+  return m ? { name: m[1].trim(), email: m[2] } : null;
+}
+
+type Task = { name?: string; notes?: string; memberships?: { section?: { gid: string }; project?: { gid: string } }[] };
+const sectionOf = (task: Task) =>
+  task.memberships?.find((m) => m.project?.gid === process.env.ASANA_PROJECT_ID)?.section?.gid || task.memberships?.[0]?.section?.gid;
+
 export default async function handler(req: Req, res: Res) {
   const body = (typeof req.body === "string" ? JSON.parse(req.body) : req.body || {}) as Record<string, unknown>;
   const ref = String((req.method === "GET" ? req.query?.ref : body.ref) || "");
@@ -32,18 +48,44 @@ export default async function handler(req: Req, res: Res) {
   if (!parsed || !verify(ref, t)) return res.status(403).json({ error: "This link isn't valid. Ask the Souq team for a new one." });
 
   try {
+    // ---- Step 1: the one-time code -------------------------------------
+    const session = String(req.headers["x-doc-session"] || "");
+    const signedIn = !codesEnabled() || checkSession(ref, session);
+
+    if (!signedIn) {
+      const task = (await getTask(parsed.task)) as Task;
+      const contact = founderContact(task.notes);
+      if (!contact) return res.status(403).json({ error: "We couldn't find an email for this link. Reply to the Souq team's email and we'll sort it out." });
+
+      if (req.method === "GET") return res.status(200).json({ needsCode: true, emailHint: maskEmail(contact.email) });
+      if (body.action === "sendCode") {
+        await sendEmail(accessCode({ to: contact.email, name: contact.name, code: newCode(ref) }));
+        return res.status(200).json({ ok: true, emailHint: maskEmail(contact.email) });
+      }
+      if (body.action === "verifyCode") {
+        const result = checkCode(ref, String(body.code || ""));
+        if (result === "locked") return res.status(429).json({ error: "Too many tries. Wait 15 minutes, then request a new code." });
+        if (result === "wrong") return res.status(400).json({ error: "That code didn't match, or it expired. Check the latest email, or send a new code." });
+        return res.status(200).json({ session: newSession(ref) });
+      }
+      return res.status(401).json({ error: "Your session ended. Reload the page to get a new code." });
+    }
+
+    // ---- Step 2: the page itself ---------------------------------------
     const docsFolder = await ensureFolder("Documents", parsed.folder);
 
     if (req.method === "GET") {
-      const task = await getTask(parsed.task);
+      const task = (await getTask(parsed.task)) as Task;
       const files = await listFiles(docsFolder);
       const bySlot: Record<string, string[]> = {};
       for (const f of files) {
         const s = slotOf(f.name);
         if (s) (bySlot[s.id] ||= []).push(f.name.slice(s.label.length + 3));
       }
+      const required = DOC_SLOTS.filter((s) => s.required);
+      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length });
       // Card names look like "Company (Founder)"; show just the company.
-      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot });
+      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress });
     }
 
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -83,14 +125,14 @@ export default async function handler(req: Req, res: Res) {
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
 
       // Claude's underwriting draft runs after the founder sees "done" (takes a few minutes).
-      const task = await getTask(parsed.task).catch(() => ({ name: "", notes: "" }));
+      const task = (await getTask(parsed.task).catch(() => ({ name: "", notes: "" }))) as Task;
       const company = String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "");
 
-      // Email the founder. Their name and email are on the card ("Contact: Name, role · email · phone").
-      const contact = String(task.notes || "").match(/Contact:\s*([^,·\n]+)[^·\n]*·\s*([^\s·]+@[^\s·]+)/);
+      // Email the founder a receipt.
+      const contact = founderContact(task.notes);
       if (contact) {
         await sendEmail(documentsReceived({
-          to: contact[2], name: contact[1], company,
+          to: contact.email, name: contact.name, company,
           missing: missing.map((m) => m.label),
           link: `${siteOrigin(req)}/apply/documents?ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`,
         })).catch((e) => console.error("documents email failed", e));

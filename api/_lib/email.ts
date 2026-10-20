@@ -153,3 +153,17 @@ export function documentsReceived(opts: { to: string; name: string; company: str
   paragraphs.push("If you have a question, just reply to this email.");
   return { to: opts.to, subject: "We received your documents", paragraphs };
 }
+
+/** The one-time code that opens a founder's document page. */
+export function accessCode(opts: { to: string; name: string; code: string }): Email {
+  return {
+    to: opts.to,
+    subject: `Your Souq code: ${opts.code.slice(0, 4)} ${opts.code.slice(4)}`,
+    paragraphs: [
+      `Hi ${firstName(opts.name)},`,
+      "Here's your code to open your private document page:",
+      `${opts.code.slice(0, 4)} ${opts.code.slice(4)}`,
+      "It works for 10 minutes. If you didn't ask for it, you can ignore this email.",
+    ],
+  };
+}

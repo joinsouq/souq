@@ -10,8 +10,18 @@ function useLinkParams() {
   return { ref: p.get("ref") || "", t: p.get("t") || "" };
 }
 
+// The session from the emailed code, remembered per link so founders don't need a new code every visit.
+const sessionKey = () => `souq-doc-session:${new URLSearchParams(window.location.search).get("ref") || ""}`;
+const getSession = () => { try { return localStorage.getItem(sessionKey()) || ""; } catch { return ""; } };
+const setSession = (v: string) => { try { v ? localStorage.setItem(sessionKey(), v) : localStorage.removeItem(sessionKey()); } catch { /* private mode */ } };
+
 async function api(body: Record<string, unknown>) {
-  const r = await fetch("/api/documents", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const r = await fetch("/api/documents", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-doc-session": getSession() },
+    body: JSON.stringify(body),
+  });
+  if (r.status === 401) { setSession(""); window.location.reload(); }
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw Object.assign(new Error(j.error || "Something went wrong."), { errors: j.errors });
   return j;
@@ -88,9 +98,84 @@ function Slot({ slot, existing, auth }: { slot: DocSlot; existing: string[]; aut
   );
 }
 
+type Progress = { steps: { label: string; state: "done" | "current" | "todo"; detail?: string }[]; percent: number };
+
+function ProgressBar({ progress }: { progress: Progress }) {
+  return (
+    <div className="dp" aria-label={`Your application is ${progress.percent}% of the way through`}>
+      <div className="dp-top">
+        <span className="dp-label">Where you are</span>
+        <span className="dp-pct">{progress.percent}%</span>
+      </div>
+      <div className="dp-track"><span style={{ width: `${progress.percent}%` }} /></div>
+      <ol className="dp-steps">
+        {progress.steps.map((s) => (
+          <li key={s.label} className={`dp-${s.state}`} aria-current={s.state === "current" ? "step" : undefined}>
+            <span className="dp-dot" aria-hidden="true" />
+            <span className="dp-name">{s.label}</span>
+            {s.detail && s.state !== "todo" && <span className="dp-detail">{s.detail}</span>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function CodeGate({ auth, emailHint, onIn }: { auth: { ref: string; t: string }; emailHint: string; onIn: () => void }) {
+  const [sent, setSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function send() {
+    setBusy(true); setMsg("");
+    try { await api({ action: "sendCode", ...auth }); setSent(true); }
+    catch (e) { setMsg((e as Error).message); }
+    setBusy(false);
+  }
+  async function verify(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true); setMsg("");
+    try {
+      const j = await api({ action: "verifyCode", ...auth, code });
+      setSession(j.session);
+      onIn();
+    } catch (err) { setMsg((err as Error).message); setBusy(false); }
+  }
+
+  return (
+    <div className="ix-form dg">
+      <h2 className="sq-h3">First, a quick check that it's you.</h2>
+      <p className="sq-body" style={{ marginTop: ".75rem" }}>
+        We'll email a one-time code to <strong style={{ color: "var(--sq-text)", fontWeight: 500 }}>{emailHint}</strong>, the address on your application.
+      </p>
+      {!sent ? (
+        <button type="button" className="sq-btn sq-btn-primary" style={{ marginTop: "1.5rem" }} onClick={send} disabled={busy}>
+          {busy ? "Sending…" : "Email me a code"}
+        </button>
+      ) : (
+        <form onSubmit={verify} className="dg-form">
+          <label className="ix-label" htmlFor="dg-code">8-digit code</label>
+          <input id="dg-code" className="dg-input" inputMode="numeric" autoComplete="one-time-code" autoFocus
+            value={code} onChange={(e) => setCode(e.target.value.replace(/[^\d ]/g, "").slice(0, 9))} placeholder="1234 5678" />
+          <div className="sq-actions">
+            <button className="sq-btn sq-btn-primary" type="submit" disabled={busy || code.replace(/\D/g, "").length !== 8}>
+              {busy ? "Checking…" : "Open my documents"}
+            </button>
+            <button type="button" className="sq-btn sq-btn-ghost" onClick={send} disabled={busy}>Send a new code</button>
+          </div>
+        </form>
+      )}
+      {msg && <p className="ix-error" role="alert" style={{ marginTop: "1rem" }}>{msg}</p>}
+    </div>
+  );
+}
+
 export default function Documents() {
   const auth = useLinkParams();
-  const [info, setInfo] = useState<{ company: string; uploaded: Record<string, string[]> } | null>(null);
+  const [info, setInfo] = useState<{ company: string; uploaded: Record<string, string[]>; progress?: Progress } | null>(null);
+  const [gate, setGate] = useState<string | null>(null); // masked email while a code is needed
+  const [reloadKey, setReloadKey] = useState(0);
   const [loadError, setLoadError] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -99,14 +184,16 @@ export default function Documents() {
   const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/documents?ref=${encodeURIComponent(auth.ref)}&t=${encodeURIComponent(auth.t)}`)
+    fetch(`/api/documents?ref=${encodeURIComponent(auth.ref)}&t=${encodeURIComponent(auth.t)}`, { headers: { "x-doc-session": getSession() } })
       .then(async (r) => {
         const j = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(j.error || "This link isn't valid.");
+        if (j.needsCode) { setGate(j.emailHint); setInfo(null); return; }
+        setGate(null);
         setInfo(j);
       })
       .catch((e) => setLoadError(e.message));
-  }, [auth.ref, auth.t]);
+  }, [auth.ref, auth.t, reloadKey]);
 
   async function finish(e: FormEvent) {
     e.preventDefault();
@@ -140,7 +227,9 @@ export default function Documents() {
 
         <section className="sq-section" style={{ paddingTop: "2.5rem" }}>
           {loadError && <p className="ix-error" role="alert">{loadError}</p>}
-          {!info && !loadError && <p className="ix-help">Loading…</p>}
+          {!info && !loadError && gate === null && <p className="ix-help">Loading…</p>}
+          {gate !== null && !info && <CodeGate auth={auth} emailHint={gate} onIn={() => setReloadKey((k) => k + 1)} />}
+          {info?.progress && <ProgressBar progress={info.progress} />}
 
           {info && status === "done" && result && (
             <div className="ix-done" role="status">
@@ -183,6 +272,26 @@ export default function Documents() {
           )}
         </section>
       </div>
+      <style>{`
+        .dp { max-width: 46rem; margin-bottom: 3rem; padding: 1.4rem 1.5rem 1.5rem; border: 1px solid var(--sq-line); border-radius: 6px; background: color-mix(in srgb, var(--sq-ink-2) 80%, transparent); }
+        .dp-top { display: flex; justify-content: space-between; align-items: baseline; }
+        .dp-label { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--sq-faint); }
+        .dp-pct { font-size: 1.6rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+        .dp-track { height: 4px; margin: .9rem 0 1.25rem; border-radius: 4px; background: var(--sq-line); overflow: hidden; }
+        .dp-track span { display: block; height: 100%; background: var(--souq-coral); border-radius: 4px; transition: width .6s cubic-bezier(.32,.72,0,1); }
+        .dp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: .5rem; }
+        .dp-steps li { display: flex; flex-direction: column; gap: .35rem; font-size: .85rem; line-height: 1.3; color: var(--sq-faint); }
+        .dp-dot { width: .6rem; height: .6rem; border-radius: 50%; border: 1px solid var(--sq-line-strong); }
+        .dp-done { color: var(--sq-muted); }
+        .dp-done .dp-dot { background: var(--sq-muted); border-color: var(--sq-muted); }
+        .dp-current { color: var(--sq-text); }
+        .dp-current .dp-dot { background: var(--souq-coral); border-color: var(--souq-coral); box-shadow: 0 0 0 4px color-mix(in srgb, var(--souq-coral) 25%, transparent); }
+        .dp-detail { font-size: .78rem; color: var(--souq-peach); }
+        @media (max-width: 640px) { .dp-steps { grid-template-columns: repeat(3, 1fr); row-gap: 1rem; } }
+        .dg { padding: 1.75rem; border: 1px solid var(--sq-line); border-radius: 6px; }
+        .dg-form { display: flex; flex-direction: column; gap: .75rem; margin-top: 1.5rem; max-width: 22rem; }
+        .sq .dg .dg-form input.dg-input { font-size: 1.4rem; letter-spacing: .2em; font-variant-numeric: tabular-nums; }
+      `}</style>
     </SitePage>
   );
 }
