@@ -18,7 +18,7 @@ export default function Community() {
             same kind of company you are.
           </p>
           <div className="sq-actions">
-            <Link href="/apply" className="sq-btn sq-btn-primary">Join the community</Link>
+            <Link href="/apply/community" className="sq-btn sq-btn-primary">Join the community</Link>
             <Link href="/summit" className="sq-btn sq-btn-ghost">See the 2026 Summit</Link>
           </div>
         </section>

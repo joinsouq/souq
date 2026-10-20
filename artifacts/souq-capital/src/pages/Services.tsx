@@ -20,7 +20,7 @@ export default function Services() {
             for brands like yours.
           </p>
           <div className="sq-actions">
-            <Link href="/apply" className="sq-btn sq-btn-primary">Request a service</Link>
+            <Link href="/apply/service" className="sq-btn sq-btn-primary">Request a service</Link>
             <Link href="/accelerator" className="sq-btn sq-btn-ghost">Need more than one?</Link>
           </div>
         </section>

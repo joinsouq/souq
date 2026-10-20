@@ -11,7 +11,12 @@
   },
   "private": true,
   "devDependencies": {
-    "typescript": "~5.9.2",
-    "prettier": "^3.8.1"
+    "@types/node": "^22.20.5",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  },
+  "dependencies": {
+    "@vercel/functions": "^2.2.13",
+    "google-auth-library": "^9.15.1"
   }
 }

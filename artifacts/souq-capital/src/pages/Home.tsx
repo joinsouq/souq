@@ -567,7 +567,7 @@ export default function Home() {
             <div className="bg-white rounded-[40px] p-12 flex flex-col gap-6 max-w-xl">
               <h2 className="section-h2 text-[#14181A]">Ready to grow your business with Souq? Apply today.</h2>
               <p className="body-p text-[#666]">Souq helps founders unlock growth without losing ownership or taking on risky loans.</p>
-              <Link href="/apply" data-testid="cta-apply-btn">
+              <Link href="/apply/funding" data-testid="cta-apply-btn">
                 <span className="inline-flex items-center justify-center bg-[#14181A] text-white font-medium px-6 py-3 hover:bg-black/80 transition-all duration-200 text-sm cursor-pointer" style={{ borderRadius: "99px" }}>
                   Apply
                 </span>

@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import Umbrella from "@/pages/Umbrella";
 import Capital from "@/pages/Home";
-import Apply from "@/pages/Apply";
+import { ApplyChooser, ApplyForm } from "@/pages/Apply";
+import Documents from "@/pages/Documents";
 import Accelerator from "@/pages/Accelerator";
 import Summit from "@/pages/Summit";
 import Team from "@/pages/Team";
@@ -28,7 +29,9 @@ function Router() {
       <Route path="/capital" component={Capital} />
       <Route path="/accelerator" component={Accelerator} />
       <Route path="/summit" component={Summit} />
-      <Route path="/apply" component={Apply} />
+      <Route path="/apply" component={ApplyChooser} />
+      <Route path="/apply/documents" component={Documents} />
+      <Route path="/apply/:path" component={ApplyForm} />
       <Route path="/team" component={Team} />
       <Route path="/services" component={Services} />
       <Route path="/community" component={Community} />

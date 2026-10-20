@@ -241,7 +241,7 @@ export default function Accelerator() {
             <p className="accelerator-join-copy">
               The Souq Accelerator works with a selective group of high-growth consumer companies ready to scale with real support behind them. If that's your company, apply to start the conversation.
             </p>
-            <a href="https://forms.fillout.com/t/gTxTHeoSKwus" target="_blank" rel="noopener noreferrer" className="accelerator-primary-button">
+            <a href="/apply/accelerator" className="accelerator-primary-button">
               Apply to the Accelerator →
             </a>
           </ScrollReveal>
