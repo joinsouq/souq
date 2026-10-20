@@ -95,7 +95,7 @@ export default async function handler(req: Req, res: Res) {
       name: title,
       notes: notes(),
       section: form.id === "talk" ? SECTIONS.introCall : SECTIONS.new,
-      customFields: customFieldsFrom(answers),
+      customFields: customFieldsFrom(form.id, answers),
     });
   } catch (e) {
     // Keep the submission in the logs so nothing is lost, then tell the founder.

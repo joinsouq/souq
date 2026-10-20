@@ -152,10 +152,17 @@ const CF = {
     gid: "1218567047282921",
     options: { "Inventory planning": "1218567047282922", "Cash/working capital": "1218567047282923", Logistics: "1218567047282924", "Marketing/content": "1218567047282925", "Ops/systems": "1218567047282926", Other: "1218567047282927" },
   },
+  path: {
+    gid: "1219702520498198",
+    options: { funding: "1219702520498199", accelerator: "1219702520498200", service: "1219702520498201", talk: "1219702520498203" } as Record<string, string>,
+  },
+  waitingOn: { gid: "1219702520498205", options: { Founder: "1219702520498206", Souq: "1219702520498207" } },
 } as const;
 
-export function customFieldsFrom(a: Record<string, string | string[]>) {
-  const out: Record<string, string | string[]> = {};
+export function customFieldsFrom(formId: string, a: Record<string, string | string[]>) {
+  // New applications: which program, and it's Souq's move first.
+  const out: Record<string, string | string[]> = { [CF.waitingOn.gid]: CF.waitingOn.options.Souq };
+  if (CF.path.options[formId]) out[CF.path.gid] = CF.path.options[formId];
   const t = a.trend as string | undefined;
   if (t && t in CF.trend.options) out[CF.trend.gid] = CF.trend.options[t as keyof typeof CF.trend.options];
   const pick = (vals: unknown, map: Record<string, string>) =>
@@ -188,6 +195,8 @@ export async function createTask(opts: { name: string; notes: string; section: s
 
 export const comment = (taskGid: string, text: string) => asana(`/tasks/${taskGid}/stories`, "POST", { text });
 export const moveTo = (taskGid: string, section: string) => asana(`/sections/${section}/addTask`, "POST", { task: taskGid });
+export const setWaitingOn = (taskGid: string, who: "Founder" | "Souq") =>
+  asana(`/tasks/${taskGid}`, "PUT", { custom_fields: { [CF.waitingOn.gid]: CF.waitingOn.options[who] } });
 export const getTask = (taskGid: string) => asana(`/tasks/${taskGid}?opt_fields=name`);
 
 // ---------------------------------------------------------------- Claude

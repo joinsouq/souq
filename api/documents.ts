@@ -6,7 +6,7 @@
 
 import { DOC_SLOTS, DOC_QUESTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
-  parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, folderUrl, SECTIONS,
+  parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
 
 type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
@@ -76,6 +76,7 @@ export default async function handler(req: Req, res: Res) {
           (missing.length ? `\n\nStill missing (required):\n${missingText}` : "\n\nAll required documents are in. Ready for the full underwrite."),
       );
       await moveTo(parsed.task, SECTIONS.diligence);
+      await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
       return res.status(200).json({ ok: true, missing: missing.map((m) => m.label) });
     }
 
