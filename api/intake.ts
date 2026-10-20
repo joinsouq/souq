@@ -14,6 +14,8 @@ import {
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
 
+const BREAK = "\u0000break";
+
 const clean = (v: unknown): string | string[] =>
   Array.isArray(v) ? v.map((x) => String(x).slice(0, 300)) : String(v ?? "").slice(0, 4000).trim();
 
@@ -79,12 +81,13 @@ export default async function handler(req: Req, res: Res) {
     pick("alsoAccelerator") === "Yes" && "Also interested in the Accelerator",
     pick("alsoFunding") === "Yes" && "Also wants funding",
     pick("heard") && `Heard about Souq: ${pick("heard")}`,
-    "",
+    BREAK,
     folderId
       ? `Full application incl. numbers (need-to-know): ${docUrl || folderUrl(folderId)}`
       : `Drive save failed. Full application:\n\n${fullText}`,
   ];
-  const notes = () => lines.filter((l) => typeof l === "string").join("\n");
+  // Unanswered questions leave empty strings; drop them, keep the deliberate breaks.
+  const notes = () => lines.filter((l): l is string => typeof l === "string" && l !== "").map((l) => (l === BREAK ? "" : l)).join("\n");
 
   let task: { gid: string; url: string };
   try {
@@ -103,7 +106,7 @@ export default async function handler(req: Req, res: Res) {
   // Funding: add the private document-upload link, tied to this card and folder.
   if (form.id === "funding" && folderId) {
     const ref = `${task.gid}.${folderId}`;
-    lines.push("", `Document upload link to send after the intro call:\n${siteOrigin(req)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
+    lines.push(BREAK, `Document upload link to send after the intro call:\n${siteOrigin(req)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
 

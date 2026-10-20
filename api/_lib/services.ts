@@ -14,14 +14,39 @@ const env = (k: string) => {
 // ---------------------------------------------------------------- Drive
 
 let jwt: JWT | null = null;
-async function driveToken(): Promise<string> {
-  if (!jwt) {
-    const creds = JSON.parse(env("GOOGLE_SERVICE_ACCOUNT_KEY"));
-    jwt = new JWT({ email: creds.client_email, key: creds.private_key, scopes: ["https://www.googleapis.com/auth/drive"] });
+
+/**
+ * Reads the service-account key. Tolerates a paste that contains more than
+ * one key file back to back (an easy mistake): each key is tried in turn and
+ * the first one Google accepts is used.
+ */
+function keyCandidates(raw: string): { client_email: string; private_key: string }[] {
+  try {
+    return [JSON.parse(raw)];
+  } catch {
+    const out = [];
+    for (const m of raw.matchAll(/\{[^{}]*"private_key"[^{}]*\}/g)) {
+      try { out.push(JSON.parse(m[0])); } catch { /* skip */ }
+    }
+    if (!out.length) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not valid JSON");
+    return out;
   }
-  const { token } = await jwt.getAccessToken();
-  if (!token) throw new Error("Could not get a Google access token");
-  return token;
+}
+
+async function driveToken(): Promise<string> {
+  if (jwt) {
+    const { token } = await jwt.getAccessToken();
+    if (token) return token;
+  }
+  let lastErr: unknown;
+  for (const c of keyCandidates(env("GOOGLE_SERVICE_ACCOUNT_KEY"))) {
+    try {
+      const candidate = new JWT({ email: c.client_email, key: c.private_key, scopes: ["https://www.googleapis.com/auth/drive"] });
+      const { token } = await candidate.getAccessToken();
+      if (token) { jwt = candidate; return token; }
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("Could not get a Google access token");
 }
 
 async function drive(path: string, init: RequestInit = {}, upload = false) {
