@@ -5,7 +5,7 @@
 //                              what's missing on the Asana card, moves the card,
 //                              then runs the Claude underwriting draft
 
-import { DOC_SLOTS, DOC_QUESTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
+import { DOC_SLOTS, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
@@ -18,7 +18,7 @@ type Res = { status: (n: number) => Res; json: (b: unknown) => void };
 // The written questions, wrapped as a one-section form so we can reuse validate/toText.
 const QUESTIONS_FORM: IntakeForm = {
   id: "funding", choice: "", choiceDetail: "", title: "Documents and details", intro: "", minutes: 0,
-  submitLabel: "", doneTitle: "", doneBody: "", sections: [{ title: "Details", fields: DOC_QUESTIONS }],
+  submitLabel: "", doneTitle: "", doneBody: "", sections: DOC_SECTIONS,
 };
 
 const slotOf = (fileName: string) => DOC_SLOTS.find((s) => fileName.startsWith(`${s.label} - `));

@@ -95,7 +95,7 @@ export default async function handler(req: Req, res: Res) {
     task = await createTask({
       name: title,
       notes: notes(),
-      section: form.id === "talk" ? SECTIONS.introCall : SECTIONS.new,
+      section: form.id === "talk" ? SECTIONS.introCall : form.id === "3pl-onboarding" ? SECTIONS.live : SECTIONS.new,
       customFields: customFieldsFrom(form.id, answers),
     });
   } catch (e) {

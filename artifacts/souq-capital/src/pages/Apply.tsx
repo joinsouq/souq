@@ -43,7 +43,7 @@ export function ApplyForm() {
     <SitePage>
       <div className="sq-wrap">
         <section className="sq-page-hero" style={{ paddingBottom: "2rem" }}>
-          <Link href="/apply" className="sq-link" style={{ marginBottom: "2rem" }}>All options</Link>
+          {PATH_ORDER.includes(form.id) && <Link href="/apply" className="sq-link" style={{ marginBottom: "2rem" }}>All options</Link>}
           <h1 className="sq-h2" style={{ maxWidth: "20ch", marginTop: "2rem" }}>{form.title}</h1>
           <p className="sq-lede">{form.intro}</p>
         </section>

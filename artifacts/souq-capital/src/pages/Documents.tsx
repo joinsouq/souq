@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import SitePage from "@/components/SitePage";
 import { FieldInput } from "@/components/IntakeForm";
-import { DOC_QUESTIONS, DOC_SLOTS, MAX_FILE_MB, type DocSlot } from "@/intake/forms";
+import { DOC_SECTIONS, DOC_SLOTS, MAX_FILE_MB, isShown, type DocSlot } from "@/intake/forms";
 
 type Upload = { name: string; state: "uploading" | "done" | "error"; pct: number; msg?: string };
 
@@ -64,6 +64,7 @@ function Slot({ slot, existing, auth }: { slot: DocSlot; existing: string[]; aut
             {slot.label}{!slot.required && <span className="ix-optional"> (optional)</span>}
           </h3>
           {slot.help && <p className="ix-help">{slot.help}</p>}
+          {slot.template && <p className="ix-help"><a className="sq-link" href={slot.template.href} download>{slot.template.label}</a></p>}
         </div>
         <label className="sq-btn sq-btn-ghost ix-upload-btn">
           {has ? "Add more" : "Upload"}
@@ -160,15 +161,18 @@ export default function Documents() {
                   {DOC_SLOTS.map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} />)}
                 </ul>
               </fieldset>
-              <fieldset className="ix-section">
-                <legend className="sq-h3">A few details</legend>
-                <div className="ix-grid">
-                  {DOC_QUESTIONS.map((f) => (
-                    <FieldInput key={f.id} field={f} value={answers[f.id]} error={errors[f.id]}
-                      onChange={(v) => { setAnswers((a) => ({ ...a, [f.id]: String(v) })); setErrors(({ [f.id]: _d, ...r }) => r); }} />
-                  ))}
-                </div>
-              </fieldset>
+              {DOC_SECTIONS.map((s) => (
+                <fieldset className="ix-section" key={s.title}>
+                  <legend className="sq-h3">{s.title}</legend>
+                  {s.intro && <p className="ix-help">{s.intro}</p>}
+                  <div className="ix-grid">
+                    {s.fields.filter((f) => isShown(f.showIf, answers)).map((f) => (
+                      <FieldInput key={f.id} field={f} value={answers[f.id]} error={errors[f.id]}
+                        onChange={(v) => { setAnswers((a) => ({ ...a, [f.id]: String(v) })); setErrors(({ [f.id]: _d, ...r }) => r); }} />
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
               <div className="ix-submit">
                 {submitError && <p className="ix-error" role="alert">{submitError}</p>}
                 <button className="sq-btn sq-btn-primary" type="submit" disabled={status === "sending"}>
