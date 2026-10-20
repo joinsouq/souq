@@ -6,10 +6,10 @@
 //    verdict on the card (in the background, so the founder isn't kept waiting).
 
 import { waitUntil } from "@vercel/functions";
-import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../artifacts/souq-capital/src/intake/forms";
+import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
-} from "./_lib/services";
+} from "./_lib/services.js";
 
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };

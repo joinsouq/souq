@@ -1,14 +1,21 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "lib": ["es2022", "dom"],
-    "types": ["node"]
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "types": [
+      "node"
+    ]
   },
-  "include": ["./**/*.ts", "../artifacts/souq-capital/src/intake/forms.ts"]
+  "include": [
+    "./**/*.ts",
+    "../artifacts/souq-capital/src/intake/forms.ts"
+  ]
 }

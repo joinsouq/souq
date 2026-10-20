@@ -4,10 +4,10 @@
 //   POST {action:"finish"} -> saves their written answers, notes what's in and
 //                              what's missing on the Asana card, moves the card
 
-import { DOC_SLOTS, DOC_QUESTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms";
+import { DOC_SLOTS, DOC_QUESTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, folderUrl, SECTIONS,
-} from "./_lib/services";
+} from "./_lib/services.js";
 
 type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
