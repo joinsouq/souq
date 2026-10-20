@@ -39,7 +39,7 @@ export default async function handler(req: Req, res: Res) {
         if (s) (bySlot[s.id] ||= []).push(f.name.slice(s.label.length + 3));
       }
       // Card names look like "Company (Founder)"; show just the company.
-      return res.status(200).json({ company: String(task.name).replace(/\s*\(.*\)\s*$/, ""), uploaded: bySlot });
+      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot });
     }
 
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
