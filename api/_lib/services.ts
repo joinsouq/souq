@@ -136,11 +136,11 @@ async function asana(path: string, method = "GET", data?: unknown) {
 }
 
 // Customer Pipeline sections and custom fields (Asana IDs).
+// Columns: New > Intro call > Diligence > Proposal > Live > Parked.
 export const SECTIONS = {
-  inbound: "1218558113663017",
-  officeHours: "1218558260242200",
-  underwriting: "1218558205461144",
-  docsNeeded: "1218558205475618",
+  new: "1218558113663017",
+  introCall: "1218558260242200",
+  diligence: "1218558205461144",
 };
 const CF = {
   trend: { gid: "1218567047282908", options: { Up: "1218567047282909", Flat: "1218567047282910", Down: "1218567047282911" } },

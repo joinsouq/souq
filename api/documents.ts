@@ -75,7 +75,7 @@ export default async function handler(req: Req, res: Res) {
         `Founder uploaded documents (${submitted} ET). ${files.length} file(s), in the private folder: ${folderUrl(parsed.folder)}\n\nReceived:\n${received}` +
           (missing.length ? `\n\nStill missing (required):\n${missingText}` : "\n\nAll required documents are in. Ready for the full underwrite."),
       );
-      await moveTo(parsed.task, missing.length ? SECTIONS.docsNeeded : SECTIONS.underwriting);
+      await moveTo(parsed.task, SECTIONS.diligence);
       return res.status(200).json({ ok: true, missing: missing.map((m) => m.label) });
     }
 

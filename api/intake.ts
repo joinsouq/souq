@@ -1,7 +1,7 @@
 // POST /api/intake: receives a form from the Apply page.
 // 1. Validates it against the same definitions the form was built from.
 // 2. Saves the full application to the client's private Google Drive folder.
-// 3. Creates the Asana card in Customer Pipeline > Inbound, assigned for first review.
+// 3. Creates the Asana card in Customer Pipeline > New ("Talk to us" goes to Intro call), assigned for first review.
 // 4. For funding requests, runs the Souq submission filter and posts the
 //    verdict on the card (in the background, so the founder isn't kept waiting).
 
@@ -94,7 +94,7 @@ export default async function handler(req: Req, res: Res) {
     task = await createTask({
       name: title,
       notes: notes(),
-      section: SECTIONS.inbound,
+      section: form.id === "talk" ? SECTIONS.introCall : SECTIONS.new,
       customFields: customFieldsFrom(answers),
     });
   } catch (e) {
