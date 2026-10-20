@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import Umbrella from "@/pages/Umbrella";
-import Capital from "@/pages/Home";
+import Capital from "@/pages/Capital";
 import { ApplyChooser, ApplyForm } from "@/pages/Apply";
 import Documents from "@/pages/Documents";
 import Accelerator from "@/pages/Accelerator";
