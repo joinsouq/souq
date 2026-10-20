@@ -2,12 +2,15 @@
 //   GET  ?ref&t           -> who this link belongs to, and what's already uploaded
 //   POST {action:"upload"} -> a one-time Drive upload URL for one file
 //   POST {action:"finish"} -> saves their written answers, notes what's in and
-//                              what's missing on the Asana card, moves the card
+//                              what's missing on the Asana card, moves the card,
+//                              then runs the Claude underwriting draft
 
 import { DOC_SLOTS, DOC_QUESTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
+import { runUnderwriting } from "./_lib/underwrite.js";
+import { waitUntil } from "@vercel/functions";
 
 type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
@@ -77,6 +80,17 @@ export default async function handler(req: Req, res: Res) {
       );
       await moveTo(parsed.task, SECTIONS.diligence);
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
+
+      // Claude's underwriting draft runs after the founder sees "done" (takes a few minutes).
+      const task = await getTask(parsed.task).catch(() => ({ name: "" }));
+      waitUntil(
+        runUnderwriting({
+          taskGid: parsed.task,
+          clientFolder: parsed.folder,
+          docsFolder,
+          company: String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "") || "this company",
+        }).catch((e) => console.error("underwriting error", e)),
+      );
       return res.status(200).json({ ok: true, missing: missing.map((m) => m.label) });
     }
 

@@ -10,6 +10,7 @@ import { FORMS, type Answers, type PathId, validate, toText, fieldById, display 
 import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
 } from "./_lib/services.js";
+import { loadSkill } from "./_lib/underwrite.js";
 
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
@@ -113,10 +114,14 @@ export default async function handler(req: Req, res: Res) {
   // 3. Quick-look review runs after the founder gets their confirmation.
   waitUntil(
     (async () => {
-      if (form.id === "funding" && process.env.SOUQ_FILTER_SKILL) {
+      // The skill comes from the "_Souq skills" folder in Drive; the env var is a fallback.
+      const filterSkill = form.id === "funding"
+        ? (await loadSkill("souq-submission-filter").catch((e) => { console.error("skill load failed", e); return null; })) || process.env.SOUQ_FILTER_SKILL
+        : null;
+      if (filterSkill) {
         try {
           const verdict = await askClaude(
-            process.env.SOUQ_FILTER_SKILL,
+            filterSkill,
             `Today is ${new Date().toDateString()}. New submission from the Souq website. These are the applicant's own answers; no documents have been received yet. Run the submission filter and reply in the exact output format.\n\n${fullText}`,
           );
           if (verdict) await comment(task.gid, `Quick look (Claude, submission filter). Based only on the founder's own answers, nothing verified yet.\n\n${verdict}`);

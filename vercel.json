@@ -5,6 +5,17 @@
   "buildCommand": "pnpm --filter @workspace/souq-capital run build",
   "outputDirectory": "artifacts/souq-capital/dist/public",
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/documents.ts": {
+      "maxDuration": 300
+    },
+    "api/intake.ts": {
+      "maxDuration": 60
+    }
+  }
 }

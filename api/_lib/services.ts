@@ -123,6 +123,35 @@ export async function listFiles(folderId: string): Promise<{ id: string; name: s
 
 export const folderUrl = (id: string) => `https://drive.google.com/drive/folders/${id}`;
 
+export type DriveFile = { id: string; name: string; mimeType: string; size?: string };
+
+/** Lists a folder's contents (files and subfolders) with their types. */
+export async function listFolder(folderId: string): Promise<DriveFile[]> {
+  const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
+  const res = await drive(`/files?q=${q}&fields=files(id,name,mimeType,size)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}&pageSize=200&orderBy=name`);
+  return (await res.json()).files || [];
+}
+
+/** Finds a folder by exact name anywhere in the shared drive. */
+export async function findFolder(name: string): Promise<string | null> {
+  const q = encodeURIComponent(`name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
+  const res = await drive(`/files?q=${q}&fields=files(id)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}`);
+  return (await res.json()).files?.[0]?.id ?? null;
+}
+
+/** Downloads a file. Google Docs come back as plain text, Google Sheets as CSV. */
+export async function downloadFile(f: DriveFile): Promise<Buffer> {
+  const exportAs: Record<string, string> = {
+    "application/vnd.google-apps.document": "text/plain",
+    "application/vnd.google-apps.spreadsheet": "text/csv",
+  };
+  const path = exportAs[f.mimeType]
+    ? `/files/${f.id}/export?mimeType=${encodeURIComponent(exportAs[f.mimeType])}`
+    : `/files/${f.id}?alt=media`;
+  const res = await drive(path);
+  return Buffer.from(await res.arrayBuffer());
+}
+
 // ---------------------------------------------------------------- Asana
 
 async function asana(path: string, method = "GET", data?: unknown) {
