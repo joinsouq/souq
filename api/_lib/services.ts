@@ -227,7 +227,7 @@ export const comment = (taskGid: string, text: string) => asana(`/tasks/${taskGi
 export const moveTo = (taskGid: string, section: string) => asana(`/sections/${section}/addTask`, "POST", { task: taskGid });
 export const setWaitingOn = (taskGid: string, who: "Founder" | "Souq") =>
   asana(`/tasks/${taskGid}`, "PUT", { custom_fields: { [CF.waitingOn.gid]: CF.waitingOn.options[who] } });
-export const getTask = (taskGid: string) => asana(`/tasks/${taskGid}?opt_fields=name`);
+export const getTask = (taskGid: string) => asana(`/tasks/${taskGid}?opt_fields=name,notes`);
 
 // ---------------------------------------------------------------- Claude
 

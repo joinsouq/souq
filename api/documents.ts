@@ -7,9 +7,10 @@
 
 import { DOC_SLOTS, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
-  parseRef, verify, getTask, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
+  parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
 import { runUnderwriting } from "./_lib/underwrite.js";
+import { documentsReceived, sendEmail } from "./_lib/email.js";
 import { waitUntil } from "@vercel/functions";
 
 type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
@@ -82,13 +83,24 @@ export default async function handler(req: Req, res: Res) {
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
 
       // Claude's underwriting draft runs after the founder sees "done" (takes a few minutes).
-      const task = await getTask(parsed.task).catch(() => ({ name: "" }));
+      const task = await getTask(parsed.task).catch(() => ({ name: "", notes: "" }));
+      const company = String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "");
+
+      // Email the founder. Their name and email are on the card ("Contact: Name, role · email · phone").
+      const contact = String(task.notes || "").match(/Contact:\s*([^,·\n]+)[^·\n]*·\s*([^\s·]+@[^\s·]+)/);
+      if (contact) {
+        await sendEmail(documentsReceived({
+          to: contact[2], name: contact[1], company,
+          missing: missing.map((m) => m.label),
+          link: `${siteOrigin(req)}/apply/documents?ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`,
+        })).catch((e) => console.error("documents email failed", e));
+      }
       waitUntil(
         runUnderwriting({
           taskGid: parsed.task,
           clientFolder: parsed.folder,
           docsFolder,
-          company: String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "") || "this company",
+          company: company || "this company",
         }).catch((e) => console.error("underwriting error", e)),
       );
       return res.status(200).json({ ok: true, missing: missing.map((m) => m.label) });

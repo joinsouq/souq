@@ -10,6 +10,7 @@ import { FORMS, type Answers, type PathId, validate, toText, fieldById, display 
 import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
 } from "./_lib/services.js";
+import { confirmationFor, sendEmail } from "./_lib/email.js";
 import { loadSkill } from "./_lib/underwrite.js";
 
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
@@ -49,6 +50,7 @@ export default async function handler(req: Req, res: Res) {
     } catch (e) {
       console.error("community save failed", e, JSON.stringify(answers));
     }
+    await emailFounder(form.id, answers);
     return res.status(200).json({ ok: true });
   }
 
@@ -133,6 +135,7 @@ export default async function handler(req: Req, res: Res) {
     })(),
   );
 
+  await emailFounder(form.id, answers);
   return res.status(200).json({ ok: true });
 }
 
@@ -143,4 +146,11 @@ async function updateNotes(taskGid: string, notes: string) {
     body: JSON.stringify({ data: { notes } }),
   });
   if (!r.ok) throw new Error(await r.text());
+}
+
+/** "We got it" email to the founder. Never blocks or fails the submission. */
+async function emailFounder(path: PathId, answers: Answers) {
+  const email = confirmationFor(path, answers);
+  if (!email) return;
+  await sendEmail(email).catch((e) => console.error("confirmation email failed", e));
 }
