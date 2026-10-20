@@ -79,13 +79,13 @@ export async function ensureFolder(name: string, parent: string): Promise<string
   return (await createFolder(name, parent)).id;
 }
 
-/** Saves text as a Google Doc in a folder. */
-export async function saveDoc(name: string, text: string, folderId: string): Promise<string> {
+/** Saves text (or HTML, which Google turns into real formatting) as a Google Doc in a folder. */
+export async function saveDoc(name: string, text: string, folderId: string, contentType: "text/plain" | "text/html" = "text/plain"): Promise<string> {
   const boundary = "souq" + Math.random().toString(36).slice(2);
   const body =
     `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
     JSON.stringify({ name, parents: [folderId], mimeType: "application/vnd.google-apps.document" }) +
-    `\r\n--${boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${text}\r\n--${boundary}--`;
+    `\r\n--${boundary}\r\nContent-Type: ${contentType}; charset=UTF-8\r\n\r\n${text}\r\n--${boundary}--`;
   const res = await drive("/files?uploadType=multipart&fields=id,webViewLink", {
     method: "POST",
     headers: { "Content-Type": `multipart/related; boundary=${boundary}` },

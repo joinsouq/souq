@@ -8,6 +8,7 @@
 
 import ExcelJS from "exceljs";
 import mammoth from "mammoth";
+import { marked } from "marked";
 import { listFolder, findFolder, downloadFile, saveDoc, comment, type DriveFile } from "./services.js";
 
 const SKILLS_ROOT = "_Souq skills";
@@ -214,13 +215,44 @@ export async function runUnderwriting(opts: { taskGid: string; clientFolder: str
     return;
   }
 
-  const link = await saveDoc(`Claude underwriting draft (${started})`, memo, opts.clientFolder);
   const verdict = memo.match(/^\s*VERDICT:\s*(.+)$/im)?.[1]?.trim() || "see memo";
   const headline = memo.match(/^\s*HEADLINE:\s*(.+)$/im)?.[1]?.trim() || "";
+  const link = await saveDoc(
+    `Claude underwriting draft (${started})`,
+    memoToHtml(memo, { company: opts.company, verdict, headline, started }),
+    opts.clientFolder,
+    "text/html",
+  );
   await comment(
     opts.taskGid,
     `Underwriting draft (Claude, souq-underwriting skill). A first pass for the team, not a decision.\n\n` +
       `VERDICT: ${verdict}\n${headline}\n\nFull memo with figures (need-to-know): ${link}` +
       (skipped.length ? `\n\nNot reviewed automatically: ${skipped.join("; ")}` : ""),
   );
+}
+
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/** Claude writes Markdown; Google Docs needs HTML to show real headings, bold, and tables. */
+function memoToHtml(memo: string, m: { company: string; verdict: string; headline: string; started: string }): string {
+  // The VERDICT/HEADLINE lines (and a divider after them) become the header block instead.
+  const body = memo
+    .replace(/^\s*VERDICT:.*$/im, "")
+    .replace(/^\s*HEADLINE:.*$/im, "")
+    .replace(/^\s*(---|\*\*\*)\s*$/m, "")
+    .trim();
+  const html = marked.parse(body, { gfm: true, async: false }) as string;
+  const color = /no-go/i.test(m.verdict) ? "#b3261e" : /^\W*go\b/i.test(m.verdict) ? "#1e7b34" : "#9a6700";
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.4; }
+h1 { font-size: 18pt; } h2 { font-size: 14pt; margin-top: 18pt; } h3 { font-size: 12pt; }
+table { border-collapse: collapse; } td, th { border: 1px solid #bbbbbb; padding: 4pt 6pt; vertical-align: top; }
+th { background: #f1f1f1; }
+</style></head><body>
+<p style="color:#666666;font-size:9pt">Claude underwriting draft for ${esc(m.company)} · ${esc(m.started)} ET · A first pass for the team, not a decision. Need-to-know.</p>
+<p style="font-size:16pt;font-weight:bold;color:${color}">Verdict: ${esc(m.verdict)}</p>
+${m.headline ? `<p style="font-size:12pt">${esc(m.headline)}</p>` : ""}
+<hr/>
+${html}
+</body></html>`;
 }

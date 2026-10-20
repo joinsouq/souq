@@ -19,6 +19,7 @@
     "@vercel/functions": "^2.2.13",
     "exceljs": "^4.4.0",
     "google-auth-library": "^9.15.1",
-    "mammoth": "^1.13.0"
+    "mammoth": "^1.13.0",
+    "marked": "^15.0.12"
   }
 }
