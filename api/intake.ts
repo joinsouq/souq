@@ -10,7 +10,7 @@
 import { waitUntil } from "@vercel/functions";
 import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
-  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
+  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS, getTask,
 } from "./_lib/services.js";
 import { confirmationFor, sendEmail } from "./_lib/email.js";
 import { loadSkill } from "./_lib/underwrite.js";
@@ -123,8 +123,13 @@ export default async function handler(req: Req, res: Res) {
       (async () => {
         try {
           const cover = await runCoverSheet({ company, folderId, path: form.id, applicationText: fullText, answers });
-          lines.splice(lines.indexOf(BREAK), 0, BREAK, `Cover sheet (public background on the company and founders): ${cover.link}`);
-          await updateNotes(task.gid, notes()).catch((e) => console.error("cover link update failed", e));
+          // Add the link to the card as it is now, so edits made in the meantime
+          // (by the team or by other automations) aren't overwritten.
+          const coverLine = `Cover sheet (public background on the company and founders): ${cover.link}`;
+          const current = String(((await getTask(task.gid)) as { notes?: string }).notes || "");
+          const at = current.indexOf("Full application incl. numbers");
+          const updated = at >= 0 ? `${current.slice(0, at)}${coverLine}\n\n${current.slice(at)}` : `${current}\n\n${coverLine}`;
+          await updateNotes(task.gid, updated).catch((e) => console.error("cover link update failed", e));
           await comment(task.gid, `Cover sheet ready (Claude, from the application and public sources).${cover.summary ? `\n\n${cover.summary}` : ""}\n\n${cover.link}`);
         } catch (e) {
           console.error("cover sheet failed", e);
