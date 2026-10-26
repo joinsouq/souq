@@ -223,6 +223,34 @@ export async function createTask(opts: { name: string; notes: string; section: s
   return { gid: task.gid, url: task.permalink_url || `https://app.asana.com/0/${project}/${task.gid}` };
 }
 
+// "Documents requested": moving a funding card here emails the founder their
+// upload link (see api/asana-webhook.ts). Created by the app if it's missing.
+export const DOCS_REQUESTED_NAME = "Documents requested";
+let docsSectionGid = "";
+export async function ensureDocsRequestedSection(): Promise<string> {
+  if (docsSectionGid) return docsSectionGid;
+  const project = env("ASANA_PROJECT_ID");
+  const sections = (await asana(`/projects/${project}/sections`)) as { gid: string; name: string }[];
+  const hit = sections.find((s) => s.name.trim().toLowerCase() === DOCS_REQUESTED_NAME.toLowerCase());
+  docsSectionGid = hit
+    ? hit.gid
+    : (await asana(`/projects/${project}/sections`, "POST", { name: DOCS_REQUESTED_NAME, insert_after: SECTIONS.introCall })).gid;
+  return docsSectionGid;
+}
+
+/** Makes sure Asana tells the site when cards move. Safe to run more than once. */
+export async function ensureWebhook(target: string): Promise<"exists" | "created"> {
+  const project = env("ASANA_PROJECT_ID");
+  const { workspace } = (await asana(`/projects/${project}?opt_fields=workspace.gid`)) as { workspace: { gid: string } };
+  const hooks = (await asana(`/webhooks?workspace=${workspace.gid}&resource=${project}&opt_fields=target,active`)) as { gid: string; target: string; active: boolean }[];
+  const base = target.split("?")[0];
+  if (hooks.some((h) => h.active && h.target.split("?")[0] === base)) return "exists";
+  await asana("/webhooks", "POST", { resource: project, target, filters: [{ resource_type: "task", action: "added" }] });
+  return "created";
+}
+
+export const updateNotes = (taskGid: string, notes: string) => asana(`/tasks/${taskGid}`, "PUT", { notes });
+
 export const comment = (taskGid: string, text: string) => asana(`/tasks/${taskGid}/stories`, "POST", { text });
 export const moveTo = (taskGid: string, section: string) => asana(`/sections/${section}/addTask`, "POST", { task: taskGid });
 export const setWaitingOn = (taskGid: string, who: "Founder" | "Souq") =>

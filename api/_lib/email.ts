@@ -154,6 +154,21 @@ export function documentsReceived(opts: { to: string; name: string; company: str
   return { to: opts.to, subject: "We received your documents", paragraphs };
 }
 
+/** Sent automatically when a funding card moves to "Documents requested". */
+export function documentsRequest(opts: { to: string; name: string; company: string; link: string; needed: string[] }): Email {
+  return {
+    to: opts.to,
+    subject: "Next step: your documents for Souq",
+    paragraphs: [
+      `Hi ${firstName(opts.name)},`,
+      `Thanks for taking the time to talk${opts.company ? ` about ${opts.company}` : ""}. The next step is a short list of documents so we can finish our review.`,
+      opts.needed.map((n) => `• ${n}`).join("\n"),
+      `Upload them here. It's private to you, and we'll email you a code to open it:\n${opts.link}`,
+      "You can upload in more than one sitting. If you have a question, just reply to this email.",
+    ],
+  };
+}
+
 /** The one-time code that opens a founder's document page. */
 export function accessCode(opts: { to: string; name: string; code: string }): Email {
   return {

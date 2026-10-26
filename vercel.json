@@ -16,6 +16,9 @@
     },
     "api/intake.ts": {
       "maxDuration": 300
+    },
+    "api/asana-webhook.ts": {
+      "maxDuration": 60
     }
   }
 }
