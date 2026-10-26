@@ -13,7 +13,8 @@ import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
 } from "./_lib/services.js";
 import { confirmationFor, sendEmail } from "./_lib/email.js";
-import { loadSkill, runCoverSheet } from "./_lib/underwrite.js";
+import { loadSkill } from "./_lib/underwrite.js";
+import { runCoverSheet } from "./_lib/coversheet.js";
 
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
