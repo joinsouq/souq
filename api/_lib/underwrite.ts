@@ -10,6 +10,7 @@ import ExcelJS from "exceljs";
 import mammoth from "mammoth";
 import { marked } from "marked";
 import { listFolder, findFolder, downloadFile, saveDoc, comment, type DriveFile } from "./services.js";
+import { CRITERIA } from "../../artifacts/souq-capital/src/data/offerings.js";
 
 const SKILLS_ROOT = "_Souq skills";
 const FOLDER = "application/vnd.google-apps.folder";
@@ -140,7 +141,7 @@ async function xlsxToText(buf: Buffer): Promise<string> {
 type ClaudeContent = { type: string; text?: string; [k: string]: unknown };
 
 /** One Claude turn with web search, following "pause_turn" until it finishes. */
-async function claudeWithSearch(system: string, content: Block[], timeoutMs: number): Promise<string> {
+export async function claudeWithSearch(system: string, content: Block[], timeoutMs: number): Promise<string> {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error("ANTHROPIC_API_KEY is not set");
   const deadline = Date.now() + timeoutMs;
@@ -255,4 +256,112 @@ ${m.headline ? `<p style="font-size:12pt">${esc(m.headline)}</p>` : ""}
 <hr/>
 ${html}
 </body></html>`;
+}
+
+// ---------------------------------------------------------------- Cover sheet
+
+/**
+ * Used when there's no "souq-cover-sheet" skill in the Drive folder yet.
+ * Once the team drops one in, theirs wins and this is ignored.
+ */
+const DEFAULT_COVER_SKILL = `You write the cover sheet for a company that just applied to Souq, an Islamic-aligned
+working capital and operating partner for consumer brands. The cover sheet is the first thing the team reads
+before any call: who the company is, who runs it, and what the public record shows. It is background, not a
+credit decision.
+
+Use the founder's application for what they told us, and web search for everything public. Keep the two apart:
+anything from the application is "per the application"; anything from the web gets a source link. If you
+could not find or confirm something, say "Not found" rather than guessing. Never invent people, numbers, or links.
+
+What to look up:
+- The company: website, what it sells, price point, where it sells (own site, Amazon, retail, wholesale), when it
+  started, where it's based, any press or awards.
+- The founders and leadership: name, role, background (prior companies, roles, education) from LinkedIn,
+  interviews, podcasts, press. Note anything that suggests they are or are not full time on the business.
+- Public footprint: Instagram, TikTok, LinkedIn and other socials with rough follower counts, Amazon or marketplace
+  ratings and review counts, notable retail doors.
+- Public record: state business registration if findable, USPTO trademarks for the brand name, lawsuits, regulator
+  actions, BBB complaints, recalls, or negative press. Say plainly when nothing turned up.
+- Fit against Souq's criteria for the path they applied to (given below): for each criterion say Met, Not met, or
+  Unknown, with what you based it on.
+
+Write in plain, short sentences. No marketing language. Use this structure, in Markdown:
+
+SUMMARY: one or two sentences on who they are and what stands out. No dollar amounts or financial figures.
+
+# Cover sheet: <Company>
+
+## At a glance
+A two-column table: Company, Website, Based in, Founded, What they sell, Channels, Applied for, Revenue
+(per the application), Team size (if known).
+
+## The business
+Three to five sentences.
+
+## Founders and leadership
+One short paragraph per person, with sources.
+
+## Public footprint
+Bullets: website, each social channel with follower counts, marketplaces and ratings, retail, press.
+
+## Public record
+Bullets: registration, trademarks, legal or regulatory issues, complaints, negative press.
+
+## Fit against Souq's criteria
+A table: Criterion, What we know, Met / Not met / Unknown.
+
+## Worth asking on the first call
+Three to five specific questions the public record raised or couldn't answer.
+
+## Sources
+Every link you used, one per line.`;
+
+const CRITERIA_FOR: Record<string, (keyof typeof CRITERIA)[]> = {
+  funding: ["capital"],
+  accelerator: ["accelerator", "operating-partnership"],
+};
+
+function criteriaText(path: string, answers: Record<string, string | string[]>): string {
+  const ids = new Set(CRITERIA_FOR[path] || []);
+  if (answers.alsoFunding === "Yes") ids.add("capital");
+  if (answers.alsoAccelerator === "Yes") ids.add("accelerator");
+  if (!ids.size) return "They did not apply for Capital or the Accelerator, so there are no tier criteria to check. Skip that section and say so in one line.";
+  return [...ids].map((id) => {
+    const t = CRITERIA[id];
+    return `${t.name}: ${t.threshold} ${t.thresholdLabel}; ` + t.criteria.map((c) => `${c.label}: ${c.value}`).join("; ");
+  }).join("\n");
+}
+
+/**
+ * Builds the cover sheet (public background) for a new application, saves it
+ * as a Google Doc in the client's folder, and returns the link plus a short
+ * summary with no figures, for the Asana card.
+ */
+export async function runCoverSheet(opts: {
+  company: string; folderId: string; path: string; applicationText: string; answers: Record<string, string | string[]>;
+}): Promise<{ link: string; summary: string }> {
+  const skill = (await loadSkill("souq-cover-sheet").catch(() => null)) || DEFAULT_COVER_SKILL;
+  const today = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York", dateStyle: "long" });
+  const prompt =
+    `Today is ${today}. Write the cover sheet for ${opts.company}.\n\n` +
+    `Souq's criteria for what they applied to:\n${criteriaText(opts.path, opts.answers)}\n\n` +
+    `Their application, in their own words:\n\n${opts.applicationText}`;
+
+  const out = await claudeWithSearch(skill, [{ type: "text", text: prompt }], 240_000);
+  const summary = out.match(/^\s*SUMMARY:\s*(.+)$/im)?.[1]?.trim() || "";
+  const body = out.replace(/^\s*SUMMARY:.*$/im, "").trim();
+  const html = marked.parse(body, { gfm: true, async: false }) as string;
+  const made = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
+  const doc = `<!doctype html><html><head><meta charset="utf-8"><style>
+body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.4; }
+h1 { font-size: 18pt; } h2 { font-size: 14pt; margin-top: 18pt; } h3 { font-size: 12pt; }
+table { border-collapse: collapse; } td, th { border: 1px solid #bbbbbb; padding: 4pt 6pt; vertical-align: top; }
+th { background: #f1f1f1; }
+</style></head><body>
+<p style="color:#666666;font-size:9pt">Cover sheet for ${esc(opts.company)} · ${esc(made)} ET · Drafted by Claude from the application and public sources. Check anything marked unverified.</p>
+${summary ? `<p style="font-size:12pt">${esc(summary)}</p><hr/>` : ""}
+${html}
+</body></html>`;
+  const link = await saveDoc(`Cover sheet: ${opts.company}`, doc, opts.folderId, "text/html");
+  return { link, summary };
 }

@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import SitePage from "@/components/SitePage";
-import { SERVICES } from "@/data/offerings";
+import ServiceGrid from "@/components/ServiceGrid";
 
 const HOW_IT_WORKS = [
   { title: "Tell us what you need", body: "Pick the service and share a few numbers about the business. It takes about five minutes." },
@@ -16,8 +16,8 @@ export default function Services() {
         <section className="sq-page-hero">
           <h1 className="sq-display" style={{ maxWidth: "13ch" }}>Hire Souq for one part of the business.</h1>
           <p className="sq-lede">
-            No program to join first. Choose the service you need, and work with the team that runs it
-            for brands like yours.
+            No program to join first. Open any service to see what it covers, then work with the team
+            that runs it for brands like yours.
           </p>
           <div className="sq-actions">
             <Link href="/apply/service" className="sq-btn sq-btn-primary">Request a service</Link>
@@ -27,14 +27,7 @@ export default function Services() {
 
         <section className="sq-section" aria-labelledby="svc-list" style={{ paddingTop: 0, borderTop: 0 }}>
           <h2 id="svc-list" className="sr-only">Services</h2>
-          <ul className="sq-service-grid" role="list">
-            {SERVICES.map((s) => (
-              <li key={s.id} id={s.id} className="sq-service">
-                <h3 className="sq-h3">{s.name}</h3>
-                <p>{s.summary}</p>
-              </li>
-            ))}
-          </ul>
+          <ServiceGrid openFromHash />
         </section>
 
         {/* A real sequence, so it is numbered */}

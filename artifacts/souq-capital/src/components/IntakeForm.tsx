@@ -76,8 +76,25 @@ export function FieldInput({
   );
 }
 
+/** Pre-select choices from the link, e.g. /apply/service?services=3PL%20and%20returns.
+ *  Only real options for that field are accepted. */
+function prefillFromUrl(form: Form): Answers {
+  if (typeof window === "undefined") return {};
+  const params = new URLSearchParams(window.location.search);
+  const out: Answers = {};
+  for (const section of form.sections) {
+    for (const f of section.fields) {
+      if (!f.options) continue;
+      const picked = params.getAll(f.id).filter((v) => f.options!.includes(v));
+      if (!picked.length) continue;
+      out[f.id] = f.type === "checkboxes" ? picked : picked[0];
+    }
+  }
+  return out;
+}
+
 export default function IntakeForm({ form }: { form: Form }) {
-  const [answers, setAnswers] = useState<Answers>({});
+  const [answers, setAnswers] = useState<Answers>(() => prefillFromUrl(form));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [serverError, setServerError] = useState("");

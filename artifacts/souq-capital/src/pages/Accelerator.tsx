@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import SitePage from "@/components/SitePage";
-import { SERVICES } from "@/data/offerings";
+import { CRITERIA, SERVICES } from "@/data/offerings";
+import TierCriteria, { CriteriaNote } from "@/components/TierCriteria";
 import { OPERATING_TEAM } from "@/data/team";
 
 const PATHS = [
@@ -52,7 +53,7 @@ const OP_POINTS = [
 ];
 
 const FAQS = [
-  { q: "Who is the Accelerator for?", a: "Consumer brands with real traction, usually $1M or more a year, led by a founder who runs the business day to day, with a product that stands apart. If you're earlier, a single service or office hours is often the better first step." },
+  { q: "Who is the Accelerator for?", a: "Brands doing $1M or more a year, operating for at least a year, focused on growth, with a founder who runs the business full time. We work with brands anywhere. If you're earlier, a single service or the community is often the better first step." },
   { q: "What's the difference between the Accelerator and an Operating Partnership?", a: "In the Accelerator, we advise and your team carries out the plan. In an Operating Partnership, a Souq operating lead and our service teams run an agreed part of the business for you." },
   { q: "What does it cost?", a: "It depends on the scope. We walk through pricing on the intro call, once we understand where the business is and what you need." },
   { q: "Do I have to use your service teams?", a: "No. Accelerator brands can bring in any service when they need execution, each with its own scope and price, but it's never required." },
@@ -90,6 +91,20 @@ export default function Accelerator() {
               </a>
             ))}
           </div>
+        </section>
+
+        <section id="who-its-for" className="sq-section" aria-labelledby="acc-who">
+          <div className="sq-head">
+            <h2 id="acc-who" className="sq-h2">Who it's for.</h2>
+            <p className="sq-body">
+              We work with a small group of brands at a time, so we look for a few things before the first call.
+            </p>
+          </div>
+          <div className="acc-crit">
+            <TierCriteria tier={CRITERIA.accelerator} />
+            <TierCriteria tier={CRITERIA["operating-partnership"]} />
+          </div>
+          <CriteriaNote />
         </section>
 
         <section id="how-it-works" className="sq-section" aria-labelledby="acc-how">
@@ -266,7 +281,10 @@ export default function Accelerator() {
         .acc-faq details[open] .acc-plus::after { transform: rotate(0deg); }
 
         .acc-close { padding-bottom: clamp(5rem, 12vw, 9rem); }
-        #how-it-works, #whats-included, #operating-partnership { scroll-margin-top: 5rem; }
+        #who-its-for, #how-it-works, #whats-included, #operating-partnership { scroll-margin-top: 5rem; }
+
+        .acc-crit { display: grid; grid-template-columns: 1fr 1fr; margin: 0 calc(-1 * var(--sq-pad)); border-top: 1px solid var(--sq-line); border-bottom: 1px solid var(--sq-line); }
+        .acc-crit > .sq-crit + .sq-crit { border-left: 1px solid var(--sq-line); background: linear-gradient(to bottom, color-mix(in srgb, var(--souq-coral) 7%, transparent), transparent 85%); }
 
         @media (max-width: 1000px) {
           .acc-steps, .acc-focus { grid-template-columns: 1fr 1fr; }
@@ -276,7 +294,8 @@ export default function Accelerator() {
           .acc-op, .acc-team { grid-template-columns: 1fr; }
         }
         @media (max-width: 760px) {
-          .acc-paths, .acc-included, .acc-steps, .acc-focus { grid-template-columns: 1fr; }
+          .acc-paths, .acc-included, .acc-steps, .acc-focus, .acc-crit { grid-template-columns: 1fr; }
+          .acc-crit > .sq-crit + .sq-crit { border-left: 0; border-top: 1px solid var(--sq-line); }
           .acc-path + .acc-path, .acc-included > div + div { border-left: 0; border-top: 1px solid var(--sq-line); }
           .acc-included > div + div { margin-top: 2rem; }
           .acc-steps li:nth-child(even), .acc-focus > div:nth-child(even) { border-left: 0; }

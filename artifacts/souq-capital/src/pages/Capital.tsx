@@ -1,6 +1,8 @@
 import { Link } from "wouter";
 import SitePage from "@/components/SitePage";
 import { CAPITAL_TEAM } from "@/data/team";
+import { CRITERIA } from "@/data/offerings";
+import TierCriteria, { CriteriaNote } from "@/components/TierCriteria";
 
 const STATS = [
   { value: "$8M", label: "invested" },
@@ -83,7 +85,7 @@ const FAQS = [
   },
   {
     q: "What kinds of businesses do you fund?",
-    a: "Consumer product brands that need inventory, and service businesses with signed contracts. Steady sales and healthy margins matter more to us than size.",
+    a: "US-based consumer product brands that need inventory, and service businesses with signed contracts, doing $200K or more a year with at least a year of sales history. The full list is under Who qualifies above.",
   },
   {
     q: "What will you ask for?",
@@ -160,6 +162,20 @@ export default function Capital() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section id="who-qualifies" className="sq-section" aria-labelledby="cap-who">
+          <div className="sq-head">
+            <h2 id="cap-who" className="sq-h2">Who qualifies.</h2>
+            <p className="sq-body">
+              Capital is for established brands that need working capital to grow, not startup money.
+              Here's what we look for.
+            </p>
+          </div>
+          <div className="cap-crit">
+            <TierCriteria tier={CRITERIA.capital} wide />
+          </div>
+          <CriteriaNote />
         </section>
 
         <section className="sq-section" aria-labelledby="cap-compare">
@@ -246,6 +262,8 @@ export default function Capital() {
       </div>
 
       <style>{`
+        .cap-crit { margin: 0 calc(-1 * var(--sq-pad)); border-top: 1px solid var(--sq-line); border-bottom: 1px solid var(--sq-line); background: linear-gradient(to bottom, color-mix(in srgb, var(--souq-blue) 5%, transparent), transparent 80%); }
+        #who-qualifies { scroll-margin-top: 5rem; }
         .cap-kicker { margin: 0 0 1.5rem; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--souq-coral); }
         .cap-stats {
           margin: clamp(3rem, 7vh, 4.5rem) calc(-1 * var(--sq-pad)) 0; padding: 0;

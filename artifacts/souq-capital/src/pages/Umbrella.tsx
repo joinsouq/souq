@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
 import SitePage from "@/components/SitePage";
-import { CAPITAL, LEVELS, SERVICES } from "@/data/offerings";
+import { CAPITAL, LEVELS } from "@/data/offerings";
+import ServiceGrid from "@/components/ServiceGrid";
 
 const WORDS = [
   "natural haircare brand",
@@ -108,14 +109,7 @@ export default function Umbrella() {
               </p>
             </div>
           </div>
-          <ul className="sq-service-grid" role="list">
-            {SERVICES.map((s) => (
-              <li key={s.id} className="sq-service">
-                <h3 className="sq-h3">{s.name}</h3>
-                <p>{s.summary}</p>
-              </li>
-            ))}
-          </ul>
+          <ServiceGrid flywheel />
         </section>
 
         {/* Close */}

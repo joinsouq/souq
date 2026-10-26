@@ -4,6 +4,8 @@
 // 3. Creates the Asana card in Customer Pipeline > New ("Talk to us" goes to Intro call), assigned for first review.
 // 4. For funding requests, runs the Souq submission filter and posts the
 //    verdict on the card (in the background, so the founder isn't kept waiting).
+// 5. For every application, drafts a cover sheet (public background on the
+//    company and founders) as a Google Doc in the folder, linked on the card.
 
 import { waitUntil } from "@vercel/functions";
 import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../artifacts/souq-capital/src/intake/forms.js";
@@ -11,7 +13,7 @@ import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS,
 } from "./_lib/services.js";
 import { confirmationFor, sendEmail } from "./_lib/email.js";
-import { loadSkill } from "./_lib/underwrite.js";
+import { loadSkill, runCoverSheet } from "./_lib/underwrite.js";
 
 type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
 type Res = { status: (n: number) => Res; json: (b: unknown) => void };
@@ -113,7 +115,25 @@ export default async function handler(req: Req, res: Res) {
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
 
-  // 3. Quick-look review runs after the founder gets their confirmation.
+  // 3. Cover sheet: public background on the company and founders, saved to
+  //    the folder and linked on the card. Runs alongside the quick look below.
+  if (folderId) {
+    waitUntil(
+      (async () => {
+        try {
+          const cover = await runCoverSheet({ company, folderId, path: form.id, applicationText: fullText, answers });
+          lines.splice(lines.indexOf(BREAK), 0, BREAK, `Cover sheet (public background on the company and founders): ${cover.link}`);
+          await updateNotes(task.gid, notes()).catch((e) => console.error("cover link update failed", e));
+          await comment(task.gid, `Cover sheet ready (Claude, from the application and public sources).${cover.summary ? `\n\n${cover.summary}` : ""}\n\n${cover.link}`);
+        } catch (e) {
+          console.error("cover sheet failed", e);
+          await comment(task.gid, "Cover sheet didn't run (Claude error). Look the company up manually.").catch(() => {});
+        }
+      })(),
+    );
+  }
+
+  // 4. Quick-look review runs after the founder gets their confirmation.
   waitUntil(
     (async () => {
       // The skill comes from the "_Souq skills" folder in Drive; the env var is a fallback.

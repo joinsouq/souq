@@ -15,7 +15,7 @@
       "maxDuration": 300
     },
     "api/intake.ts": {
-      "maxDuration": 60
+      "maxDuration": 300
     }
   }
 }
