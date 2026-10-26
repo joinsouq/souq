@@ -94,13 +94,15 @@ const STAGE_BY_SECTION: Record<string, number> = {
   "1218558190765255": 3, // Parked: shown as "in review"; founders never see "parked"
 };
 
-export function progressFor(sectionGid: string | undefined, docs: { have: number; need: number }) {
+export function progressFor(sectionGid: string | undefined, docs: { have: number; need: number }, path: "funding" | "accelerator" = "funding") {
   let stage = STAGE_BY_SECTION[sectionGid || ""] ?? 2;
   // Anyone on this page has had their intro call, so never show less than "Documents".
   stage = Math.max(stage, 2);
   if (stage === 2 && docs.have >= docs.need) stage = 3;
 
-  const labels = ["Applied", "Intro call", "Documents", "In review", "Terms", "Funded"];
+  const labels = path === "accelerator"
+    ? ["Applied", "Intro call", "Documents", "In review", "Proposal", "Onboarded"]
+    : ["Applied", "Intro call", "Documents", "In review", "Terms", "Funded"];
   const steps: Step[] = labels.map((label, i) => ({
     label,
     state: i < stage || (i === 5 && stage === 5) ? "done" : i === stage ? "current" : "todo",

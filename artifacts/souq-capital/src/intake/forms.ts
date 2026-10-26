@@ -630,4 +630,19 @@ export const DOC_SECTIONS: Section[] = [
 
 export const DOC_QUESTIONS: Field[] = DOC_SECTIONS.flatMap((s) => s.fields);
 
+/** Which paths get the document upload page. */
+export type DocPath = "funding" | "accelerator";
+export const DOC_PATHS: DocPath[] = ["funding", "accelerator"];
+
+// Funding-only items Accelerator founders aren't asked for.
+const FUNDING_ONLY_SLOTS = ["skuRequest", "debtDocs"];
+
+/** The document list for a path. Accelerator gets the funding list minus the funding-only items. */
+export const docSlotsFor = (path: DocPath | string | undefined): DocSlot[] =>
+  path === "accelerator" ? DOC_SLOTS.filter((s) => !FUNDING_ONLY_SLOTS.includes(s.id)) : DOC_SLOTS;
+
+/** Works out the path from an Asana card's description ("Submitted ... via the website: <choice>"). */
+export const docPathFromNotes = (notes: unknown): DocPath =>
+  String(notes || "").includes(FORMS.accelerator.choice) ? "accelerator" : "funding";
+
 export const MAX_FILE_MB = 50;

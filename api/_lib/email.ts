@@ -84,7 +84,7 @@ export function confirmationFor(path: PathId, a: Record<string, string | string[
         paragraphs: [
           hi,
           `Thanks for applying to the Souq Accelerator${company ? ` with ${company}` : ""}. Your application came through.`,
-          "We work with a small group of brands at a time, so we read every application closely. If it looks like a fit, we'll reach out to set up a conversation.",
+          "We work with a small group of brands at a time, so we read every application closely. If it looks like a fit, we'll reach out to set up a conversation, and after that we'll send a private link where you can upload a short list of documents.",
           reply,
         ],
       };

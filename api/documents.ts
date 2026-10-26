@@ -10,7 +10,7 @@
 //                              what's missing on the Asana card, moves the card,
 //                              then runs the Claude underwriting draft
 
-import { DOC_SLOTS, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
+import { DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "./_lib/services.js";
@@ -82,10 +82,11 @@ export default async function handler(req: Req, res: Res) {
         const s = slotOf(f.name);
         if (s) (bySlot[s.id] ||= []).push(f.name.slice(s.label.length + 3));
       }
-      const required = DOC_SLOTS.filter((s) => s.required);
-      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length });
+      const path = docPathFromNotes(task.notes);
+      const required = docSlotsFor(path).filter((s) => s.required);
+      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length }, path);
       // Card names look like "Company (Founder)"; show just the company.
-      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress });
+      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
     }
 
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -107,19 +108,22 @@ export default async function handler(req: Req, res: Res) {
       const errors = validate(QUESTIONS_FORM, answers);
       if (Object.keys(errors).length) return res.status(400).json({ errors });
 
+      const cardNow = (await getTask(parsed.task).catch(() => ({ notes: "" }))) as Task;
+      const path = docPathFromNotes(cardNow.notes);
+      const slots = docSlotsFor(path);
       const files = await listFiles(docsFolder);
       const got = new Set(files.map((f) => slotOf(f.name)?.id).filter(Boolean));
-      const missing = DOC_SLOTS.filter((s) => s.required && !got.has(s.id));
+      const missing = slots.filter((s) => s.required && !got.has(s.id));
       const submitted = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
 
       await saveDoc(`Details from founder (${submitted})`, toText(QUESTIONS_FORM, answers), parsed.folder);
 
-      const received = DOC_SLOTS.filter((s) => got.has(s.id)).map((s) => `• ${s.label}`).join("\n") || "• (none)";
+      const received = slots.filter((s) => got.has(s.id)).map((s) => `• ${s.label}`).join("\n") || "• (none)";
       const missingText = missing.map((s) => `• ${s.label}`).join("\n");
       await comment(
         parsed.task,
         `Founder uploaded documents (${submitted} ET). ${files.length} file(s), in the private folder: ${folderUrl(parsed.folder)}\n\nReceived:\n${received}` +
-          (missing.length ? `\n\nStill missing (required):\n${missingText}` : "\n\nAll required documents are in. Ready for the full underwrite."),
+          (missing.length ? `\n\nStill missing (required):\n${missingText}` : (path === "accelerator" ? "\n\nAll required documents are in. Ready for review." : "\n\nAll required documents are in. Ready for the full underwrite.")),
       );
       await moveTo(parsed.task, SECTIONS.diligence);
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
@@ -137,7 +141,8 @@ export default async function handler(req: Req, res: Res) {
           link: `${siteOrigin(req)}/apply/documents?ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`,
         })).catch((e) => console.error("documents email failed", e));
       }
-      waitUntil(
+      // Underwriting is for funding decisions; Accelerator uploads stop at the receipt.
+      if (path === "funding") waitUntil(
         runUnderwriting({
           taskGid: parsed.task,
           clientFolder: parsed.folder,

@@ -7,7 +7,7 @@
 // so a fake or repeated call can't send anything the card doesn't call for.
 
 import { waitUntil } from "@vercel/functions";
-import { DOC_SLOTS } from "../artifacts/souq-capital/src/intake/forms.js";
+import { docSlotsFor, docPathFromNotes } from "../artifacts/souq-capital/src/intake/forms.js";
 import { ensureDocsRequestedSection, getTask, updateNotes, comment, setWaitingOn } from "./_lib/services.js";
 import { documentsRequest, sendEmail } from "./_lib/email.js";
 
@@ -47,7 +47,7 @@ async function handleTask(gid: string) {
 
   const link = notes.match(/https?:\/\/\S+\/apply\/documents\?ref=\S+/)?.[0];
   if (!link) {
-    await comment(gid, "Moved to Documents requested, but this card has no upload link (only funding applications get one), so nothing was sent.");
+    await comment(gid, "Moved to Documents requested, but this card has no upload link (only funding and Accelerator applications get one), so nothing was sent.");
     return;
   }
   const contact = notes.match(/Contact:\s*([^,·\n]+)[^·\n]*·\s*([^\s·]+@[^\s·]+)/);
@@ -60,7 +60,7 @@ async function handleTask(gid: string) {
 
   await sendEmail(documentsRequest({
     to: email, name: name.trim(), company, link,
-    needed: DOC_SLOTS.filter((s) => s.required).map((s) => s.label),
+    needed: docSlotsFor(docPathFromNotes(notes)).filter((s) => s.required).map((s) => s.label),
   }));
   const when = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
   await updateNotes(gid, `${notes}\n\n${SENT_MARK}: ${email}, ${when} ET`);

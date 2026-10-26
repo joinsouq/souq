@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import SitePage from "@/components/SitePage";
 import { FieldInput } from "@/components/IntakeForm";
-import { DOC_SECTIONS, DOC_SLOTS, MAX_FILE_MB, isShown, type DocSlot } from "@/intake/forms";
+import { DOC_SECTIONS, docSlotsFor, MAX_FILE_MB, isShown, type DocSlot } from "@/intake/forms";
 
 type Upload = { name: string; state: "uploading" | "done" | "error"; pct: number; msg?: string };
 
@@ -173,7 +173,7 @@ function CodeGate({ auth, emailHint, onIn }: { auth: { ref: string; t: string };
 
 export default function Documents() {
   const auth = useLinkParams();
-  const [info, setInfo] = useState<{ company: string; uploaded: Record<string, string[]>; progress?: Progress } | null>(null);
+  const [info, setInfo] = useState<{ company: string; uploaded: Record<string, string[]>; progress?: Progress; path?: string } | null>(null);
   const [gate, setGate] = useState<string | null>(null); // masked email while a code is needed
   const [reloadKey, setReloadKey] = useState(0);
   const [loadError, setLoadError] = useState("");
@@ -247,7 +247,7 @@ export default function Documents() {
               <fieldset className="ix-section">
                 <legend className="sq-h3">Documents</legend>
                 <ul className="ix-slots" role="list">
-                  {DOC_SLOTS.map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} />)}
+                  {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} />)}
                 </ul>
               </fieldset>
               {DOC_SECTIONS.map((s) => (

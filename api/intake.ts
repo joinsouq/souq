@@ -109,8 +109,8 @@ export default async function handler(req: Req, res: Res) {
     return res.status(502).json({ error: "We couldn't submit this right now. Please try again in a minute." });
   }
 
-  // Funding: add the private document-upload link, tied to this card and folder.
-  if (form.id === "funding" && folderId) {
+  // Funding and Accelerator: add the private document-upload link, tied to this card and folder.
+  if ((form.id === "funding" || form.id === "accelerator") && folderId) {
     const ref = `${task.gid}.${folderId}`;
     lines.push(BREAK, `Document upload link to send after the intro call:\n${siteOrigin(req)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
