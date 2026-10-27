@@ -44,10 +44,6 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Replit
-.cache/
-.local/
-
 # Chat uploads and Vercel local state (keep private files out of this public repo)
 attached_assets/
 .vercel
