@@ -10,17 +10,14 @@
 //                              what's missing on the Asana card, moves the card,
 //                              then runs the Claude underwriting draft
 
-import { DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../artifacts/souq-capital/src/intake/forms.js";
+import { DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
-} from "./_lib/services.js";
-import { runUnderwriting } from "./_lib/underwrite.js";
-import { documentsReceived, accessCode, sendEmail } from "./_lib/email.js";
-import { newCode, checkCode, newSession, checkSession, codesEnabled, maskEmail, progressFor } from "./_lib/access.js";
-import { waitUntil } from "@vercel/functions";
-
-type Req = { method?: string; body?: unknown; query?: Record<string, string>; headers: Record<string, string | string[] | undefined> };
-type Res = { status: (n: number) => Res; json: (b: unknown) => void };
+} from "../_lib/services.js";
+import { runUnderwriting } from "../_lib/underwrite.js";
+import { documentsReceived, accessCode, sendEmail } from "../_lib/email.js";
+import { newCode, checkCode, newSession, checkSession, codesEnabled, maskEmail, progressFor } from "../_lib/access.js";
+import { bindEnv } from "../_lib/env.js";
 
 // The written questions, wrapped as a one-section form so we can reuse validate/toText.
 const QUESTIONS_FORM: IntakeForm = {
@@ -40,41 +37,47 @@ type Task = { name?: string; notes?: string; memberships?: { section?: { gid: st
 const sectionOf = (task: Task) =>
   task.memberships?.find((m) => m.project?.gid === process.env.ASANA_PROJECT_ID)?.section?.gid || task.memberships?.[0]?.section?.gid;
 
-export default async function handler(req: Req, res: Res) {
-  const body = (typeof req.body === "string" ? JSON.parse(req.body) : req.body || {}) as Record<string, unknown>;
-  const ref = String((req.method === "GET" ? req.query?.ref : body.ref) || "");
-  const t = String((req.method === "GET" ? req.query?.t : body.t) || "");
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
+
+export const onRequest: PagesFunction<Record<string, string>> = async ({ request, env, waitUntil }) => {
+  bindEnv(env);
+  const url = new URL(request.url);
+  const raw = request.method === "POST" ? await request.text() : "";
+  const body = (raw ? JSON.parse(raw) : {}) as Record<string, unknown>;
+  const ref = String((request.method === "GET" ? url.searchParams.get("ref") : body.ref) || "");
+  const t = String((request.method === "GET" ? url.searchParams.get("t") : body.t) || "");
   const parsed = parseRef(ref);
-  if (!parsed || !verify(ref, t)) return res.status(403).json({ error: "This link isn't valid. Ask the Souq team for a new one." });
+  if (!parsed || !verify(ref, t)) return json(403, { error: "This link isn't valid. Ask the Souq team for a new one." });
 
   try {
     // ---- Step 1: the one-time code -------------------------------------
-    const session = String(req.headers["x-doc-session"] || "");
+    const session = request.headers.get("x-doc-session") || "";
     const signedIn = !codesEnabled() || checkSession(ref, session);
 
     if (!signedIn) {
       const task = (await getTask(parsed.task)) as Task;
       const contact = founderContact(task.notes);
-      if (!contact) return res.status(403).json({ error: "We couldn't find an email for this link. Reply to the Souq team's email and we'll sort it out." });
+      if (!contact) return json(403, { error: "We couldn't find an email for this link. Reply to the Souq team's email and we'll sort it out." });
 
-      if (req.method === "GET") return res.status(200).json({ needsCode: true, emailHint: maskEmail(contact.email) });
+      if (request.method === "GET") return json(200, { needsCode: true, emailHint: maskEmail(contact.email) });
       if (body.action === "sendCode") {
         await sendEmail(accessCode({ to: contact.email, name: contact.name, code: newCode(ref) }));
-        return res.status(200).json({ ok: true, emailHint: maskEmail(contact.email) });
+        return json(200, { ok: true, emailHint: maskEmail(contact.email) });
       }
       if (body.action === "verifyCode") {
         const result = checkCode(ref, String(body.code || ""));
-        if (result === "locked") return res.status(429).json({ error: "Too many tries. Wait 15 minutes, then request a new code." });
-        if (result === "wrong") return res.status(400).json({ error: "That code didn't match, or it expired. Check the latest email, or send a new code." });
-        return res.status(200).json({ session: newSession(ref) });
+        if (result === "locked") return json(429, { error: "Too many tries. Wait 15 minutes, then request a new code." });
+        if (result === "wrong") return json(400, { error: "That code didn't match, or it expired. Check the latest email, or send a new code." });
+        return json(200, { session: newSession(ref) });
       }
-      return res.status(401).json({ error: "Your session ended. Reload the page to get a new code." });
+      return json(401, { error: "Your session ended. Reload the page to get a new code." });
     }
 
     // ---- Step 2: the page itself ---------------------------------------
     const docsFolder = await ensureFolder("Documents", parsed.folder);
 
-    if (req.method === "GET") {
+    if (request.method === "GET") {
       const task = (await getTask(parsed.task)) as Task;
       const files = await listFiles(docsFolder);
       const bySlot: Record<string, string[]> = {};
@@ -86,27 +89,27 @@ export default async function handler(req: Req, res: Res) {
       const required = docSlotsFor(path).filter((s) => s.required);
       const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length }, path);
       // Card names look like "Company (Founder)"; show just the company.
-      return res.status(200).json({ company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
+      return json(200, { company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
     }
 
-    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    if (request.method !== "POST") return json(405, { error: "Method not allowed" });
 
     if (body.action === "upload") {
       const slot = DOC_SLOTS.find((s) => s.id === body.slot);
       const size = Number(body.size);
-      if (!slot) return res.status(400).json({ error: "Unknown document type." });
-      if (!(size > 0) || size > MAX_FILE_MB * 1024 * 1024) return res.status(400).json({ error: `Files must be under ${MAX_FILE_MB} MB.` });
+      if (!slot) return json(400, { error: "Unknown document type." });
+      if (!(size > 0) || size > MAX_FILE_MB * 1024 * 1024) return json(400, { error: `Files must be under ${MAX_FILE_MB} MB.` });
       const name = `${slot.label} - ${String(body.name || "file").replace(/[/\\]/g, "-").slice(0, 150)}`;
-      const origin = String(req.headers.origin || "");
+      const origin = request.headers.get("origin") || "";
       const uploadUrl = await startUpload({ folderId: docsFolder, name, mimeType: String(body.type || ""), size, origin });
-      return res.status(200).json({ uploadUrl });
+      return json(200, { uploadUrl });
     }
 
     if (body.action === "finish") {
       const answers: Answers = {};
       for (const f of DOC_QUESTIONS) answers[f.id] = String((body.answers as Record<string, unknown>)?.[f.id] ?? "").slice(0, 4000).trim();
       const errors = validate(QUESTIONS_FORM, answers);
-      if (Object.keys(errors).length) return res.status(400).json({ errors });
+      if (Object.keys(errors).length) return json(400, { errors });
 
       const cardNow = (await getTask(parsed.task).catch(() => ({ notes: "" }))) as Task;
       const path = docPathFromNotes(cardNow.notes);
@@ -138,7 +141,7 @@ export default async function handler(req: Req, res: Res) {
         await sendEmail(documentsReceived({
           to: contact.email, name: contact.name, company,
           missing: missing.map((m) => m.label),
-          link: `${siteOrigin(req)}/apply/documents?ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`,
+          link: `${siteOrigin(request.headers)}/apply/documents?ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`,
         })).catch((e) => console.error("documents email failed", e));
       }
       // Underwriting is for funding decisions; Accelerator uploads stop at the receipt.
@@ -150,12 +153,12 @@ export default async function handler(req: Req, res: Res) {
           company: company || "this company",
         }).catch((e) => console.error("underwriting error", e)),
       );
-      return res.status(200).json({ ok: true, missing: missing.map((m) => m.label) });
+      return json(200, { ok: true, missing: missing.map((m) => m.label) });
     }
 
-    return res.status(400).json({ error: "Unknown action." });
+    return json(400, { error: "Unknown action." });
   } catch (e) {
     console.error("documents error", e);
-    return res.status(500).json({ error: "Something went wrong on our side. Please try again." });
+    return json(500, { error: "Something went wrong on our side. Please try again." });
   }
-}
+};

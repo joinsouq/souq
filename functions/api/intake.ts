@@ -7,37 +7,39 @@
 // 5. For every application, drafts a cover sheet (public background on the
 //    company and founders) as a Google Doc in the folder, linked on the card.
 
-import { waitUntil } from "@vercel/functions";
-import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../artifacts/souq-capital/src/intake/forms.js";
+import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
   createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS, getTask,
-} from "./_lib/services.js";
-import { confirmationFor, sendEmail } from "./_lib/email.js";
-import { loadSkill } from "./_lib/underwrite.js";
-import { runCoverSheet } from "./_lib/coversheet.js";
-
-type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
-type Res = { status: (n: number) => Res; json: (b: unknown) => void };
+} from "../_lib/services.js";
+import { confirmationFor, sendEmail } from "../_lib/email.js";
+import { loadSkill } from "../_lib/underwrite.js";
+import { runCoverSheet } from "../_lib/coversheet.js";
+import { bindEnv } from "../_lib/env.js";
 
 const BREAK = "\u0000break";
 
 const clean = (v: unknown): string | string[] =>
   Array.isArray(v) ? v.map((x) => String(x).slice(0, 300)) : String(v ?? "").slice(0, 4000).trim();
 
-export default async function handler(req: Req, res: Res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 
-  const body = (typeof req.body === "string" ? JSON.parse(req.body) : req.body) as { path?: string; answers?: Record<string, unknown>; hp?: string };
+export const onRequest: PagesFunction<Record<string, string>> = async ({ request, env, waitUntil }) => {
+  if (request.method !== "POST") return json(405, { error: "Method not allowed" });
+  bindEnv(env);
+
+  const raw = await request.text();
+  const body = (raw ? JSON.parse(raw) : {}) as { path?: string; answers?: Record<string, unknown>; hp?: string };
   // Honeypot: bots fill the hidden field. Pretend success, do nothing.
-  if (body?.hp) return res.status(200).json({ ok: true });
+  if (body?.hp) return json(200, { ok: true });
 
   const form = FORMS[body?.path as PathId];
-  if (!form) return res.status(400).json({ error: "Unknown form." });
+  if (!form) return json(400, { error: "Unknown form." });
 
   const answers: Answers = {};
   for (const [k, v] of Object.entries(body.answers || {})) answers[k] = clean(v);
   const errors = validate(form, answers);
-  if (Object.keys(errors).length) return res.status(400).json({ errors });
+  if (Object.keys(errors).length) return json(400, { errors });
 
   const company = String(answers.company || "").trim() || String(answers.name);
   const person = String(answers.name || "").trim();
@@ -54,7 +56,7 @@ export default async function handler(req: Req, res: Res) {
       console.error("community save failed", e, JSON.stringify(answers));
     }
     await emailFounder(form.id, answers);
-    return res.status(200).json({ ok: true });
+    return json(200, { ok: true });
   }
 
   // 1. Private Drive folder with the full application.
@@ -106,13 +108,13 @@ export default async function handler(req: Req, res: Res) {
   } catch (e) {
     // Keep the submission in the logs so nothing is lost, then tell the founder.
     console.error("asana create failed", e, JSON.stringify({ path: form.id, answers }));
-    return res.status(502).json({ error: "We couldn't submit this right now. Please try again in a minute." });
+    return json(502, { error: "We couldn't submit this right now. Please try again in a minute." });
   }
 
   // Funding and Accelerator: add the private document-upload link, tied to this card and folder.
   if ((form.id === "funding" || form.id === "accelerator") && folderId) {
     const ref = `${task.gid}.${folderId}`;
-    lines.push(BREAK, `Document upload link to send after the intro call:\n${siteOrigin(req)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
+    lines.push(BREAK, `Document upload link to send after the intro call:\n${siteOrigin(request.headers)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
 
@@ -162,8 +164,8 @@ export default async function handler(req: Req, res: Res) {
   );
 
   await emailFounder(form.id, answers);
-  return res.status(200).json({ ok: true });
-}
+  return json(200, { ok: true });
+};
 
 async function updateNotes(taskGid: string, notes: string) {
   const r = await fetch(`https://app.asana.com/api/1.0/tasks/${taskGid}`, {

@@ -6,35 +6,35 @@
 // Events are only a nudge: every decision is made from the card as it is now,
 // so a fake or repeated call can't send anything the card doesn't call for.
 
-import { waitUntil } from "@vercel/functions";
-import { docSlotsFor, docPathFromNotes } from "../artifacts/souq-capital/src/intake/forms.js";
-import { ensureDocsRequestedSection, getTask, updateNotes, comment, setWaitingOn } from "./_lib/services.js";
-import { documentsRequest, sendEmail } from "./_lib/email.js";
+import { docSlotsFor, docPathFromNotes } from "../../artifacts/souq-capital/src/intake/forms.js";
+import { ensureDocsRequestedSection, getTask, updateNotes, comment, setWaitingOn } from "../_lib/services.js";
+import { documentsRequest, sendEmail } from "../_lib/email.js";
+import { bindEnv } from "../_lib/env.js";
 
-type Req = { method?: string; body?: unknown; headers: Record<string, string | string[] | undefined> };
-type Res = { status: (n: number) => Res; json: (b: unknown) => void; setHeader: (k: string, v: string) => void };
 type Event = { action?: string; resource?: { gid: string; resource_type: string }; parent?: { gid: string; resource_type: string } };
 type Task = { name?: string; notes?: string; memberships?: { section?: { gid: string }; project?: { gid: string } }[] };
 
 const SENT_MARK = "Upload link emailed to founder";
 
-export default async function handler(req: Req, res: Res) {
-  const hookSecret = req.headers["x-hook-secret"];
-  if (hookSecret) {
-    res.setHeader("X-Hook-Secret", String(hookSecret));
-    return res.status(200).json({ ok: true });
-  }
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+const json = (status: number, body: unknown, headers?: Record<string, string>) =>
+  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", ...headers } });
 
-  const body = (typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {}) as { events?: Event[] };
+export const onRequest: PagesFunction<Record<string, string>> = async ({ request, env, waitUntil }) => {
+  bindEnv(env);
+  const hookSecret = request.headers.get("x-hook-secret");
+  if (hookSecret) return json(200, { ok: true }, { "X-Hook-Secret": hookSecret });
+  if (request.method !== "POST") return json(405, { error: "Method not allowed" });
+
+  const raw = await request.text();
+  const body = (raw ? JSON.parse(raw) : {}) as { events?: Event[] };
   const tasks = new Set(
     (body.events || [])
       .filter((e) => e.action === "added" && e.resource?.resource_type === "task" && e.parent?.resource_type === "section")
       .map((e) => e.resource!.gid),
   );
   if (tasks.size) waitUntil(Promise.all([...tasks].map((gid) => handleTask(gid).catch((e) => console.error("docs request failed", gid, e)))));
-  return res.status(200).json({ ok: true });
-}
+  return json(200, { ok: true });
+};
 
 async function handleTask(gid: string) {
   const section = await ensureDocsRequestedSection();

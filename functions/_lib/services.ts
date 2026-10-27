@@ -66,7 +66,7 @@ export async function createFolder(name: string, parent?: string): Promise<{ id:
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, mimeType: "application/vnd.google-apps.folder", parents: [parent || env("GOOGLE_DRIVE_ID")] }),
   });
-  const j = await res.json();
+  const j = (await res.json()) as any;
   return { id: j.id, url: j.webViewLink };
 }
 
@@ -74,7 +74,7 @@ export async function createFolder(name: string, parent?: string): Promise<{ id:
 export async function ensureFolder(name: string, parent: string): Promise<string> {
   const q = encodeURIComponent(`'${parent}' in parents and name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
   const res = await drive(`/files?q=${q}&fields=files(id)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}`);
-  const j = await res.json();
+  const j = (await res.json()) as any;
   if (j.files?.length) return j.files[0].id;
   return (await createFolder(name, parent)).id;
 }
@@ -91,7 +91,7 @@ export async function saveDoc(name: string, text: string, folderId: string, cont
     headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
     body,
   }, true);
-  return (await res.json()).webViewLink;
+  return ((await res.json()) as any).webViewLink;
 }
 
 /**
@@ -118,7 +118,7 @@ export async function startUpload(opts: { folderId: string; name: string; mimeTy
 export async function listFiles(folderId: string): Promise<{ id: string; name: string; size?: string }[]> {
   const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
   const res = await drive(`/files?q=${q}&fields=files(id,name,size)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}&pageSize=200`);
-  return (await res.json()).files || [];
+  return ((await res.json()) as any).files || [];
 }
 
 export const folderUrl = (id: string) => `https://drive.google.com/drive/folders/${id}`;
@@ -129,14 +129,14 @@ export type DriveFile = { id: string; name: string; mimeType: string; size?: str
 export async function listFolder(folderId: string): Promise<DriveFile[]> {
   const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
   const res = await drive(`/files?q=${q}&fields=files(id,name,mimeType,size)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}&pageSize=200&orderBy=name`);
-  return (await res.json()).files || [];
+  return ((await res.json()) as any).files || [];
 }
 
 /** Finds a folder by exact name anywhere in the shared drive. */
 export async function findFolder(name: string): Promise<string | null> {
   const q = encodeURIComponent(`name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
   const res = await drive(`/files?q=${q}&fields=files(id)&includeItemsFromAllDrives=true&corpora=drive&driveId=${env("GOOGLE_DRIVE_ID")}`);
-  return (await res.json()).files?.[0]?.id ?? null;
+  return ((await res.json()) as any).files?.[0]?.id ?? null;
 }
 
 /** Downloads a file. Google Docs come back as plain text, Google Sheets as CSV. */
@@ -161,7 +161,7 @@ async function asana(path: string, method = "GET", data?: unknown) {
     body: data ? JSON.stringify({ data }) : undefined,
   });
   if (!res.ok) throw new Error(`Asana ${res.status}: ${await res.text()}`);
-  return (await res.json()).data;
+  return ((await res.json()) as any).data;
 }
 
 // Customer Pipeline sections and custom fields (Asana IDs).
@@ -274,7 +274,7 @@ export async function askClaude(system: string, user: string): Promise<string | 
     }),
   });
   if (!res.ok) throw new Error(`Claude ${res.status}: ${await res.text()}`);
-  const j = await res.json();
+  const j = (await res.json()) as any;
   return (j.content || []).filter((c: { type: string }) => c.type === "text").map((c: { text: string }) => c.text).join("\n").trim();
 }
 
@@ -295,7 +295,7 @@ export function parseRef(ref: string) {
   return { task, folder };
 }
 
-export function siteOrigin(req: { headers: Record<string, string | string[] | undefined> }): string {
-  const host = (req.headers["x-forwarded-host"] || req.headers.host) as string;
+export function siteOrigin(headers: Headers): string {
+  const host = headers.get("x-forwarded-host") || headers.get("host");
   return `https://${host}`;
 }

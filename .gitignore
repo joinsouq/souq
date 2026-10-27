@@ -44,8 +44,10 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Chat uploads and Vercel local state (keep private files out of this public repo)
+# Chat uploads and local state (keep private files out of this public repo)
 attached_assets/
 .vercel
 .env*
 !.env.example
+.wrangler/
+.dev.vars*

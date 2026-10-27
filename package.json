@@ -6,16 +6,19 @@
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "typecheck": "pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
+    "typecheck": "pnpm -r --filter \"./artifacts/**\" --if-present run typecheck",
+    "pages:dev": "pnpm --filter @workspace/souq-capital run build && wrangler pages dev artifacts/souq-capital/dist/public",
+    "pages:deploy": "pnpm --filter @workspace/souq-capital run build && wrangler pages deploy artifacts/souq-capital/dist/public"
   },
   "private": true,
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261026.1",
     "@types/node": "^22.20.5",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "wrangler": "^4.42.1"
   },
   "dependencies": {
-    "@vercel/functions": "^2.2.13",
     "exceljs": "^4.4.0",
     "google-auth-library": "^9.15.1",
     "mammoth": "^1.13.0",
