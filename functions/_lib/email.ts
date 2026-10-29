@@ -57,7 +57,7 @@ ${body}
 const firstName = (name: string) => name.trim().split(/\s+/)[0] || "there";
 
 /** The "we got it" email for each website form. */
-export function confirmationFor(path: PathId, a: Record<string, string | string[]>): Email | null {
+export function confirmationFor(path: PathId, a: Record<string, string | string[]>, opts: { bookingUrl?: string } = {}): Email | null {
   const to = String(a.email || "").trim();
   if (!to) return null;
   const hi = `Hi ${firstName(String(a.name || ""))},`;
@@ -102,13 +102,27 @@ export function confirmationFor(path: PathId, a: Record<string, string | string[
       };
     }
     case "talk":
+      // Qualified founders get the booking link; everyone else hears from the team.
+      if (opts.bookingUrl) {
+        return {
+          to,
+          subject: "Book your Souq office hours",
+          paragraphs: [
+            hi,
+            `Thanks for telling us about ${company || "your business"}. You're a fit for office hours with the Souq team.`,
+            `Pick a 20-minute slot here:\n${opts.bookingUrl}`,
+            "Your answers mean we can skip the background and get straight to what you want to cover.",
+            reply,
+          ],
+        };
+      }
       return {
         to,
-        subject: "Your office hours request",
+        subject: "We received your office hours request",
         paragraphs: [
           hi,
-          "Thanks for requesting office hours with Souq. Your request came through.",
-          "We'll email you a few times that work for the team. The session is 30 minutes, and your answers mean we can skip the background and get straight to what you want to walk away with.",
+          `Thanks for telling us about ${company || "your business"}. Your answers came through.`,
+          "The team will look them over and follow up by email with the best next step.",
           reply,
         ],
       };

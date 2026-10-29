@@ -9,11 +9,12 @@
 
 import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
-  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, sign, siteOrigin, SECTIONS,
+  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, sign, siteOrigin, SECTIONS, setWaitingOn,
 } from "../_lib/services.js";
 import { confirmationFor, sendEmail } from "../_lib/email.js";
 import { bindEnv } from "../_lib/env.js";
 import { enqueue, updateNotes } from "../_lib/jobs.js";
+import { checkOfficeHours, BOOKING_URL } from "../_lib/officeHours.js";
 
 const BREAK = "\u0000break";
 
@@ -39,6 +40,9 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
   for (const [k, v] of Object.entries(body.answers || {})) answers[k] = clean(v);
   const errors = validate(form, answers);
   if (Object.keys(errors).length) return json(400, { errors });
+
+  // Office hours: decide here, on the server, who gets the booking link.
+  const officeHours = form.id === "talk" ? checkOfficeHours(answers) : null;
 
   const company = String(answers.company || "").trim() || String(answers.name);
   const person = String(answers.name || "").trim();
@@ -75,12 +79,16 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
   };
   const lines: (string | false | undefined)[] = [
     `Submitted ${submitted} ET via the website: ${form.choice}`,
+    officeHours?.reason,
     pick("website") && `Website: ${pick("website")}`,
     `Contact: ${person}${pick("role") ? `, ${pick("role")}` : ""} · ${pick("email")} · ${pick("phone")}`,
     pick("sells") && `Sells: ${pick("sells")}`,
     pick("category") && `Category: ${pick("category")}`,
     pick("services") && `Services requested: ${pick("services")}`,
     pick("channels") && `Channels: ${pick("channels")}`,
+    pick("interest") && `Most interested in: ${pick("interest")}`,
+    pick("companyType") && `Products or services: ${pick("companyType")}`,
+    pick("location") && `Based in: ${pick("location")}`,
     pick("model") && `Funding for: ${pick("model")}`,
     pick("timing") && `Timing: ${pick("timing")}`,
     pick("ask") && `Wants from the session: ${pick("ask")}`,
@@ -101,7 +109,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     task = await createTask({
       name: title,
       notes: notes(),
-      section: form.id === "talk" ? SECTIONS.introCall : form.id === "3pl-onboarding" ? SECTIONS.live : SECTIONS.new,
+      section: officeHours?.qualified ? SECTIONS.introCall : form.id === "3pl-onboarding" ? SECTIONS.live : SECTIONS.new,
       customFields: customFieldsFrom(form.id, answers),
     });
   } catch (e) {
@@ -117,24 +125,39 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
 
+  // Qualified office hours: the founder's next move is to pick a time.
+  if (officeHours?.qualified) await setWaitingOn(task.gid, "Founder").catch((e) => console.error("waiting-on update failed", e));
+
   // 3. Cover sheet: public background on the company and founders, saved to
   //    the folder and linked on the card.
   // 4. For funding requests, the quick-look review.
   //    Both take minutes, so they go to the jobs queue (see _lib/jobs.ts).
-  if (folderId) {
+  //    Office hours only get one when they qualify, so it's ready for the call.
+  if (folderId && (!officeHours || officeHours.qualified)) {
     await enqueue(env, waitUntil, { kind: "coverSheet", taskGid: task.gid, folderId, company, path: form.id, applicationText: fullText, answers });
   }
   if (form.id === "funding") {
     await enqueue(env, waitUntil, { kind: "quickLook", taskGid: task.gid, applicationText: fullText });
   }
 
-  await emailFounder(form.id, answers);
+  await emailFounder(form.id, answers, officeHours?.qualified ? BOOKING_URL : undefined);
+  if (officeHours?.qualified) {
+    return json(200, {
+      ok: true,
+      next: {
+        title: "You're a fit for office hours.",
+        body: "Pick a 20-minute slot with the Souq team. We've also emailed you this link.",
+        link: BOOKING_URL,
+        linkLabel: "Pick a time",
+      },
+    });
+  }
   return json(200, { ok: true });
 };
 
 /** "We got it" email to the founder. Never blocks or fails the submission. */
-async function emailFounder(path: PathId, answers: Answers) {
-  const email = confirmationFor(path, answers);
+async function emailFounder(path: PathId, answers: Answers, bookingUrl?: string) {
+  const email = confirmationFor(path, answers, { bookingUrl });
   if (!email) return;
   await sendEmail(email).catch((e) => console.error("confirmation email failed", e));
 }

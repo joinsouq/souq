@@ -98,6 +98,8 @@ export default function IntakeForm({ form }: { form: Form }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [serverError, setServerError] = useState("");
+  // Set when the server sends the founder straight on (office hours: the booking link).
+  const [next, setNext] = useState<{ title: string; body: string; link: string; linkLabel: string } | null>(null);
   const [hp, setHp] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -130,6 +132,7 @@ export default function IntakeForm({ form }: { form: Form }) {
       });
       const j = await r.json().catch(() => ({}));
       if (r.ok) {
+        if (j.next?.link) setNext(j.next);
         setStatus("done");
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
@@ -144,6 +147,18 @@ export default function IntakeForm({ form }: { form: Form }) {
       setServerError("Couldn't reach Souq. Check your connection and try again.");
     }
     setStatus("idle");
+  }
+
+  if (status === "done" && next) {
+    return (
+      <div className="ix-done" role="status">
+        <h2 className="sq-h2">{next.title}</h2>
+        <p className="sq-lede" style={{ marginTop: "1.25rem" }}>{next.body}</p>
+        <p style={{ marginTop: "2rem" }}>
+          <a href={next.link} target="_blank" rel="noopener noreferrer" className="sq-btn sq-btn-primary">{next.linkLabel}</a>
+        </p>
+      </div>
+    );
   }
 
   if (status === "done") {

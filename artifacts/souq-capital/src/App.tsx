@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import Umbrella from "@/pages/Umbrella";
 import Capital from "@/pages/Capital";
 import { ApplyChooser, ApplyForm } from "@/pages/Apply";
@@ -30,6 +30,7 @@ function Router() {
       <Route path="/accelerator" component={Accelerator} />
       <Route path="/summit" component={Summit} />
       <Route path="/apply" component={ApplyChooser} />
+      <Route path="/office-hours"><Redirect to="/apply/talk" replace /></Route>
       <Route path="/apply/documents" component={Documents} />
       <Route path="/apply/:path" component={ApplyForm} />
       <Route path="/team" component={Team} />
