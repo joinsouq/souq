@@ -1,0 +1,24 @@
+# The souq-jobs Worker. Deploy with `pnpm jobs:deploy` (wrangler deploy -c jobs/wrangler.toml).
+name = "souq-jobs"
+main = "index.ts"
+compatibility_date = "2025-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Reading uploaded spreadsheets and Word files takes CPU; allow up to 5 minutes.
+[limits]
+cpu_ms = 300000
+
+# One job per run, so each gets its own 15 minutes. If the Worker itself
+# crashes mid-job, the message is retried once.
+[[queues.consumers]]
+queue = "souq-jobs"
+max_batch_size = 1
+max_batch_timeout = 0
+max_retries = 1
+
+[observability]
+enabled = true
+
+# Secrets (set with `wrangler secret put <NAME> -c jobs/wrangler.toml`):
+#   ANTHROPIC_API_KEY, ANTHROPIC_MODEL, UNDERWRITING_MODEL, SOUQ_FILTER_SKILL,
+#   GOOGLE_SERVICE_ACCOUNT_KEY, GOOGLE_DRIVE_ID, ASANA_TOKEN, ASANA_PROJECT_ID

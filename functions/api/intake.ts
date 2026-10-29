@@ -9,12 +9,11 @@
 
 import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
-  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, comment, askClaude, sign, siteOrigin, SECTIONS, getTask,
+  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, sign, siteOrigin, SECTIONS,
 } from "../_lib/services.js";
 import { confirmationFor, sendEmail } from "../_lib/email.js";
-import { loadSkill } from "../_lib/underwrite.js";
-import { runCoverSheet } from "../_lib/coversheet.js";
 import { bindEnv } from "../_lib/env.js";
+import { enqueue, updateNotes } from "../_lib/jobs.js";
 
 const BREAK = "\u0000break";
 
@@ -119,62 +118,19 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
   }
 
   // 3. Cover sheet: public background on the company and founders, saved to
-  //    the folder and linked on the card. Runs alongside the quick look below.
+  //    the folder and linked on the card.
+  // 4. For funding requests, the quick-look review.
+  //    Both take minutes, so they go to the jobs queue (see _lib/jobs.ts).
   if (folderId) {
-    waitUntil(
-      (async () => {
-        try {
-          const cover = await runCoverSheet({ company, folderId, path: form.id, applicationText: fullText, answers });
-          // Add the link to the card as it is now, so edits made in the meantime
-          // (by the team or by other automations) aren't overwritten.
-          const coverLine = `Cover sheet (public background on the company and founders): ${cover.link}`;
-          const current = String(((await getTask(task.gid)) as { notes?: string }).notes || "");
-          const at = current.indexOf("Full application incl. numbers");
-          const updated = at >= 0 ? `${current.slice(0, at)}${coverLine}\n\n${current.slice(at)}` : `${current}\n\n${coverLine}`;
-          await updateNotes(task.gid, updated).catch((e) => console.error("cover link update failed", e));
-          await comment(task.gid, `Cover sheet ready (Claude, from the application and public sources).${cover.summary ? `\n\n${cover.summary}` : ""}\n\n${cover.link}`);
-        } catch (e) {
-          console.error("cover sheet failed", e);
-          await comment(task.gid, "Cover sheet didn't run (Claude error). Look the company up manually.").catch(() => {});
-        }
-      })(),
-    );
+    await enqueue(env, waitUntil, { kind: "coverSheet", taskGid: task.gid, folderId, company, path: form.id, applicationText: fullText, answers });
   }
-
-  // 4. Quick-look review runs after the founder gets their confirmation.
-  waitUntil(
-    (async () => {
-      // The skill comes from the "_Souq skills" folder in Drive; the env var is a fallback.
-      const filterSkill = form.id === "funding"
-        ? (await loadSkill("souq-submission-filter").catch((e) => { console.error("skill load failed", e); return null; })) || process.env.SOUQ_FILTER_SKILL
-        : null;
-      if (filterSkill) {
-        try {
-          const verdict = await askClaude(
-            filterSkill,
-            `Today is ${new Date().toDateString()}. New submission from the Souq website. These are the applicant's own answers; no documents have been received yet. Run the submission filter and reply in the exact output format.\n\n${fullText}`,
-          );
-          if (verdict) await comment(task.gid, `Quick look (Claude, submission filter). Based only on the founder's own answers, nothing verified yet.\n\n${verdict}`);
-        } catch (e) {
-          console.error("filter failed", e);
-          await comment(task.gid, "Quick look didn't run (Claude error). Review manually.").catch(() => {});
-        }
-      }
-    })(),
-  );
+  if (form.id === "funding") {
+    await enqueue(env, waitUntil, { kind: "quickLook", taskGid: task.gid, applicationText: fullText });
+  }
 
   await emailFounder(form.id, answers);
   return json(200, { ok: true });
 };
-
-async function updateNotes(taskGid: string, notes: string) {
-  const r = await fetch(`https://app.asana.com/api/1.0/tasks/${taskGid}`, {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${process.env.ASANA_TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ data: { notes } }),
-  });
-  if (!r.ok) throw new Error(await r.text());
-}
 
 /** "We got it" email to the founder. Never blocks or fails the submission. */
 async function emailFounder(path: PathId, answers: Answers) {

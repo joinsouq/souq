@@ -8,7 +8,9 @@
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck": "pnpm -r --filter \"./artifacts/**\" --if-present run typecheck",
     "pages:dev": "pnpm --filter @workspace/souq-capital run build && wrangler pages dev artifacts/souq-capital/dist/public",
-    "pages:deploy": "pnpm --filter @workspace/souq-capital run build && wrangler pages deploy artifacts/souq-capital/dist/public"
+    "pages:deploy": "pnpm --filter @workspace/souq-capital run build && wrangler pages deploy artifacts/souq-capital/dist/public",
+    "jobs:deploy": "wrangler deploy -c jobs/wrangler.toml",
+    "jobs:logs": "wrangler tail souq-jobs"
   },
   "private": true,
   "devDependencies": {

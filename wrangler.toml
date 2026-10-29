@@ -1,11 +1,19 @@
-name = "souq-capital"
+# Must match the Pages project name in Cloudflare, or `wrangler pages deploy`
+# creates a second project instead of updating this one.
+name = "souqweb"
 pages_build_output_dir = "artifacts/souq-capital/dist/public"
 compatibility_date = "2025-10-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Secrets (set with `wrangler pages secret put <NAME>`, or in the Cloudflare
-# dashboard under Pages > souq-capital > Settings > Environment variables):
+# dashboard under Pages > souqweb > Settings > Environment variables):
 #   INTAKE_SECRET, GOOGLE_SERVICE_ACCOUNT_KEY, GOOGLE_DRIVE_ID, ASANA_TOKEN,
 #   ASANA_PROJECT_ID, ASANA_ASSIGNEE_ID, RESEND_API_KEY, EMAIL_FROM,
 #   EMAIL_REPLY_TO, ANTHROPIC_API_KEY, ANTHROPIC_MODEL, UNDERWRITING_MODEL,
 #   SOUQ_FILTER_SKILL
+
+# Slow work (cover sheets, quick looks, underwriting) goes to this queue and
+# runs in the souq-jobs Worker (jobs/), which gets 15 minutes per job.
+[[queues.producers]]
+binding = "JOBS"
+queue = "souq-jobs"

@@ -14,10 +14,10 @@ import { DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, 
 import {
   parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "../_lib/services.js";
-import { runUnderwriting } from "../_lib/underwrite.js";
 import { documentsReceived, accessCode, sendEmail } from "../_lib/email.js";
 import { newCode, checkCode, newSession, checkSession, codesEnabled, maskEmail, progressFor } from "../_lib/access.js";
 import { bindEnv } from "../_lib/env.js";
+import { enqueue } from "../_lib/jobs.js";
 
 // The written questions, wrapped as a one-section form so we can reuse validate/toText.
 const QUESTIONS_FORM: IntakeForm = {
@@ -131,7 +131,6 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       await moveTo(parsed.task, SECTIONS.diligence);
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
 
-      // Claude's underwriting draft runs after the founder sees "done" (takes a few minutes).
       const task = (await getTask(parsed.task).catch(() => ({ name: "", notes: "" }))) as Task;
       const company = String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "");
 
@@ -145,14 +144,10 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
         })).catch((e) => console.error("documents email failed", e));
       }
       // Underwriting is for funding decisions; Accelerator uploads stop at the receipt.
-      if (path === "funding") waitUntil(
-        runUnderwriting({
-          taskGid: parsed.task,
-          clientFolder: parsed.folder,
-          docsFolder,
-          company: company || "this company",
-        }).catch((e) => console.error("underwriting error", e)),
-      );
+      // Claude's draft takes a few minutes, so it goes to the jobs queue (see _lib/jobs.ts).
+      if (path === "funding") {
+        await enqueue(env, waitUntil, { kind: "underwrite", taskGid: parsed.task, clientFolder: parsed.folder, docsFolder, company: company || "this company" });
+      }
       return json(200, { ok: true, missing: missing.map((m) => m.label) });
     }
 

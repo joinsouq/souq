@@ -11,6 +11,7 @@
   },
   "include": [
     "./**/*.ts",
+    "../jobs/**/*.ts",
     "../artifacts/souq-capital/src/intake/forms.ts",
     "../artifacts/souq-capital/src/data/offerings.ts"
   ]
