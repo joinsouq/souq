@@ -3,7 +3,6 @@
 // links for the document upload page. Nothing here runs in the browser.
 
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { JWT } from "google-auth-library";
 
 const env = (k: string) => {
   const v = process.env[k];
@@ -13,7 +12,8 @@ const env = (k: string) => {
 
 // ---------------------------------------------------------------- Drive
 
-let jwt: JWT | null = null;
+// Google access token, cached until shortly before it expires.
+let cached: { token: string; expires: number } | null = null;
 
 /**
  * Reads the service-account key. Tolerates a paste that contains more than
@@ -33,17 +33,49 @@ function keyCandidates(raw: string): { client_email: string; private_key: string
   }
 }
 
+const b64url = (bytes: Uint8Array | string) =>
+  Buffer.from(bytes).toString("base64").replace(/=+$/, "").replace(/\+/g, "-").replace(/\//g, "_");
+
+/**
+ * Trades the service-account key for a Google access token. Signs the JWT
+ * with Web Crypto rather than google-auth-library: Cloudflare's Pages build
+ * stubs out Node's crypto.createSign, so the library fails there.
+ */
+async function fetchGoogleToken(c: { client_email: string; private_key: string }): Promise<{ token: string; expires: number }> {
+  const now = Math.floor(Date.now() / 1000);
+  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64url(JSON.stringify({
+    iss: c.client_email,
+    scope: "https://www.googleapis.com/auth/drive",
+    aud: "https://oauth2.googleapis.com/token",
+    iat: now,
+    exp: now + 3600,
+  }));
+  const pem = c.private_key.replace(/-----(BEGIN|END) PRIVATE KEY-----/g, "").replace(/\s+/g, "");
+  const key = await crypto.subtle.importKey(
+    "pkcs8", Buffer.from(pem, "base64"), { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"],
+  );
+  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(`${header}.${claims}`));
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: `${header}.${claims}.${b64url(new Uint8Array(sig))}`,
+    }),
+  });
+  if (!res.ok) throw new Error(`Google token ${res.status}: ${await res.text()}`);
+  const j = (await res.json()) as { access_token: string; expires_in: number };
+  return { token: j.access_token, expires: Date.now() + (j.expires_in - 120) * 1000 };
+}
+
 async function driveToken(): Promise<string> {
-  if (jwt) {
-    const { token } = await jwt.getAccessToken();
-    if (token) return token;
-  }
+  if (cached && cached.expires > Date.now()) return cached.token;
   let lastErr: unknown;
   for (const c of keyCandidates(env("GOOGLE_SERVICE_ACCOUNT_KEY"))) {
     try {
-      const candidate = new JWT({ email: c.client_email, key: c.private_key, scopes: ["https://www.googleapis.com/auth/drive"] });
-      const { token } = await candidate.getAccessToken();
-      if (token) { jwt = candidate; return token; }
+      cached = await fetchGoogleToken(c);
+      return cached.token;
     } catch (e) { lastErr = e; }
   }
   throw lastErr instanceof Error ? lastErr : new Error("Could not get a Google access token");
