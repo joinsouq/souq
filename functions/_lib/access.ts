@@ -113,7 +113,7 @@ export function progressFor(
   docs: { have: number; need: number },
   path: "funding" | "accelerator" = "funding",
 ) {
-  let stage = STAGE_BY_SECTION[section?.gid || ""] ?? (/sign/i.test(section?.name || "") ? SIGNING : DOCUMENTS);
+  let stage = STAGE_BY_SECTION[section?.gid || ""] ?? (/\bsign/i.test(section?.name || "") ? SIGNING : DOCUMENTS);
   // Anyone on this page has had the proposal and been sent their upload
   // link, so never show less than "Documents".
   stage = Math.max(stage, DOCUMENTS);

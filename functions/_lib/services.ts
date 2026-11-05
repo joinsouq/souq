@@ -202,6 +202,7 @@ export const SECTIONS = {
   new: "1218558113663017",
   introCall: "1218558260242200",
   diligence: "1218558205461144",
+  proposal: "1218558260175604",
   live: "1218558190745258",
 };
 const CF = {
@@ -268,6 +269,18 @@ export async function ensureDocsRequestedSection(): Promise<string> {
     ? hit.gid
     : (await asana(`/projects/${project}/sections`, "POST", { name: DOCS_REQUESTED_NAME, insert_after: SECTIONS.introCall })).gid;
   return docsSectionGid;
+}
+
+// "Signing": both sides sign after the review, before Live. The founder's
+// progress shows any column with "sign" in its name as the Signed step
+// (see _lib/access.ts). Created by /api/asana-setup if it's missing.
+export const SIGNING_NAME = "Signing";
+export async function ensureSigningSection(): Promise<string> {
+  const project = env("ASANA_PROJECT_ID");
+  const sections = (await asana(`/projects/${project}/sections`)) as { gid: string; name: string }[];
+  const hit = sections.find((s) => /\bsign/i.test(s.name));
+  if (hit) return hit.gid;
+  return (await asana(`/projects/${project}/sections`, "POST", { name: SIGNING_NAME, insert_after: SECTIONS.proposal })).gid;
 }
 
 // What the Customer Pipeline webhook reports: cards moving between columns,
