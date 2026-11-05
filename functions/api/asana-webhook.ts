@@ -1,6 +1,9 @@
 // POST /api/asana-webhook: Asana calls this when a card in Customer Pipeline
-// is added to a column. When a funding card lands in "Documents requested",
-// the founder gets their private upload link by email, and the card says so.
+// is added to a column, or when someone comments on a card.
+// - Funding card lands in "Documents requested": the founder gets their
+//   private upload link by email, and the card says so.
+// - Comment mentions "@viktor": it's sent to Viktor in #souq-pipeline (the
+//   jobs Worker checks the comment; see _lib/viktor.ts).
 //
 // Asana's first call is a handshake (X-Hook-Secret), which we echo back.
 // Events are only a nudge: every decision is made from the card as it is now,
@@ -10,8 +13,13 @@ import { docSlotsFor, docPathFromNotes } from "../../artifacts/souq-capital/src/
 import { ensureDocsRequestedSection, getTask, updateNotes, comment, setWaitingOn } from "../_lib/services.js";
 import { documentsRequest, sendEmail } from "../_lib/email.js";
 import { bindEnv } from "../_lib/env.js";
+import { enqueue } from "../_lib/jobs.js";
 
-type Event = { action?: string; resource?: { gid: string; resource_type: string }; parent?: { gid: string; resource_type: string } };
+type Event = {
+  action?: string;
+  resource?: { gid: string; resource_type: string; resource_subtype?: string };
+  parent?: { gid: string; resource_type: string };
+};
 type Task = { name?: string; notes?: string; memberships?: { section?: { gid: string }; project?: { gid: string } }[] };
 
 const SENT_MARK = "Upload link emailed to founder";
@@ -33,6 +41,15 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       .map((e) => e.resource!.gid),
   );
   if (tasks.size) waitUntil(Promise.all([...tasks].map((gid) => handleTask(gid).catch((e) => console.error("docs request failed", gid, e)))));
+
+  // New comments go to the jobs Worker, which reads each one and only acts on "@viktor".
+  const comments = (body.events || []).filter(
+    (e) => e.action === "added" && e.resource?.resource_type === "story" && e.resource.resource_subtype === "comment_added" && e.parent?.resource_type === "task",
+  );
+  for (const e of comments) {
+    await enqueue(env, waitUntil, { kind: "askViktor", taskGid: e.parent!.gid, storyGid: e.resource!.gid })
+      .catch((err) => console.error("askViktor enqueue failed", err));
+  }
   return json(200, { ok: true });
 };
 

@@ -10,6 +10,7 @@
 import { comment, getTask, askClaude } from "./services.js";
 import { loadSkill, runUnderwriting } from "./underwrite.js";
 import { runCoverSheet } from "./coversheet.js";
+import { askViktor } from "./viktor.js";
 
 export type Job =
   | {
@@ -22,7 +23,8 @@ export type Job =
       answers: Record<string, string | string[]>;
     }
   | { kind: "quickLook"; taskGid: string; applicationText: string }
-  | { kind: "underwrite"; taskGid: string; clientFolder: string; docsFolder: string; company: string };
+  | { kind: "underwrite"; taskGid: string; clientFolder: string; docsFolder: string; company: string }
+  | { kind: "askViktor"; taskGid: string; storyGid: string };
 
 type JobQueue = { send(body: Job): Promise<unknown> };
 
@@ -51,6 +53,11 @@ export async function runJob(job: Job): Promise<void> {
       return quickLook(job);
     case "underwrite":
       return runUnderwriting(job).catch((e) => console.error("underwriting error", e));
+    case "askViktor":
+      return askViktor(job).catch(async (e) => {
+        console.error("askViktor failed", e);
+        await comment(job.taskGid, "Couldn't send this to Viktor (Slack error). Ask him in #souq-pipeline instead.").catch(() => {});
+      });
   }
 }
 

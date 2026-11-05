@@ -270,15 +270,30 @@ export async function ensureDocsRequestedSection(): Promise<string> {
   return docsSectionGid;
 }
 
-/** Makes sure Asana tells the site when cards move. Safe to run more than once. */
-export async function ensureWebhook(target: string): Promise<"exists" | "created"> {
+// What the Customer Pipeline webhook reports: cards moving between columns,
+// and new comments (so "@viktor" comments can be sent to Viktor in Slack).
+const WEBHOOK_FILTERS = [
+  { resource_type: "task", action: "added" },
+  { resource_type: "story", resource_subtype: "comment_added", action: "added" },
+];
+
+/**
+ * Makes sure Asana tells the site when cards move and when comments are added.
+ * Safe to run more than once. A webhook from before comments were included is
+ * replaced (Asana doesn't let you change a webhook's filters in place).
+ */
+export async function ensureWebhook(target: string): Promise<"exists" | "created" | "updated"> {
   const project = env("ASANA_PROJECT_ID");
   const { workspace } = (await asana(`/projects/${project}?opt_fields=workspace.gid`)) as { workspace: { gid: string } };
-  const hooks = (await asana(`/webhooks?workspace=${workspace.gid}&resource=${project}&opt_fields=target,active`)) as { gid: string; target: string; active: boolean }[];
+  const hooks = (await asana(`/webhooks?workspace=${workspace.gid}&resource=${project}&opt_fields=target,active,filters`)) as {
+    gid: string; target: string; active: boolean; filters?: { resource_type?: string }[];
+  }[];
   const base = target.split("?")[0];
-  if (hooks.some((h) => h.active && h.target.split("?")[0] === base)) return "exists";
-  await asana("/webhooks", "POST", { resource: project, target, filters: [{ resource_type: "task", action: "added" }] });
-  return "created";
+  const mine = hooks.filter((h) => h.target.split("?")[0] === base);
+  if (mine.some((h) => h.active && h.filters?.some((f) => f.resource_type === "story"))) return "exists";
+  for (const h of mine) await asana(`/webhooks/${h.gid}`, "DELETE");
+  await asana("/webhooks", "POST", { resource: project, target, filters: WEBHOOK_FILTERS });
+  return mine.length ? "updated" : "created";
 }
 
 export const updateNotes = (taskGid: string, notes: string) => asana(`/tasks/${taskGid}`, "PUT", { notes });
@@ -288,7 +303,11 @@ export const moveTo = (taskGid: string, section: string) => asana(`/sections/${s
 export const setWaitingOn = (taskGid: string, who: "Founder" | "Souq") =>
   asana(`/tasks/${taskGid}`, "PUT", { custom_fields: { [CF.waitingOn.gid]: CF.waitingOn.options[who] } });
 export const getTask = (taskGid: string) =>
-  asana(`/tasks/${taskGid}?opt_fields=name,notes,memberships.section.gid,memberships.project.gid`);
+  asana(`/tasks/${taskGid}?opt_fields=name,notes,permalink_url,memberships.section.gid,memberships.project.gid`);
+export const getStory = (storyGid: string) =>
+  asana(`/stories/${storyGid}?opt_fields=text,resource_subtype,created_by.name`) as Promise<{
+    text?: string; resource_subtype?: string; created_by?: { name?: string };
+  }>;
 
 // ---------------------------------------------------------------- Claude
 

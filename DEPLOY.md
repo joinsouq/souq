@@ -118,9 +118,13 @@ The logs should show `job start` and `job done` for each queued job. Delete the 
 
 Each underwriting draft is posted to #souq-pipeline with its verdict, the Doc link and the Asana card. Reply in that message's thread and tag @Viktor to talk through or edit the draft.
 
+Comments on Asana cards work too: write `@viktor` in a comment on any Customer Pipeline card and it's posted to #souq-pipeline, tagging Viktor, with the card and the client's Drive folder. Viktor answers in the thread and posts his answer back on the card. The card gets a "Sent to Viktor" comment so you know it went through.
+
 1. In Souq's Slack, create a **private** channel called `#souq-pipeline` (the drafts are need-to-know).
 2. Go to api.slack.com/apps > Create New App > From scratch, name it "Souq Pipeline", pick the Souq workspace.
 3. Incoming Webhooks > turn on > Add New Webhook to Workspace > pick #souq-pipeline. Copy the URL.
 4. `npx wrangler secret put SLACK_WEBHOOK_URL -c jobs/wrangler.toml` and paste the URL. Then push to `souq-v2` (or run `pnpm jobs:deploy`).
 5. Invite Viktor to #souq-pipeline (`/invite @Viktor`).
 6. In Viktor's dashboard > Integrations, connect Google Drive with an account that can open the Souq Clients shared drive, so he can read and edit the drafts.
+7. Also connect Asana there (shared with the workspace), so he can read cards and post his answers back.
+8. After deploying, open `/api/asana-setup` once on the address Asana's webhook already uses. It replaces the webhook with one that also reports comments.
