@@ -32,6 +32,7 @@ Neither the site nor the jobs Worker has its keys yet. They're on Vercel, but ma
 | `RESEND_API_KEY` | resend.com > API keys | yes | no |
 | `INTAKE_SECRET` | Any long random string (`openssl rand -hex 32`). A new one means upload links sent from the old site stop working. | yes | no |
 | `SOUQ_FILTER_SKILL` | Optional fallback; the skill is normally read from Drive | optional | optional |
+| `SLACK_WEBHOOK_URL` | Slack incoming webhook for #souq-pipeline (see "Viktor in Slack" below). Optional; without it nothing is posted. | no | yes |
 
 Put them in a file called `.dev.vars` in the repo folder (git ignores it), one per line:
 
@@ -64,7 +65,7 @@ The Worker only uses the Claude, Google and Asana values; the extra ones don't h
 pnpm jobs:deploy
 ```
 
-Then deploy the site. The souqweb project isn't connected to GitHub, so deploys come from your machine:
+Then deploy the site:
 
 ```sh
 pnpm pages:deploy
@@ -73,6 +74,15 @@ pnpm pages:deploy
 The site must be redeployed after the queue exists, so it picks up the `JOBS` queue binding from `wrangler.toml`.
 
 Run `pnpm pages:deploy` from the `souq-v2` branch: that's the project's production branch, so it updates souqweb.pages.dev.
+
+### Deploy on push (after the first deploy)
+
+The site deploys itself from GitHub. The souq-jobs Worker doesn't, so `.github/workflows/deploy-cloudflare.yml` deploys it on every push to `souq-v2`. It needs one GitHub secret:
+
+1. Cloudflare dashboard > My Profile > API Tokens > Create Token > "Edit Cloudflare Workers" template. Set Account Resources to the Souq account, and add the permission Account > Queues > Edit. Create it and copy the token.
+2. GitHub > joinsouq/souq > Settings > Secrets and variables > Actions > New repository secret: name `CLOUDFLARE_API_TOKEN`, paste the token.
+
+App secrets (Claude, Google, Asana, Slack) still go in with `wrangler secret put`; they live in Cloudflare and stay set across deploys.
 
 **Plan note:** the Worker allows up to 5 minutes of CPU per job (`[limits] cpu_ms` in `jobs/wrangler.toml`), which needs the Workers Paid plan ($5/month). On the free plan, deploys with that setting fail, and the 10 ms CPU limit is too low for reading uploaded spreadsheets anyway.
 
@@ -103,3 +113,14 @@ The logs should show `job start` and `job done` for each queued job. Delete the 
 - `pnpm jobs:logs` shows the jobs Worker live.
 - If a cover sheet or memo never shows up, the card gets a "didn't run" comment and the error is in the Worker's logs (dashboard > souq-jobs > Observability).
 - Change anything in `functions/_lib/` that jobs use (coversheet, underwrite, services)? Redeploy both: `pnpm jobs:deploy` and the site.
+
+## Viktor in Slack
+
+Each underwriting draft is posted to #souq-pipeline with its verdict, the Doc link and the Asana card. Reply in that message's thread and tag @Viktor to talk through or edit the draft.
+
+1. In Souq's Slack, create a **private** channel called `#souq-pipeline` (the drafts are need-to-know).
+2. Go to api.slack.com/apps > Create New App > From scratch, name it "Souq Pipeline", pick the Souq workspace.
+3. Incoming Webhooks > turn on > Add New Webhook to Workspace > pick #souq-pipeline. Copy the URL.
+4. `npx wrangler secret put SLACK_WEBHOOK_URL -c jobs/wrangler.toml` and paste the URL. Then push to `souq-v2` (or run `pnpm jobs:deploy`).
+5. Invite Viktor to #souq-pipeline (`/invite @Viktor`).
+6. In Viktor's dashboard > Integrations, connect Google Drive with an account that can open the Souq Clients shared drive, so he can read and edit the drafts.

@@ -10,7 +10,7 @@ compatibility_flags = ["nodejs_compat"]
 #   INTAKE_SECRET, GOOGLE_SERVICE_ACCOUNT_KEY, GOOGLE_DRIVE_ID, ASANA_TOKEN,
 #   ASANA_PROJECT_ID, ASANA_ASSIGNEE_ID, RESEND_API_KEY, EMAIL_FROM,
 #   EMAIL_REPLY_TO, ANTHROPIC_API_KEY, ANTHROPIC_MODEL, UNDERWRITING_MODEL,
-#   SOUQ_FILTER_SKILL
+#   SOUQ_FILTER_SKILL, SLACK_WEBHOOK_URL (jobs Worker only)
 
 # Slow work (cover sheets, quick looks, underwriting) goes to this queue and
 # runs in the souq-jobs Worker (jobs/), which gets 15 minutes per job.

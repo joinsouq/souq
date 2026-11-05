@@ -10,6 +10,7 @@ import ExcelJS from "exceljs";
 import mammoth from "mammoth";
 import { marked } from "marked";
 import { listFolder, findFolder, downloadFile, saveDoc, comment, type DriveFile } from "./services.js";
+import { postToSlack, slackLink } from "./slack.js";
 
 const SKILLS_ROOT = "_Souq skills";
 const FOLDER = "application/vnd.google-apps.folder";
@@ -229,6 +230,15 @@ export async function runUnderwriting(opts: { taskGid: string; clientFolder: str
       `VERDICT: ${verdict}\n${headline}\n\nFull memo with figures (need-to-know): ${link}` +
       (skipped.length ? `\n\nNot reviewed automatically: ${skipped.join("; ")}` : ""),
   );
+
+  // One message per draft in #souq-pipeline; the team replies in its thread
+  // and @mentions Viktor to discuss or edit the Doc. No figures in Slack.
+  await postToSlack(
+    `*Underwriting draft ready: ${opts.company}*\n` +
+      `Verdict: ${verdict}${headline ? `\n${headline}` : ""}\n\n` +
+      `${slackLink(link, "Open the draft")} · ${slackLink(`https://app.asana.com/0/0/${opts.taskGid}`, "Asana card")}\n` +
+      `_Reply in this thread and tag @Viktor to talk through or edit the draft._`,
+  ).catch((e) => console.error("slack post failed", e));
 }
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
