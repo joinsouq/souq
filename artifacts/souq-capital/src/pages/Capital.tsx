@@ -12,8 +12,8 @@ const STATS = [
 
 const STEPS = [
   { title: "Apply", body: "About seven minutes. Tell us what you sell, your numbers, and what the funding would pay for." },
-  { title: "Intro call", body: "If it looks like a fit, we set up a call to walk through the business and the buy." },
-  { title: "Share documents", body: "You get a private link to upload financials and sales reports. We review them and send terms." },
+  { title: "Intro call and terms", body: "If it looks like a fit, we walk through the business and the buy on a call, then send proposed terms." },
+  { title: "Share documents", body: "You get a private link to upload financials and sales reports. We review them and confirm the terms." },
   { title: "Get funded", body: "We pay your supplier, contractor, or business directly, so the money goes where it's needed." },
   { title: "Repay as you sell", body: "Each month you share a set percentage of the profit on the inventory we funded. No sales, no payment." },
 ];
@@ -89,11 +89,11 @@ const FAQS = [
   },
   {
     q: "What will you ask for?",
-    a: "The application takes about seven minutes. After the intro call, we send a private link for financial statements, bank statements, sales reports, and details on what the funding would buy.",
+    a: "The application takes about seven minutes. After the intro call and proposed terms, we send a private link for financial statements, bank statements, sales reports, and details on what the funding would buy.",
   },
   {
     q: "How fast can it happen?",
-    a: "It depends on how quickly documents come in. Once we have everything, we review and come back with terms, and funds go straight to your supplier or contractor.",
+    a: "You get proposed terms after the intro call. From there it depends on how quickly documents come in: once we have everything, we review, confirm the terms, and funds go straight to your supplier or contractor.",
   },
   {
     q: "Can I also get operating help?",
