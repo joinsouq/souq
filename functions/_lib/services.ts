@@ -303,7 +303,7 @@ export const moveTo = (taskGid: string, section: string) => asana(`/sections/${s
 export const setWaitingOn = (taskGid: string, who: "Founder" | "Souq") =>
   asana(`/tasks/${taskGid}`, "PUT", { custom_fields: { [CF.waitingOn.gid]: CF.waitingOn.options[who] } });
 export const getTask = (taskGid: string) =>
-  asana(`/tasks/${taskGid}?opt_fields=name,notes,permalink_url,memberships.section.gid,memberships.project.gid`);
+  asana(`/tasks/${taskGid}?opt_fields=name,notes,permalink_url,memberships.section.gid,memberships.section.name,memberships.project.gid`);
 export const getStory = (storyGid: string) =>
   asana(`/stories/${storyGid}?opt_fields=text,resource_subtype,created_by.name`) as Promise<{
     text?: string; resource_subtype?: string; created_by?: { name?: string };

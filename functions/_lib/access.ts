@@ -84,43 +84,52 @@ export function maskEmail(email: string): string {
 
 export type Step = { label: string; state: "done" | "current" | "todo"; detail?: string };
 
-// The founder's steps, in order. The proposal (Capital: indicative terms)
-// comes before documents; documents confirm it in underwriting.
-//   0 Applied · 1 Intro call · 2 Proposal/Terms · 3 Documents · 4 In review · 5 Onboarded/Funded
+// The founder's steps, in order, for both Capital and Accelerator. The
+// proposal (Capital: indicative terms) goes out after the intro call;
+// documents come next, then the review (Capital: underwriting), then both
+// sides sign.
+//   0 Applied · 1 Intro call · 2 Proposal/Terms · 3 Documents · 4 In review · 5 Signed · 6 Onboarded/Funded
 const PROPOSAL = 2;
 const DOCUMENTS = 3;
 const REVIEW = 4;
+const SIGNING = 5;
+const DONE = 6;
 
 // Asana Customer Pipeline columns, mapped to how far along the founder is.
-// Columns not listed here (like "Documents requested") count as Documents.
+// Columns not listed here (like "Documents requested") count as Documents,
+// except a column with "sign" in its name (e.g. "Signing"), which counts as
+// the signing step.
 const STAGE_BY_SECTION: Record<string, number> = {
   "1218558113663017": 1, // New: applied, intro call next
   "1218558260242200": 1, // Intro call
   "1218558260175604": PROPOSAL, // Proposal
   "1218558205461144": DOCUMENTS, // Diligence: documents, then review
   "1218558190765255": REVIEW, // Parked: shown as "in review"; founders never see "parked"
-  "1218558190745258": 5, // Live: onboarded / funded
+  "1218558190745258": DONE, // Live: onboarded / funded
 };
 
-export function progressFor(sectionGid: string | undefined, docs: { have: number; need: number }, path: "funding" | "accelerator" = "funding") {
-  let stage = STAGE_BY_SECTION[sectionGid || ""] ?? DOCUMENTS;
+export function progressFor(
+  section: { gid?: string; name?: string } | undefined,
+  docs: { have: number; need: number },
+  path: "funding" | "accelerator" = "funding",
+) {
+  let stage = STAGE_BY_SECTION[section?.gid || ""] ?? (/sign/i.test(section?.name || "") ? SIGNING : DOCUMENTS);
   // Anyone on this page has had the proposal and been sent their upload
   // link, so never show less than "Documents".
   stage = Math.max(stage, DOCUMENTS);
   if (stage === DOCUMENTS && docs.have >= docs.need) stage = REVIEW;
 
   const labels = path === "accelerator"
-    ? ["Applied", "Intro call", "Proposal", "Documents", "In review", "Onboarded"]
-    : ["Applied", "Intro call", "Terms", "Documents", "In review", "Funded"];
-  const last = labels.length - 1;
+    ? ["Applied", "Intro call", "Proposal", "Documents", "In review", "Signed", "Onboarded"]
+    : ["Applied", "Intro call", "Terms", "Documents", "In review", "Signed", "Funded"];
   const steps: Step[] = labels.map((label, i) => ({
     label,
-    state: i < stage || (i === last && stage === last) ? "done" : i === stage ? "current" : "todo",
+    state: i < stage || (i === DONE && stage === DONE) ? "done" : i === stage ? "current" : "todo",
   }));
   steps[DOCUMENTS].detail = `${Math.min(docs.have, docs.need)} of ${docs.need} required`;
 
   // Each step is an equal share; the documents step fills in as files arrive.
-  const share = 100 / last;
+  const share = 100 / DONE;
   let percent = stage * share;
   if (stage === DOCUMENTS) percent += share * (docs.need ? Math.min(docs.have, docs.need) / docs.need : 0);
   return { steps, percent: Math.round(Math.min(percent, 100)) };

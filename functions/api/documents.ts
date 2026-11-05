@@ -33,9 +33,9 @@ function founderContact(notes: unknown): { name: string; email: string } | null 
   return m ? { name: m[1].trim(), email: m[2] } : null;
 }
 
-type Task = { name?: string; notes?: string; memberships?: { section?: { gid: string }; project?: { gid: string } }[] };
+type Task = { name?: string; notes?: string; memberships?: { section?: { gid: string; name?: string }; project?: { gid: string } }[] };
 const sectionOf = (task: Task) =>
-  task.memberships?.find((m) => m.project?.gid === process.env.ASANA_PROJECT_ID)?.section?.gid || task.memberships?.[0]?.section?.gid;
+  task.memberships?.find((m) => m.project?.gid === process.env.ASANA_PROJECT_ID)?.section || task.memberships?.[0]?.section;
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });

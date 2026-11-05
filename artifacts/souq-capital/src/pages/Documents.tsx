@@ -108,7 +108,7 @@ function ProgressBar({ progress }: { progress: Progress }) {
         <span className="dp-pct">{progress.percent}%</span>
       </div>
       <div className="dp-track"><span style={{ width: `${progress.percent}%` }} /></div>
-      <ol className="dp-steps">
+      <ol className="dp-steps" style={{ ["--dp-n" as string]: progress.steps.length }}>
         {progress.steps.map((s) => (
           <li key={s.label} className={`dp-${s.state}`} aria-current={s.state === "current" ? "step" : undefined}>
             <span className="dp-dot" aria-hidden="true" />
@@ -279,7 +279,7 @@ export default function Documents() {
         .dp-pct { font-size: 1.6rem; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
         .dp-track { height: 4px; margin: .9rem 0 1.25rem; border-radius: 4px; background: var(--sq-line); overflow: hidden; }
         .dp-track span { display: block; height: 100%; background: var(--souq-coral); border-radius: 4px; transition: width .6s cubic-bezier(.32,.72,0,1); }
-        .dp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: .5rem; }
+        .dp-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--dp-n, 7), 1fr); gap: .5rem; }
         .dp-steps li { display: flex; flex-direction: column; gap: .35rem; font-size: .85rem; line-height: 1.3; color: var(--sq-faint); }
         .dp-dot { width: .6rem; height: .6rem; border-radius: 50%; border: 1px solid var(--sq-line-strong); }
         .dp-done { color: var(--sq-muted); }
@@ -287,7 +287,7 @@ export default function Documents() {
         .dp-current { color: var(--sq-text); }
         .dp-current .dp-dot { background: var(--souq-coral); border-color: var(--souq-coral); box-shadow: 0 0 0 4px color-mix(in srgb, var(--souq-coral) 25%, transparent); }
         .dp-detail { font-size: .78rem; color: var(--souq-peach); }
-        @media (max-width: 640px) { .dp-steps { grid-template-columns: repeat(3, 1fr); row-gap: 1rem; } }
+        @media (max-width: 640px) { .dp-steps { grid-template-columns: repeat(4, 1fr); row-gap: 1rem; } }
         .dg { padding: 1.75rem; border: 1px solid var(--sq-line); border-radius: 6px; }
         .dg-form { display: flex; flex-direction: column; gap: .75rem; margin-top: 1.5rem; max-width: 22rem; }
         .sq .dg .dg-form input.dg-input { font-size: 1.4rem; letter-spacing: .2em; font-variant-numeric: tabular-nums; }

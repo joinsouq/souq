@@ -73,7 +73,7 @@ export function confirmationFor(path: PathId, a: Record<string, string | string[
           hi,
           `Thanks for applying for funding from Souq Capital${company ? ` for ${company}` : ""}. Your application came through.`,
           "Here's what happens next:",
-          "• We review every application and reply within a few business days.\n• If it looks like a fit, we'll email you to set up an intro call.\n• After the call, we'll send a private link where you can upload a short list of documents.",
+          "• We review every application and reply within a few business days.\n• If it looks like a fit, we'll email you to set up an intro call.\n• After the call, we'll send a proposal, then a private link where you can upload a short list of documents.",
           reply,
         ],
       };
