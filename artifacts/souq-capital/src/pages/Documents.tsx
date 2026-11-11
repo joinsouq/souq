@@ -39,7 +39,7 @@ function putFile(url: string, file: File, onPct: (n: number) => void): Promise<v
   });
 }
 
-function Slot({ slot, existing, auth, onUploaded }: { slot: DocSlot; existing: string[]; auth: { ref: string; t: string }; onUploaded?: () => void }) {
+function Slot({ slot, existing, auth, onUploaded }: { slot: DocSlot; existing: string[]; auth: { ref: string; t: string }; onUploaded?: (slotId: string) => void }) {
   const [uploads, setUploads] = useState<Upload[]>([]);
   const input = useRef<HTMLInputElement>(null);
 
@@ -58,7 +58,7 @@ function Slot({ slot, existing, auth, onUploaded }: { slot: DocSlot; existing: s
         const { uploadUrl } = await api({ action: "upload", ...auth, slot: slot.id, name: file.name, type: file.type, size: file.size });
         await putFile(uploadUrl, file, (pct) => update(i, { pct }));
         update(i, { state: "done", pct: 100 });
-        onUploaded?.();
+        onUploaded?.(slot.id);
       } catch (e) {
         update(i, { state: "error", msg: (e as Error).message });
       }
@@ -184,10 +184,12 @@ export default function Documents() {
   const [result, setResult] = useState<{ missing: string[] } | null>(null);
   const [submitError, setSubmitError] = useState("");
   const is3pl = info?.path === "3pl";
-  const [newUploads, setNewUploads] = useState(0);
-  // 3PL files are all optional, but "Done" with nothing uploaded means nothing to send.
-  const hasFiles = newUploads > 0 || Object.values(info?.uploaded || {}).some((f) => f.length > 0);
-  const blockDone = is3pl && !hasFiles;
+  const [newUploads, setNewUploads] = useState<string[]>([]);
+  // 3PL needs every file before "Done": they feed the proposal and shipping comparison.
+  const missing3pl = is3pl
+    ? docSlotsFor("3pl").filter((s) => !(info?.uploaded[s.id]?.length) && !newUploads.includes(s.id)).map((s) => s.label)
+    : [];
+  const blockDone = missing3pl.length > 0;
 
   useEffect(() => {
     fetch(`/api/documents?ref=${encodeURIComponent(auth.ref)}&t=${encodeURIComponent(auth.t)}`, { headers: { "x-doc-session": getSession() } })
@@ -256,7 +258,7 @@ export default function Documents() {
               <fieldset className="ix-section">
                 <legend className="sq-h3">{is3pl ? "Files" : "Documents"}</legend>
                 <ul className="ix-slots" role="list">
-                  {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} onUploaded={() => setNewUploads((n) => n + 1)} />)}
+                  {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} onUploaded={(id) => setNewUploads((u) => (u.includes(id) ? u : [...u, id]))} />)}
                 </ul>
               </fieldset>
               {docSectionsFor(info.path).map((s) => (
@@ -273,7 +275,7 @@ export default function Documents() {
               ))}
               <div className="ix-submit">
                 {submitError && <p className="ix-error" role="alert">{submitError}</p>}
-                {blockDone && <p className="ix-help">Upload at least one file first. If you don't have any yet, you can come back to this link later.</p>}
+                {blockDone && <p className="ix-help">Still needed: {missing3pl.join(" and ")}. You can come back to this link to finish.</p>}
                 <button className="sq-btn sq-btn-primary" type="submit" disabled={status === "sending" || blockDone}>
                   {status === "sending" ? "Sending…" : is3pl ? "Done uploading" : "Send to Souq"}
                 </button>

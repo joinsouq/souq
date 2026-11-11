@@ -88,9 +88,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       const path = docPathFromNotes(task.notes);
       const slots = docSlotsFor(path);
       const required = slots.filter((s) => s.required);
-      // 3PL files are all optional, so its progress counts any slot with a file.
-      const counted = path === "3pl" ? slots : required;
-      const progress = progressFor(sectionOf(task), { have: counted.filter((s) => bySlot[s.id]?.length).length, need: required.length, total: slots.length }, path);
+      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length, total: slots.length }, path);
       // Card names look like "Company (Founder)"; show just the company.
       return json(200, { company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
     }
@@ -124,7 +122,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       const files = await listFiles(docsFolder);
       const got = new Set(files.map((f) => slotOf(f.name)?.id).filter(Boolean));
       const missing = slots.filter((s) => s.required && !got.has(s.id));
-      if (is3pl && !slots.some((s) => got.has(s.id))) return json(400, { error: "Upload at least one file first." });
+      if (is3pl && missing.length) return json(400, { error: `Still needed: ${missing.map((s) => s.label).join(" and ")}.` });
       const submitted = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
 
       if (!is3pl) await saveDoc(`Details from founder (${submitted})`, toText(QUESTIONS_FORM, answers), parsed.folder);

@@ -146,7 +146,7 @@ export function confirmationFor(path: PathId, a: Record<string, string | string[
           `Thanks for sending your 3PL intake${company ? ` for ${company}` : ""}. It came through.`,
           "The fulfillment team will follow up within 1 to 2 business days with your proposal.",
           opts.uploadUrl
-            ? `If you have them, add your product list (SKU, name, size and weight) and the last 3 months of shipments plus your carrier rate card here. We use them to run a shipping cost comparison before the call. It's private to you, and we'll email you a code to open it:\n${opts.uploadUrl}`
+            ? `Next, upload your product list (SKU, name, size and weight) and the last 3 months of shipments plus your carrier rate card here. We need both for your proposal and a shipping cost comparison. It's private to you, and we'll email you a code to open it:\n${opts.uploadUrl}`
             : "If you have them, reply to this email with your product list (SKU, name, size and weight) and the last 3 months of shipments plus your carrier rate card. We use them to run a shipping cost comparison before the call.",
           reply,
         ],

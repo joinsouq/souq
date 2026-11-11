@@ -118,7 +118,7 @@ function progressFor3pl(section: { gid?: string; name?: string } | undefined, fi
     gid === "1218558190745258" ? LIVE
     : /\bsign/i.test(section?.name || "") ? 3
     : ["1218558260175604", "1218558190765255"].includes(gid) ? 2
-    : files.have > 0 ? 2 : 1;
+    : files.total > 0 && files.have >= files.total ? 2 : 1;
   stage = Math.max(stage, 1);
   const steps: Step[] = ["Intake", "Files", "Proposal", "Signed", "Live"].map((label, i) => ({
     label,

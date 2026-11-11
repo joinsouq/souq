@@ -728,11 +728,11 @@ export type DocPath = "funding" | "accelerator" | "3pl";
 export const DOC_PATHS: DocPath[] = ["funding", "accelerator", "3pl"];
 
 // 3PL: files that feed the proposal and the shipping cost comparison.
-// Shown right after the 3PL intake. Both optional, no written questions.
+// Shown right after the 3PL intake. Both required, no written questions.
 export const THREEPL_SLOTS: DocSlot[] = [
-  { id: "productList", label: "Product list",
+  { id: "productList", label: "Product list", required: true,
     help: "SKU, name, size and weight. A Shopify export works as-is. CSV, Excel or PDF." },
-  { id: "shippingData", label: "Shipments and carrier rate card",
+  { id: "shippingData", label: "Shipments and carrier rate card", required: true,
     help: "The last 3 months of shipments, one row per package (PLD), plus any rate card you have. A ShipStation or carrier export works as-is; the template shows the columns we use. We compare shipping cost line by line. Seen by the 3PL team only.",
     template: { href: "/souq-shipment-history-template.csv", label: "Download the shipment history template (CSV)" } },
 ];
