@@ -9,7 +9,7 @@
 
 import { FORMS, type Answers, type PathId, validate, toText, fieldById, display } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
-  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, sign, siteOrigin, SECTIONS, setWaitingOn,
+  createFolder, ensureFolder, saveDoc, folderUrl, createTask, customFieldsFrom, sign, siteOrigin, SECTIONS, setWaitingOn, shareFolder, threePlOwner, comment,
 } from "../_lib/services.js";
 import { confirmationFor, sendEmail } from "../_lib/email.js";
 import { bindEnv } from "../_lib/env.js";
@@ -116,6 +116,8 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       notes: notes(),
       section: officeHours?.qualified ? SECTIONS.introCall : SECTIONS.new,
       customFields: customFieldsFrom(form.id, answers),
+      // 3PL cards go straight to whoever runs 3PL.
+      assignee: form.id === "3pl-onboarding" ? threePlOwner().asanaId : undefined,
     });
   } catch (e) {
     // Keep the submission in the logs so nothing is lost, then tell the founder.
@@ -135,6 +137,16 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
   const tplUpload = form.id === "3pl-onboarding" ? uploadLink : "";
+
+  // 3PL: the 3PL lead gets the brand's Drive folder (intake, cover sheet, and their uploads).
+  // A sharing failure shouldn't fail the submission; it's noted on the card instead.
+  if (form.id === "3pl-onboarding" && folderId) {
+    const owner = threePlOwner();
+    await shareFolder(folderId, owner.email, `New 3PL intake: ${company}. Their files will land in this folder.`).catch(async (e) => {
+      console.error("3pl folder share failed", e);
+      await comment(task.gid, `Couldn't share the Drive folder with ${owner.email} automatically. Share it by hand: ${folderUrl(folderId)}`).catch(() => {});
+    });
+  }
 
   // Qualified office hours: the founder's next move is to pick a time.
   if (officeHours?.qualified) await setWaitingOn(task.gid, "Founder").catch((e) => console.error("waiting-on update failed", e));

@@ -102,6 +102,23 @@ export async function createFolder(name: string, parent?: string): Promise<{ id:
   return { id: j.id, url: j.webViewLink };
 }
 
+/** Gives one person edit access to a folder (and everything in it). Google emails them the link. */
+export async function shareFolder(folderId: string, email: string, note?: string): Promise<void> {
+  const q = `/files/${folderId}/permissions?sendNotificationEmail=true${note ? `&emailMessage=${encodeURIComponent(note)}` : ""}`;
+  await drive(q, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role: "writer", type: "user", emailAddress: email }),
+  });
+}
+
+// Who runs 3PL: new 3PL cards are assigned to them, and they get the brand's
+// Drive folder. Yaser by default; set THREEPL_ASSIGNEE_ID / THREEPL_EMAIL to change.
+export const threePlOwner = () => ({
+  asanaId: process.env.THREEPL_ASSIGNEE_ID || "1218994081739882",
+  email: process.env.THREEPL_EMAIL || "yaser@joinsouq.com",
+});
+
 /** Finds a child folder by name, creating it if it doesn't exist. */
 export async function ensureFolder(name: string, parent: string): Promise<string> {
   const q = encodeURIComponent(`'${parent}' in parents and name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
@@ -237,13 +254,13 @@ export function customFieldsFrom(formId: string, a: Record<string, string | stri
   return out;
 }
 
-export async function createTask(opts: { name: string; notes: string; section: string; customFields: Record<string, unknown> }): Promise<{ gid: string; url: string }> {
+export async function createTask(opts: { name: string; notes: string; section: string; customFields: Record<string, unknown>; assignee?: string }): Promise<{ gid: string; url: string }> {
   const project = env("ASANA_PROJECT_ID");
   const base = {
     name: opts.name,
     notes: opts.notes,
     projects: [project],
-    assignee: process.env.ASANA_ASSIGNEE_ID || undefined,
+    assignee: opts.assignee || process.env.ASANA_ASSIGNEE_ID || undefined,
   };
   let task;
   try {
