@@ -54,6 +54,8 @@ export const SERVICE_OPTIONS = [
   "Inventory and demand planning",
   "Commerce systems and reporting",
 ];
+/** The 3PL option in SERVICE_OPTIONS. Anything that asks for it goes to the 3PL intake. */
+export const THREEPL_SERVICE = "3PL and returns";
 const HEARD = ["Referral", "Souq Summit", "Office hours", "Portfolio company", "Instagram", "LinkedIn", "TikTok", "Google", "Other"];
 const NOT_SURE = "Not sure yet";
 const YES_NO_UNSURE = ["Yes", "No", NOT_SURE];
@@ -277,31 +279,16 @@ export const FORMS: Record<PathId, IntakeForm> = {
       {
         title: "What you need",
         fields: [
-          { id: "services", label: "Which services?", type: "checkboxes", required: true, options: SERVICE_OPTIONS },
+          // 3PL has its own intake (3pl-onboarding); the service form points there instead.
+          { id: "services", label: "Which services?", type: "checkboxes", required: true,
+            options: SERVICE_OPTIONS.filter((o) => o !== THREEPL_SERVICE),
+            help: "Looking for 3PL and returns? It has its own intake, so we can quote it properly.",
+            helpLink: { href: "/apply/3pl-onboarding", label: "Go to the 3PL intake" } },
           { id: "monthlyRevenue", label: "Average monthly revenue", type: "money", required: true, half: true },
           { id: "start", label: "When do you want to start?", type: "select", required: true, half: true,
             options: ["Now", "Within 30 days", "1 to 3 months", "Exploring"] },
           { id: "channels", label: "Where do you sell?", type: "checkboxes", required: true, options: SALES_CHANNELS },
           { id: "why", label: "What's prompting this now?", type: "textarea", required: true },
-        ],
-      },
-      {
-        title: "Fulfillment",
-        showIf: { field: "services", includes: "3PL and returns" },
-        fields: [
-          { id: "ordersMonth", label: "Orders shipped per month", type: "number", required: true, half: true },
-          { id: "skus", label: "Number of active SKUs", type: "number", half: true },
-          { id: "currentSetup", label: "Current warehouse or 3PL, and where", type: "text", required: true },
-          { id: "fulfillCost", label: "What fulfillment costs you today (per order or per month)", type: "text", half: true },
-          { id: "returns", label: "Returns per month", type: "number", half: true },
-          { id: "shipTo", label: "Where do you ship to?", type: "checkboxes", options: ["Customers (DTC)", "Amazon", "Wholesale and retail"] },
-          { id: "packageSize", label: "Average package size and weight", type: "text", half: true },
-          { id: "peak", label: "Busiest month, and orders that month", type: "text", half: true },
-          { id: "storePlatforms", label: "Store platforms we'd connect to", type: "checkboxes", options: ["Shopify", "Amazon", "Walmart", "TikTok Shop", "Other"] },
-          { id: "inventoryTakeover", label: "Do you have inventory you'd need us to take over?", type: "radio", options: ["Yes", "No", "Arriving soon"] },
-          { id: "takeoverDetail", label: "Roughly how many units or pallets, and where it's stored now", type: "text",
-            showIf: { field: "inventoryTakeover", equals: "Yes" } },
-          { id: "handling", label: "Special handling", type: "checkboxes", options: ["Fragile", "Temperature controlled", "Kitting or bundles", "Oversized"] },
         ],
       },
       {

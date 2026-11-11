@@ -1,7 +1,7 @@
-import { Link, useParams } from "wouter";
+import { Link, Redirect, useParams } from "wouter";
 import SitePage from "@/components/SitePage";
 import IntakeForm from "@/components/IntakeForm";
-import { FORMS, PATH_ORDER, type PathId } from "@/intake/forms";
+import { FORMS, PATH_ORDER, THREEPL_SERVICE, type PathId } from "@/intake/forms";
 import NotFound from "@/pages/not-found";
 
 /** /apply: one question that sends each founder to the right form. */
@@ -39,6 +39,10 @@ export function ApplyForm() {
   const { path } = useParams<{ path: string }>();
   const form = FORMS[path as PathId];
   if (!form) return <NotFound />;
+  // Old links like /apply/service?services=3PL%20and%20returns go to the one 3PL intake.
+  if (form.id === "service" && new URLSearchParams(window.location.search).getAll("services").includes(THREEPL_SERVICE)) {
+    return <Redirect to="/apply/3pl-onboarding" replace />;
+  }
   return (
     <SitePage>
       <div className="sq-wrap">

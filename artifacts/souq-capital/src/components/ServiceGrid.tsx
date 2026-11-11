@@ -64,7 +64,8 @@ export default function ServiceGrid({ openFromHash = false, flywheel = false }: 
             <p className="sq-body">{active.bestFor}</p>
 
             <div className="sq-actions sq-svc-actions">
-              <Link href={`/apply/service?services=${encodeURIComponent(active.name)}`} className="sq-btn sq-btn-primary" onClick={close}>Request this service</Link>
+              {/* 3PL has its own intake; every other service uses the general service form. */}
+              <Link href={active.id === "3pl" ? "/apply/3pl-onboarding" : `/apply/service?services=${encodeURIComponent(active.name)}`} className="sq-btn sq-btn-primary" onClick={close}>Request this service</Link>
               {active.onePager && (
                 <a href={active.onePager} className="sq-btn sq-btn-ghost" target="_blank" rel="noreferrer">Capability sheet</a>
               )}

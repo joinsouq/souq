@@ -72,7 +72,12 @@ export function FieldInput({
       </label>
       {control}
       {field.help && <p id={`${id}-help`} className="ix-help">{field.help}</p>}
-      {field.helpLink && <p className="ix-help"><a className="sq-link" href={field.helpLink.href} download>{field.helpLink.label}</a></p>}
+      {field.helpLink && (
+        <p className="ix-help">
+          {/* Files (like a CSV template) download; pages just open. */}
+          <a className="sq-link" href={field.helpLink.href} download={/\.[a-z0-9]+$/i.test(field.helpLink.href) || undefined}>{field.helpLink.label}</a>
+        </p>
+      )}
       {error && <p id={`${id}-err`} className="ix-error">{error}</p>}
     </div>
   );
