@@ -57,11 +57,11 @@ ${body}
 const firstName = (name: string) => name.trim().split(/\s+/)[0] || "there";
 
 /** The "we got it" email for each website form. */
-export function confirmationFor(path: PathId, a: Record<string, string | string[]>, opts: { bookingUrl?: string } = {}): Email | null {
+export function confirmationFor(path: PathId, a: Record<string, string | string[]>, opts: { bookingUrl?: string; uploadUrl?: string } = {}): Email | null {
   const to = String(a.email || "").trim();
   if (!to) return null;
   const hi = `Hi ${firstName(String(a.name || ""))},`;
-  const company = String(a.company || "").trim();
+  const company = String(a.brand || a.company || "").trim();
   const reply = "If anything changes in the meantime, or you have a question, just reply to this email.";
 
   switch (path) {
@@ -140,11 +140,14 @@ export function confirmationFor(path: PathId, a: Record<string, string | string[
     case "3pl-onboarding":
       return {
         to,
-        subject: "Your Souq fulfillment onboarding form",
+        subject: "We received your Souq 3PL intake",
         paragraphs: [
           hi,
-          `Thanks for sending your onboarding details${company ? ` for ${company}` : ""}. They came through.`,
-          "The fulfillment team will follow up within 1 to 2 business days to confirm your setup and go-live date.",
+          `Thanks for sending your 3PL intake${company ? ` for ${company}` : ""}. It came through.`,
+          "The fulfillment team will follow up within 1 to 2 business days with your proposal.",
+          opts.uploadUrl
+            ? `If you have them, add your product list (SKU, name, size and weight) and the last 3 months of shipments plus your carrier rate card here. We use them to run a shipping cost comparison before the call. It's private to you, and we'll email you a code to open it:\n${opts.uploadUrl}`
+            : "If you have them, reply to this email with your product list (SKU, name, size and weight) and the last 3 months of shipments plus your carrier rate card. We use them to run a shipping cost comparison before the call.",
           reply,
         ],
       };

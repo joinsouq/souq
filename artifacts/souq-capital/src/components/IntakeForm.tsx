@@ -48,6 +48,7 @@ export function FieldInput({
     const affix = field.type === "money" ? "$" : field.type === "percent" ? "%" : "";
     const inputType = field.type === "email" ? "email" : field.type === "tel" ? "tel" : field.type === "url" ? "url" : "text";
     const numeric = ["money", "percent", "number", "year"].includes(field.type);
+    const placeholder = field.placeholder ?? (field.type === "weight" ? "1.4 lb" : undefined);
     control = (
       <div className={`ix-input${affix ? ` ix-affix ix-affix-${field.type}` : ""}`} data-affix={affix || undefined}>
         <input
@@ -56,7 +57,7 @@ export function FieldInput({
           inputMode={numeric ? "decimal" : undefined}
           autoComplete={field.id === "email" ? "email" : field.id === "name" ? "name" : field.id === "phone" ? "tel" : field.id === "company" ? "organization" : undefined}
           value={str}
-          placeholder={field.placeholder}
+          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
         />
       </div>
@@ -71,6 +72,7 @@ export function FieldInput({
       </label>
       {control}
       {field.help && <p id={`${id}-help`} className="ix-help">{field.help}</p>}
+      {field.helpLink && <p className="ix-help"><a className="sq-link" href={field.helpLink.href} download>{field.helpLink.label}</a></p>}
       {error && <p id={`${id}-err`} className="ix-error">{error}</p>}
     </div>
   );

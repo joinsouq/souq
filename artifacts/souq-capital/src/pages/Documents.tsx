@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import SitePage from "@/components/SitePage";
 import { FieldInput } from "@/components/IntakeForm";
-import { DOC_SECTIONS, docSlotsFor, MAX_FILE_MB, isShown, type DocSlot } from "@/intake/forms";
+import { docSectionsFor, docSlotsFor, MAX_FILE_MB, isShown, type DocSlot } from "@/intake/forms";
 
 type Upload = { name: string; state: "uploading" | "done" | "error"; pct: number; msg?: string };
 
@@ -182,6 +182,7 @@ export default function Documents() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [result, setResult] = useState<{ missing: string[] } | null>(null);
   const [submitError, setSubmitError] = useState("");
+  const is3pl = info?.path === "3pl";
 
   useEffect(() => {
     fetch(`/api/documents?ref=${encodeURIComponent(auth.ref)}&t=${encodeURIComponent(auth.t)}`, { headers: { "x-doc-session": getSession() } })
@@ -217,11 +218,12 @@ export default function Documents() {
       <div className="sq-wrap">
         <section className="sq-page-hero" style={{ paddingBottom: "2rem" }}>
           <h1 className="sq-h2" style={{ maxWidth: "20ch" }}>
-            {info ? `Documents for ${info.company}` : "Your documents"}
+            {info ? `${is3pl ? "Files" : "Documents"} for ${info.company}` : "Your documents"}
           </h1>
           <p className="sq-lede">
-            These go to a private folder that only the Souq team can open. Upload what you have now; you can come back to this
-            link to add more.
+            {is3pl
+              ? "These go to a private folder that only the Souq 3PL team can open. We use them for your proposal and a shipping cost comparison. Upload what you have now; you can come back to this link to add more."
+              : "These go to a private folder that only the Souq team can open. Upload what you have now; you can come back to this link to add more."}
           </p>
         </section>
 
@@ -235,7 +237,9 @@ export default function Documents() {
             <div className="ix-done" role="status">
               <h2 className="sq-h2">Thank you. We have it.</h2>
               <p className="sq-lede" style={{ marginTop: "1.25rem" }}>
-                {result.missing.length
+                {is3pl
+                  ? "The fulfillment team will use these for your proposal. You can add more with this same link anytime."
+                  : result.missing.length
                   ? `We'll start reviewing what's here. When you can, use this same link to add: ${result.missing.join(", ")}.`
                   : "Everything we need is in. The team will review and come back to you with next steps."}
               </p>
@@ -245,12 +249,12 @@ export default function Documents() {
           {info && status !== "done" && (
             <form className="ix-form" onSubmit={finish} noValidate>
               <fieldset className="ix-section">
-                <legend className="sq-h3">Documents</legend>
+                <legend className="sq-h3">{is3pl ? "Files" : "Documents"}</legend>
                 <ul className="ix-slots" role="list">
                   {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} />)}
                 </ul>
               </fieldset>
-              {DOC_SECTIONS.map((s) => (
+              {docSectionsFor(info.path).map((s) => (
                 <fieldset className="ix-section" key={s.title}>
                   <legend className="sq-h3">{s.title}</legend>
                   {s.intro && <p className="ix-help">{s.intro}</p>}
@@ -265,7 +269,7 @@ export default function Documents() {
               <div className="ix-submit">
                 {submitError && <p className="ix-error" role="alert">{submitError}</p>}
                 <button className="sq-btn sq-btn-primary" type="submit" disabled={status === "sending"}>
-                  {status === "sending" ? "Sending…" : "Send to Souq"}
+                  {status === "sending" ? "Sending…" : is3pl ? "Done uploading" : "Send to Souq"}
                 </button>
               </div>
             </form>

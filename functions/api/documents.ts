@@ -10,7 +10,7 @@
 //                              what's missing on the Asana card, moves the card,
 //                              then runs the Claude underwriting draft
 
-import { DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../../artifacts/souq-capital/src/intake/forms.js";
+import { ALL_DOC_SLOTS, docSlotsFor, docPathFromNotes, DOC_QUESTIONS, DOC_SECTIONS, MAX_FILE_MB, validate, toText, type IntakeForm, type Answers } from "../../artifacts/souq-capital/src/intake/forms.js";
 import {
   parseRef, verify, getTask, siteOrigin, ensureFolder, startUpload, listFiles, saveDoc, comment, moveTo, setWaitingOn, folderUrl, SECTIONS,
 } from "../_lib/services.js";
@@ -25,7 +25,7 @@ const QUESTIONS_FORM: IntakeForm = {
   submitLabel: "", doneTitle: "", doneBody: "", sections: DOC_SECTIONS,
 };
 
-const slotOf = (fileName: string) => DOC_SLOTS.find((s) => fileName.startsWith(`${s.label} - `));
+const slotOf = (fileName: string) => ALL_DOC_SLOTS.find((s) => fileName.startsWith(`${s.label} - `));
 
 /** Founder name and email from the card ("Contact: Name, role · email · phone"). */
 function founderContact(notes: unknown): { name: string; email: string } | null {
@@ -86,8 +86,11 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
         if (s) (bySlot[s.id] ||= []).push(f.name.slice(s.label.length + 3));
       }
       const path = docPathFromNotes(task.notes);
-      const required = docSlotsFor(path).filter((s) => s.required);
-      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length }, path);
+      const slots = docSlotsFor(path);
+      const required = slots.filter((s) => s.required);
+      // 3PL files are all optional, so its progress counts any slot with a file.
+      const counted = path === "3pl" ? slots : required;
+      const progress = progressFor(sectionOf(task), { have: counted.filter((s) => bySlot[s.id]?.length).length, need: required.length, total: slots.length }, path);
       // Card names look like "Company (Founder)"; show just the company.
       return json(200, { company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
     }
@@ -95,7 +98,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     if (request.method !== "POST") return json(405, { error: "Method not allowed" });
 
     if (body.action === "upload") {
-      const slot = DOC_SLOTS.find((s) => s.id === body.slot);
+      const slot = ALL_DOC_SLOTS.find((s) => s.id === body.slot);
       const size = Number(body.size);
       if (!slot) return json(400, { error: "Unknown document type." });
       if (!(size > 0) || size > MAX_FILE_MB * 1024 * 1024) return json(400, { error: `Files must be under ${MAX_FILE_MB} MB.` });
@@ -106,23 +109,33 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     }
 
     if (body.action === "finish") {
-      const answers: Answers = {};
-      for (const f of DOC_QUESTIONS) answers[f.id] = String((body.answers as Record<string, unknown>)?.[f.id] ?? "").slice(0, 4000).trim();
-      const errors = validate(QUESTIONS_FORM, answers);
-      if (Object.keys(errors).length) return json(400, { errors });
-
       const cardNow = (await getTask(parsed.task).catch(() => ({ notes: "" }))) as Task;
       const path = docPathFromNotes(cardNow.notes);
+      const is3pl = path === "3pl";
+
+      // 3PL has no written questions, only files.
+      const answers: Answers = {};
+      if (!is3pl) {
+        for (const f of DOC_QUESTIONS) answers[f.id] = String((body.answers as Record<string, unknown>)?.[f.id] ?? "").slice(0, 4000).trim();
+        const errors = validate(QUESTIONS_FORM, answers);
+        if (Object.keys(errors).length) return json(400, { errors });
+      }
       const slots = docSlotsFor(path);
       const files = await listFiles(docsFolder);
       const got = new Set(files.map((f) => slotOf(f.name)?.id).filter(Boolean));
       const missing = slots.filter((s) => s.required && !got.has(s.id));
       const submitted = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
 
-      await saveDoc(`Details from founder (${submitted})`, toText(QUESTIONS_FORM, answers), parsed.folder);
+      if (!is3pl) await saveDoc(`Details from founder (${submitted})`, toText(QUESTIONS_FORM, answers), parsed.folder);
 
       const received = slots.filter((s) => got.has(s.id)).map((s) => `• ${s.label}`).join("\n") || "• (none)";
       const missingText = missing.map((s) => `• ${s.label}`).join("\n");
+      if (is3pl) {
+        // 3PL files feed the proposal. The card stays where it is: proposal, then
+        // the signed agreement, then Live once the warehouse starts.
+        await comment(parsed.task, `Brand uploaded 3PL files (${submitted} ET). ${files.length} file(s), in the private folder: ${folderUrl(parsed.folder)}\n\nReceived:\n${received}\n\nReady for the proposal and shipping cost comparison.`);
+        await setWaitingOn(parsed.task, "Souq").catch((e) => console.error("waiting-on update failed", e));
+      } else {
       await comment(
         parsed.task,
         `Founder uploaded documents (${submitted} ET). ${files.length} file(s), in the private folder: ${folderUrl(parsed.folder)}\n\nReceived:\n${received}` +
@@ -130,6 +143,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       );
       await moveTo(parsed.task, SECTIONS.diligence);
       await setWaitingOn(parsed.task, missing.length ? "Founder" : "Souq").catch((e) => console.error("waiting-on update failed", e));
+      }
 
       const task = (await getTask(parsed.task).catch(() => ({ name: "", notes: "" }))) as Task;
       const company = String(task.name || "").replace(/\s*\([^()]*\)\s*$/, "");

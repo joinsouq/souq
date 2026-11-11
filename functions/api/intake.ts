@@ -44,7 +44,8 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
   // Office hours: decide here, on the server, who gets the booking link.
   const officeHours = form.id === "talk" ? checkOfficeHours(answers) : null;
 
-  const company = String(answers.company || "").trim() || String(answers.name);
+  // 3PL intakes lead with the brand name (the name on the box).
+  const company = String(answers.brand || answers.company || "").trim() || String(answers.name);
   const person = String(answers.name || "").trim();
   const title = person && person !== company ? `${company} (${person})` : company;
   const submitted = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
@@ -81,6 +82,10 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     `Submitted ${submitted} ET via the website: ${form.choice}`,
     officeHours?.reason,
     pick("website") && `Website: ${pick("website")}`,
+    form.id === "3pl-onboarding" && pick("company") && pick("company") !== company && `Legal name: ${pick("company")}`,
+    pick("ordersAvg") && `Orders/mo: ${pick("ordersAvg")} avg, ${pick("ordersPeak")} peak, ${pick("ordersForecast")} expected`,
+    pick("formats") && `Formats: ${pick("formats")}${pick("hazmat") ? ` · Hazmat: ${pick("hazmat")}` : ""}`,
+    pick("goLive") && `Target go-live: ${pick("goLive")}`,
     `Contact: ${person}${pick("role") ? `, ${pick("role")}` : ""} · ${pick("email")} · ${pick("phone")}`,
     pick("sells") && `Sells: ${pick("sells")}`,
     pick("category") && `Category: ${pick("category")}`,
@@ -109,7 +114,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     task = await createTask({
       name: title,
       notes: notes(),
-      section: officeHours?.qualified ? SECTIONS.introCall : form.id === "3pl-onboarding" ? SECTIONS.live : SECTIONS.new,
+      section: officeHours?.qualified ? SECTIONS.introCall : SECTIONS.new,
       customFields: customFieldsFrom(form.id, answers),
     });
   } catch (e) {
@@ -118,12 +123,18 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     return json(502, { error: "We couldn't submit this right now. Please try again in a minute." });
   }
 
-  // Funding and Accelerator: add the private document-upload link, tied to this card and folder.
-  if ((form.id === "funding" || form.id === "accelerator") && folderId) {
+  // Funding, Accelerator and 3PL: add the private document-upload link, tied to this card and folder.
+  // 3PL brands get theirs straight away, on the thank-you screen and in the email.
+  let uploadLink = "";
+  if ((form.id === "funding" || form.id === "accelerator" || form.id === "3pl-onboarding") && folderId) {
     const ref = `${task.gid}.${folderId}`;
-    lines.push(BREAK, `Document upload link to send after the intro call:\n${siteOrigin(request.headers)}/apply/documents?ref=${ref}&t=${sign(ref)}`);
+    uploadLink = `${siteOrigin(request.headers)}/apply/documents?ref=${ref}&t=${sign(ref)}`;
+    lines.push(BREAK, form.id === "3pl-onboarding"
+      ? `File upload link (sent to the brand with their confirmation):\n${uploadLink}`
+      : `Document upload link to send after the intro call:\n${uploadLink}`);
     await updateNotes(task.gid, notes()).catch((e) => console.error("link update failed", e));
   }
+  const tplUpload = form.id === "3pl-onboarding" ? uploadLink : "";
 
   // Qualified office hours: the founder's next move is to pick a time.
   if (officeHours?.qualified) await setWaitingOn(task.gid, "Founder").catch((e) => console.error("waiting-on update failed", e));
@@ -140,7 +151,18 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
     await enqueue(env, waitUntil, { kind: "quickLook", taskGid: task.gid, applicationText: fullText });
   }
 
-  await emailFounder(form.id, answers, officeHours?.qualified ? BOOKING_URL : undefined);
+  await emailFounder(form.id, answers, officeHours?.qualified ? BOOKING_URL : undefined, tplUpload || undefined);
+  if (tplUpload) {
+    return json(200, {
+      ok: true,
+      next: {
+        title: "Got it. One more step if you have them.",
+        body: "Add your product list and the last 3 months of shipments, and we'll run a shipping cost comparison before the proposal. We've also emailed you this link, so you can come back to it.",
+        link: tplUpload,
+        linkLabel: "Upload your files",
+      },
+    });
+  }
   if (officeHours?.qualified) {
     return json(200, {
       ok: true,
@@ -156,8 +178,8 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
 };
 
 /** "We got it" email to the founder. Never blocks or fails the submission. */
-async function emailFounder(path: PathId, answers: Answers, bookingUrl?: string) {
-  const email = confirmationFor(path, answers, { bookingUrl });
+async function emailFounder(path: PathId, answers: Answers, bookingUrl?: string, uploadUrl?: string) {
+  const email = confirmationFor(path, answers, { bookingUrl, uploadUrl });
   if (!email) return;
   await sendEmail(email).catch((e) => console.error("confirmation email failed", e));
 }

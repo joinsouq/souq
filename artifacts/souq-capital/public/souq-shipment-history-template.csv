@@ -1,0 +1,4 @@
+ship_date,order_number,carrier,service,ship_from_zip,ship_to_city,ship_to_state,ship_to_zip,ship_to_country,units_in_order,weight_lb,length_in,width_in,height_in,package_type,postage_paid_usd,surcharges_usd,tracking_number
+2026-09-01,1001,USPS,Ground Advantage,07407,Philadelphia,PA,19106,US,2,1.4,10,8,4,box,6.85,0.00,9400100000000000000000
+2026-09-01,1002,UPS,Ground,07407,Austin,TX,78701,US,3,2.1,12,9,6,box,9.40,1.25,1Z999AA10123456784
+2026-09-02,1003,USPS,Priority Mail International,07407,Toronto,ON,M5V 2T6,CA,1,0.8,9,6,3,polymailer,24.10,0.00,LZ123456789US

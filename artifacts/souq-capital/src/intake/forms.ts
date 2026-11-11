@@ -4,7 +4,7 @@
 
 export type FieldType =
   | "text" | "email" | "tel" | "url" | "number" | "money" | "percent"
-  | "year" | "textarea" | "select" | "radio" | "checkboxes";
+  | "year" | "weight" | "textarea" | "select" | "radio" | "checkboxes";
 
 export type ShowIf = { field: string; equals?: string; includes?: string; includesAny?: string[] };
 
@@ -18,6 +18,7 @@ export type Field = {
   placeholder?: string;
   showIf?: ShowIf;
   half?: boolean; // lays out two fields per row on desktop
+  helpLink?: { href: string; label: string }; // a download shown under the help text
 };
 
 export type Section = { title: string; intro?: string; showIf?: ShowIf; fields: Field[] };
@@ -54,6 +55,19 @@ export const SERVICE_OPTIONS = [
   "Commerce systems and reporting",
 ];
 const HEARD = ["Referral", "Souq Summit", "Office hours", "Portfolio company", "Instagram", "LinkedIn", "TikTok", "Google", "Other"];
+const NOT_SURE = "Not sure yet";
+const YES_NO_UNSURE = ["Yes", "No", NOT_SURE];
+// 3PL go-live: the next four quarters, starting no earlier than Q1 2027.
+function goLiveOptions(now = new Date()): string[] {
+  let y = now.getUTCFullYear(), q = Math.floor(now.getUTCMonth() / 3) + 1;
+  if (y < 2027) { y = 2027; q = 1; }
+  const out: string[] = [];
+  for (let k = 0; k < 4; k++) {
+    out.push(`Q${q} ${y}${k === 0 ? " (earliest start)" : ""}`);
+    if (++q > 4) { q = 1; y++; }
+  }
+  return [...out, "Later than that", NOT_SURE];
+}
 
 const contact = (opts: { heardRequired?: boolean } = {}): Section => ({
   title: "About you",
@@ -414,61 +428,138 @@ export const FORMS: Record<PathId, IntakeForm> = {
     ],
   },
 
-  // Not on /apply: the team sends this link once a fulfillment client signs.
-  // Replaces the Zite 3PL onboarding form.
+  // Not on /apply: the team sends this link to fulfillment prospects.
+  // Same questions as the YNK 3PL intake (intakes.ynkincubator.com), so
+  // brands fill in this one instead. Replaces the Zite 3PL onboarding form.
   "3pl-onboarding": {
     id: "3pl-onboarding",
     choice: "3PL onboarding",
     choiceDetail: "",
-    title: "Souq fulfillment onboarding",
-    intro: "Tell us about your business and fulfillment needs so we can get you set up quickly and accurately.",
-    minutes: 8,
-    submitLabel: "Submit onboarding form",
+    title: "Souq 3PL: new account intake",
+    intro: "About ten minutes. Handy to have: your order counts for the last 6 months and a product list. What you enter is used to write your proposal and for nothing else.",
+    minutes: 10,
+    submitLabel: "Send for my proposal",
+    // Normally replaced by the upload screen (see api/intake.ts); shown if the Drive folder couldn't be made.
     doneTitle: "Got it.",
-    doneBody: "The fulfillment team will follow up within 1 to 2 business days.",
+    doneBody: "The fulfillment team will follow up within 1 to 2 business days with your proposal.",
     sections: [
       {
-        title: "Business information",
+        title: "About you",
+        intro: "Who we're writing the proposal for.",
         fields: [
-          { id: "company", label: "Full legal company name", type: "text", required: true,
-            help: "If there's more than one company name, say whether they're brands under the same company or separate LLCs." },
-          { id: "website", label: "Primary website or store", type: "url", required: true, half: true },
-          { id: "address", label: "Principal business address", type: "text", required: true, half: true },
-          { id: "name", label: "Your name", type: "text", required: true, half: true },
-          { id: "email", label: "Email", type: "email", required: true, half: true },
-          { id: "phone", label: "Phone", type: "tel", half: true },
+          { id: "brand", label: "Brand name", type: "text", required: true, half: true, help: "The name on the box." },
+          { id: "company", label: "Full legal company name", type: "text", required: true, half: true,
+            help: "As it should appear on the agreement, for example Example Brand LLC." },
+          { id: "multiBrand", label: "Do you sell more than one brand?", type: "select", required: true, half: true,
+            options: ["No, one brand", "Yes, several brands"] },
+          { id: "entityStructure", label: "Are the brands one company or separate LLCs?", type: "select", half: true,
+            options: ["One company", "Separate LLCs", NOT_SURE], showIf: { field: "multiBrand", equals: "Yes, several brands" } },
+          { id: "address", label: "Principal business address", type: "textarea", required: true, help: "Street, city, state and ZIP." },
+          { id: "name", label: "Primary contact for billing and operations", type: "text", required: true,
+            help: "The person we send the proposal and the agreement to. Full name." },
+          { id: "email", label: "Contact email", type: "email", required: true, half: true },
+          { id: "phone", label: "Contact phone", type: "tel", required: true, half: true,
+            help: "Only for questions about the proposal, no sales calls." },
+          { id: "billingEmail", label: "Preferred billing email", type: "email", required: true, help: "Where invoices go." },
+          { id: "website", label: "Store URL", type: "url", required: true, help: "For example yourbrand.com." },
+          { id: "channels", label: "Where do you sell?", type: "checkboxes", required: true,
+            help: "Pick everything that ships orders today.",
+            options: ["Shopify", "Amazon", "TikTok Shop", "Etsy", "Wholesale or retail", "Other"] },
+          { id: "channelsOther", label: "Which other channels?", type: "text", showIf: { field: "channels", includes: "Other" } },
         ],
       },
       {
-        title: "Sales and operations",
+        title: "Catalog",
+        intro: "What you ship. Formats and hazmat drive the price more than anything else.",
         fields: [
-          { id: "sellChannels", label: "Selling channels", type: "checkboxes", required: true, options: ["Shopify", "Amazon", "TikTok Shop", "Wholesale", "Other"] },
-          { id: "skus", label: "Total active SKUs", type: "number", required: true, half: true },
-          { id: "unitsPerOrder", label: "Average units per order", type: "number", required: true, half: true },
-          { id: "ordersMonth", label: "Expected monthly orders, next 6 to 12 months", type: "number", required: true, half: true },
-          { id: "platform", label: "Current order management or fulfillment platform", type: "text", required: true, half: true },
+          { id: "skus", label: "Number of active SKUs", type: "number", required: true,
+            help: "Count each size and variant separately, for example 24." },
+          { id: "formats", label: "Product formats you ship", type: "checkboxes", required: true,
+            options: ["Liquids", "Creams or gels", "Aerosols or foams", "Powders", "Glass containers", "Apparel", "Hard goods", "Other"] },
+          { id: "formatsOther", label: "Which other formats?", type: "text", showIf: { field: "formats", includes: "Other" } },
+          { id: "hazmat", label: "Anything hazmat, flammable, aerosol, or temperature sensitive?", type: "select", required: true,
+            options: YES_NO_UNSURE,
+            help: "Mousses, alcohol-based sprays, nail products and some oils count. This changes which carriers we can use." },
+          { id: "hazmatDetail", label: "Tell us which products, and what you know about them", type: "textarea",
+            help: "For example: foam mousse in a pump bottle, two oils with high alcohol content.",
+            showIf: { field: "hazmat", includesAny: ["Yes", NOT_SURE] } },
+          { id: "barcodes", label: "Are products barcoded today?", type: "select", required: true,
+            options: ["UPC or EAN on every unit", "On some units", "Not barcoded", NOT_SURE] },
+          { id: "lotTracking", label: "Shelf life, lot or expiry tracking needed?", type: "select", options: YES_NO_UNSURE },
+          { id: "lotDetail", label: "What should we track, and are there temperature limits?", type: "textarea",
+            help: "For example: 12 month shelf life, lot number on each case, keep under 80F.",
+            showIf: { field: "lotTracking", includesAny: ["Yes", NOT_SURE] } },
         ],
       },
       {
-        title: "Fulfillment requirements",
+        title: "Orders and volume",
+        intro: "How much ships today and what you expect.",
         fields: [
-          { id: "packing", label: "Any special packing requirements?", type: "textarea" },
-          { id: "branded", label: "Any branded packaging or inserts?", type: "text" },
-          { id: "carriers", label: "Any carrier requirements or preferred shipping methods?", type: "text" },
-          { id: "returnsProcess", label: "Returns process requirements", type: "textarea" },
-          { id: "initialInventory", label: "Estimated initial inventory", type: "text", required: true,
-            help: "Number of pallets, cartons, or total units you'll send at first." },
-          { id: "barcodes", label: "Are your products barcoded?", type: "select", required: true,
-            options: ["Yes, all barcoded", "Partially barcoded", "No, they need labeling"] },
-          { id: "kitting", label: "Any kitting, bundling, or prep?", type: "text" },
+          { id: "ordersAvg", label: "Orders per month, average over the last 6 months", type: "number", required: true, half: true,
+            help: "A number, for example 900." },
+          { id: "ordersPeak", label: "Your biggest month (last 6 months)", type: "number", required: true, half: true,
+            help: "For example 1,800." },
+          { id: "ordersForecast", label: "Expected orders per month over the next 6 to 12 months", type: "text", required: true,
+            help: "A number or a range is fine, for example 1,000 to 1,500." },
+          { id: "unitsPerOrder", label: "Average units per order", type: "number", required: true, half: true, help: "For example 2.3." },
+          { id: "orderWeight", label: "Average order weight, packed", type: "weight", required: true, half: true,
+            help: "In oz or lb, like 1.4 lb. Your best guess is fine. Shipping cost doesn't scale evenly with weight, so this matters more than it looks." },
+          { id: "international", label: "Share of orders that ship internationally", type: "select",
+            options: ["None, US only", "Under 5%", "5% to 20%", "Over 20%", NOT_SURE] },
+          { id: "intlCountries", label: "Which countries do most of those orders go to?", type: "text",
+            help: "For example Canada, UK, UAE.",
+            showIf: { field: "international", includesAny: ["Under 5%", "5% to 20%", "Over 20%", NOT_SURE] } },
+          { id: "fulfillment", label: "Who fulfills your orders today?", type: "select", required: true,
+            options: ["We do it ourselves", "Another 3PL", "Our manufacturer", "Other"] },
+          { id: "tplName", label: "Which 3PL or manufacturer?", type: "text", half: true,
+            showIf: { field: "fulfillment", includesAny: ["Another 3PL", "Our manufacturer"] } },
+          { id: "inventoryCity", label: "City and state where your inventory sits today", type: "text", half: true,
+            help: "For example Philadelphia, PA.",
+            showIf: { field: "fulfillment", includesAny: ["We do it ourselves", "Another 3PL", "Our manufacturer", "Other"] } },
+          { id: "platform", label: "Order platform and connected apps", type: "text",
+            help: "Shopify, ShipStation, subscriptions, loyalty, anything that touches an order. For example: Shopify, Recharge, Smile." },
         ],
       },
       {
-        title: "Timeline and billing",
+        title: "Packing, inventory and returns",
+        intro: "How an order should leave the building.",
         fields: [
-          { id: "goLive", label: "Target go-live date", type: "text", required: true, half: true },
-          { id: "billingContact", label: "Billing contact", type: "text", required: true, half: true },
-          { id: "billingEmail", label: "Billing email", type: "email", required: true },
+          { id: "branded", label: "Branded packaging, inserts or gift-with-purchase?", type: "checkboxes",
+            options: ["Branded boxes or mailers", "Inserts or cards", "Gift with purchase", "Samples", "None", NOT_SURE] },
+          { id: "brandedDetail", label: "Anything we should know about how it goes in the box?", type: "textarea",
+            help: "For example: free brush with newsletter signup orders, thank-you card in every box." },
+          { id: "kitting", label: "Bundles or kits: pre-kitted by you, or picked as separate units?", type: "select",
+            help: "This decides whether we quote a pick fee per unit or per kit.",
+            options: ["Pre-kitted before they reach the warehouse", "Picked as separate units at pack time", "Some of each", "We do not sell bundles", NOT_SURE] },
+          { id: "packing", label: "Special packing rules", type: "textarea",
+            help: "Fragile glass, leak protection, no plastic, orientation, anything a packer must know." },
+          { id: "carriers", label: "Carrier or shipping preferences", type: "text",
+            help: "Carriers you use today, services you promise customers, anything you want to keep. For example: USPS Ground Advantage for most orders, UPS for heavy." },
+          { id: "freeShipping", label: "Your free shipping threshold", type: "text", half: true,
+            help: "For example: free US shipping over $100." },
+          { id: "signature", label: "Do you require a signature on orders over a certain value?", type: "select", half: true,
+            options: YES_NO_UNSURE },
+          { id: "signatureOver", label: "Over what order value?", type: "text", help: "For example $200.",
+            showIf: { field: "signature", equals: "Yes" } },
+          { id: "initialInventory", label: "Initial inventory you would send us", type: "text", required: true,
+            help: "Roughly how many pallets or cartons, and when. For example: 4 pallets in the first week of January, then monthly replenishment." },
+          { id: "returns", label: "Do you want Souq to receive and inspect returns?", type: "select", options: YES_NO_UNSURE },
+          { id: "riskOrders", label: "How do you handle medium and high risk orders today?", type: "textarea",
+            help: "Fraud flags from Shopify or your payment provider: manual review, holds, address verification, cancellations." },
+        ],
+      },
+      {
+        title: "Timeline and terms",
+        intro: "When you want to start and what terms you're comfortable with.",
+        fields: [
+          { id: "goLive", label: "Target go-live", type: "select", required: true, half: true,
+            help: "We're at capacity through December and move into a larger warehouse in January, so new accounts start in Q1 2027.",
+            options: goLiveOptions() },
+          { id: "cycleCounts", label: "Inventory cycle counts", type: "select", half: true,
+            help: "Routine counts cost a little more and catch problems earlier.",
+            options: ["Routine, monthly or quarterly", "Only when we ask", NOT_SURE] },
+          { id: "notes", label: "Anything else we should know, or questions for the proposal", type: "textarea",
+            help: "For example: subscription orders ship on the 1st, we would like Net 15 payment terms." },
         ],
       },
     ],
@@ -515,6 +606,11 @@ export function validate(form: IntakeForm, a: Answers): Record<string, string> {
     if (f.type === "email" && !EMAIL.test(s)) errors[f.id] = "Enter a valid email.";
     if ((f.type === "money" || f.type === "number") && !/^\d[\d,]*(\.\d+)?$/.test(s.replace(/^\$/, ""))) errors[f.id] = "Enter a number.";
     if (f.type === "percent" && !(Number(s.replace("%", "")) >= -100 && Number(s.replace("%", "")) <= 100)) errors[f.id] = "Enter a percentage, like 42.";
+    if (f.type === "weight") {
+      const m = /^(\d+(?:\.\d+)?)\s*(oz|ounces?|lb|lbs|pounds?)$/i.exec(s);
+      if (!m) errors[f.id] = "Enter a weight in oz or lb, like 1.4 lb.";
+      else if (!(Number(m[1]) > 0)) errors[f.id] = "Enter a weight above zero.";
+    }
     if (f.type === "year" && !(/^\d{4}$/.test(s) && Number(s) >= 1900 && Number(s) <= new Date().getFullYear())) errors[f.id] = "Enter a four-digit year.";
     if (f.options && f.type !== "checkboxes" && !f.options.includes(s)) errors[f.id] = "Choose one of the options.";
     if (f.options && f.type === "checkboxes" && Array.isArray(v) && v.some((x) => !f.options!.includes(x))) errors[f.id] = "Choose from the options.";
@@ -628,18 +724,38 @@ export const DOC_SECTIONS: Section[] = [
 export const DOC_QUESTIONS: Field[] = DOC_SECTIONS.flatMap((s) => s.fields);
 
 /** Which paths get the document upload page. */
-export type DocPath = "funding" | "accelerator";
-export const DOC_PATHS: DocPath[] = ["funding", "accelerator"];
+export type DocPath = "funding" | "accelerator" | "3pl";
+export const DOC_PATHS: DocPath[] = ["funding", "accelerator", "3pl"];
+
+// 3PL: files that feed the proposal and the shipping cost comparison.
+// Shown right after the 3PL intake. Both optional, no written questions.
+export const THREEPL_SLOTS: DocSlot[] = [
+  { id: "productList", label: "Product list",
+    help: "SKU, name, size and weight. A Shopify export works as-is. CSV, Excel or PDF." },
+  { id: "shippingData", label: "Shipments and carrier rate card",
+    help: "The last 3 months of shipments, one row per package (PLD), plus any rate card you have. A ShipStation or carrier export works as-is; the template shows the columns we use. We compare shipping cost line by line. Seen by the 3PL team only.",
+    template: { href: "/souq-shipment-history-template.csv", label: "Download the shipment history template (CSV)" } },
+];
+
+/** Every upload slot, for matching a file back to its slot. */
+export const ALL_DOC_SLOTS: DocSlot[] = [...DOC_SLOTS, ...THREEPL_SLOTS];
+
+/** The written questions on the document page. 3PL has none. */
+export const docSectionsFor = (path: DocPath | string | undefined): Section[] => (path === "3pl" ? [] : DOC_SECTIONS);
 
 // Funding-only items Accelerator founders aren't asked for.
 const FUNDING_ONLY_SLOTS = ["skuRequest", "debtDocs"];
 
 /** The document list for a path. Accelerator gets the funding list minus the funding-only items. */
 export const docSlotsFor = (path: DocPath | string | undefined): DocSlot[] =>
-  path === "accelerator" ? DOC_SLOTS.filter((s) => !FUNDING_ONLY_SLOTS.includes(s.id)) : DOC_SLOTS;
+  path === "3pl" ? THREEPL_SLOTS
+    : path === "accelerator" ? DOC_SLOTS.filter((s) => !FUNDING_ONLY_SLOTS.includes(s.id)) : DOC_SLOTS;
 
 /** Works out the path from an Asana card's description ("Submitted ... via the website: <choice>"). */
-export const docPathFromNotes = (notes: unknown): DocPath =>
-  String(notes || "").includes(FORMS.accelerator.choice) ? "accelerator" : "funding";
+export const docPathFromNotes = (notes: unknown): DocPath => {
+  const n = String(notes || "");
+  if (n.includes(`via the website: ${FORMS["3pl-onboarding"].choice}`)) return "3pl";
+  return n.includes(FORMS.accelerator.choice) ? "accelerator" : "funding";
+};
 
 export const MAX_FILE_MB = 50;

@@ -108,11 +108,32 @@ const STAGE_BY_SECTION: Record<string, number> = {
   "1218558190745258": DONE, // Live: onboarded / funded
 };
 
+// 3PL brands see their own steps: the intake comes first, files go with it,
+// then the proposal, the signed agreement, and go-live in the warehouse.
+//   0 Intake · 1 Files · 2 Proposal · 3 Signed · 4 Live
+function progressFor3pl(section: { gid?: string; name?: string } | undefined, files: { have: number; total: number }) {
+  const gid = section?.gid || "";
+  const LIVE = 4;
+  let stage =
+    gid === "1218558190745258" ? LIVE
+    : /\bsign/i.test(section?.name || "") ? 3
+    : ["1218558260175604", "1218558190765255"].includes(gid) ? 2
+    : files.have > 0 ? 2 : 1;
+  stage = Math.max(stage, 1);
+  const steps: Step[] = ["Intake", "Files", "Proposal", "Signed", "Live"].map((label, i) => ({
+    label,
+    state: i < stage || (i === LIVE && stage === LIVE) ? "done" : i === stage ? "current" : "todo",
+  }));
+  steps[1].detail = `${Math.min(files.have, files.total)} of ${files.total} added`;
+  return { steps, percent: Math.round(Math.min((stage / LIVE) * 100, 100)) };
+}
+
 export function progressFor(
   section: { gid?: string; name?: string } | undefined,
-  docs: { have: number; need: number },
-  path: "funding" | "accelerator" = "funding",
+  docs: { have: number; need: number; total?: number },
+  path: "funding" | "accelerator" | "3pl" = "funding",
 ) {
+  if (path === "3pl") return progressFor3pl(section, { have: docs.have, total: docs.total ?? 0 });
   let stage = STAGE_BY_SECTION[section?.gid || ""] ?? (/\bsign/i.test(section?.name || "") ? SIGNING : DOCUMENTS);
   // Anyone on this page has had the proposal and been sent their upload
   // link, so never show less than "Documents".
