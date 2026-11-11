@@ -422,7 +422,7 @@ export const FORMS: Record<PathId, IntakeForm> = {
     id: "3pl-onboarding",
     choice: "3PL onboarding",
     choiceDetail: "",
-    title: "Souq 3PL: new account intake",
+    title: "Get a 3PL proposal",
     intro: "About ten minutes. Handy to have: your order counts for the last 6 months and a product list. What you enter is used to write your proposal and for nothing else.",
     minutes: 10,
     submitLabel: "Send for my proposal",
