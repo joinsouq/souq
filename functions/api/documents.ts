@@ -124,6 +124,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       const files = await listFiles(docsFolder);
       const got = new Set(files.map((f) => slotOf(f.name)?.id).filter(Boolean));
       const missing = slots.filter((s) => s.required && !got.has(s.id));
+      if (is3pl && !slots.some((s) => got.has(s.id))) return json(400, { error: "Upload at least one file first." });
       const submitted = new Date().toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
 
       if (!is3pl) await saveDoc(`Details from founder (${submitted})`, toText(QUESTIONS_FORM, answers), parsed.folder);
