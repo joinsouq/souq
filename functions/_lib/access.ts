@@ -111,29 +111,36 @@ const STAGE_BY_SECTION: Record<string, number> = {
 // 3PL brands see their own steps: the intake comes first, files go with it,
 // then the proposal, the signed agreement, and go-live in the warehouse.
 //   0 Intake · 1 Files · 2 Proposal · 3 Signed · 4 Live
-function progressFor3pl(section: { gid?: string; name?: string } | undefined, files: { have: number; total: number }) {
+// Only required files count (the product list); optional ones don't hold it up.
+function progressFor3pl(section: { gid?: string; name?: string } | undefined, docs: { have: number; need: number }) {
   const gid = section?.gid || "";
+  const FILES = 1;
   const LIVE = 4;
+  const filesDone = docs.have >= docs.need;
   let stage =
     gid === "1218558190745258" ? LIVE
     : /\bsign/i.test(section?.name || "") ? 3
     : ["1218558260175604", "1218558190765255"].includes(gid) ? 2
-    : files.total > 0 && files.have >= files.total ? 2 : 1;
-  stage = Math.max(stage, 1);
+    : filesDone ? 2 : FILES;
+  stage = Math.max(stage, FILES);
   const steps: Step[] = ["Intake", "Files", "Proposal", "Signed", "Live"].map((label, i) => ({
     label,
     state: i < stage || (i === LIVE && stage === LIVE) ? "done" : i === stage ? "current" : "todo",
   }));
-  steps[1].detail = `${Math.min(files.have, files.total)} of ${files.total} added`;
-  return { steps, percent: Math.round(Math.min((stage / LIVE) * 100, 100)) };
+  steps[FILES].detail = `${Math.min(docs.have, docs.need)} of ${docs.need} required`;
+  // Each step is an equal share; the files step fills in as required files arrive.
+  const share = 100 / LIVE;
+  let percent = stage * share;
+  if (stage === FILES && docs.need) percent += share * (Math.min(docs.have, docs.need) / docs.need);
+  return { steps, percent: Math.round(Math.min(percent, 100)) };
 }
 
 export function progressFor(
   section: { gid?: string; name?: string } | undefined,
-  docs: { have: number; need: number; total?: number },
+  docs: { have: number; need: number },
   path: "funding" | "accelerator" | "3pl" = "funding",
 ) {
-  if (path === "3pl") return progressFor3pl(section, { have: docs.have, total: docs.total ?? 0 });
+  if (path === "3pl") return progressFor3pl(section, docs);
   let stage = STAGE_BY_SECTION[section?.gid || ""] ?? (/\bsign/i.test(section?.name || "") ? SIGNING : DOCUMENTS);
   // Anyone on this page has had the proposal and been sent their upload
   // link, so never show less than "Documents".

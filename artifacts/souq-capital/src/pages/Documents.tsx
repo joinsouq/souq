@@ -185,9 +185,9 @@ export default function Documents() {
   const [submitError, setSubmitError] = useState("");
   const is3pl = info?.path === "3pl";
   const [newUploads, setNewUploads] = useState<string[]>([]);
-  // 3PL needs every file before "Done": they feed the proposal and shipping comparison.
+  // 3PL needs its required files (the product list) before "Done".
   const missing3pl = is3pl
-    ? docSlotsFor("3pl").filter((s) => !(info?.uploaded[s.id]?.length) && !newUploads.includes(s.id)).map((s) => s.label)
+    ? docSlotsFor("3pl").filter((s) => s.required && !(info?.uploaded[s.id]?.length) && !newUploads.includes(s.id)).map((s) => s.label)
     : [];
   const blockDone = missing3pl.length > 0;
 
@@ -202,6 +202,14 @@ export default function Documents() {
       })
       .catch((e) => setLoadError(e.message));
   }, [auth.ref, auth.t, reloadKey]);
+
+  // After each upload, ask the server where they are so the bar moves right away.
+  function refreshProgress() {
+    fetch(`/api/documents?ref=${encodeURIComponent(auth.ref)}&t=${encodeURIComponent(auth.t)}`, { headers: { "x-doc-session": getSession() } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.progress) setInfo((i) => (i ? { ...i, progress: j.progress } : i)); })
+      .catch(() => { /* the bar catches up on the next load */ });
+  }
 
   async function finish(e: FormEvent) {
     e.preventDefault();
@@ -258,7 +266,7 @@ export default function Documents() {
               <fieldset className="ix-section">
                 <legend className="sq-h3">{is3pl ? "Files" : "Documents"}</legend>
                 <ul className="ix-slots" role="list">
-                  {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} onUploaded={(id) => setNewUploads((u) => (u.includes(id) ? u : [...u, id]))} />)}
+                  {docSlotsFor(info.path).map((s) => <Slot key={s.id} slot={s} existing={info.uploaded[s.id] || []} auth={auth} onUploaded={(id) => { setNewUploads((u) => (u.includes(id) ? u : [...u, id])); refreshProgress(); }} />)}
                 </ul>
               </fieldset>
               {docSectionsFor(info.path).map((s) => (

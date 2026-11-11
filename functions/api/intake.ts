@@ -169,7 +169,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       ok: true,
       next: {
         title: "Got it. One more step.",
-        body: "Upload your product list and the last 3 months of shipments with your carrier rate card. We use them for your proposal and a shipping cost comparison. We've also emailed you this link, so you can come back to it.",
+        body: "Upload your product list. If you have them, add the last 3 months of shipments and your carrier rate card too, and we'll run a shipping cost comparison. We've also emailed you this link, so you can come back to it.",
         link: tplUpload,
         linkLabel: "Upload your files",
       },

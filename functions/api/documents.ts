@@ -88,7 +88,7 @@ export const onRequest: PagesFunction<Record<string, string>> = async ({ request
       const path = docPathFromNotes(task.notes);
       const slots = docSlotsFor(path);
       const required = slots.filter((s) => s.required);
-      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length, total: slots.length }, path);
+      const progress = progressFor(sectionOf(task), { have: required.filter((s) => bySlot[s.id]?.length).length, need: required.length }, path);
       // Card names look like "Company (Founder)"; show just the company.
       return json(200, { company: String(task.name).replace(/\s*\([^()]*\)\s*$/, ""), uploaded: bySlot, progress, path });
     }
