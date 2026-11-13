@@ -1,7 +1,7 @@
 import SitePage from "@/components/SitePage";
 
 // Roles are listed here as plain data, so a new opening is one entry in ROLES.
-// Applications go through each role's LinkedIn posting.
+// Applications come in by email to APPLY_EMAIL, with the role title in the subject line.
 type Role = {
   title: string;
   team: string;
@@ -10,8 +10,13 @@ type Role = {
   about: string;
   responsibilities: string[];
   qualifications: string[];
-  applyUrl: string;
 };
+
+const APPLY_EMAIL = "team@souq.capital";
+
+function applyHref(title: string) {
+  return `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(`${title} Application`)}`;
+}
 
 const ROLES: Role[] = [
   {
@@ -48,7 +53,6 @@ const ROLES: Role[] = [
       "Resourceful and able to work with both manual and automated processes.",
       "Bachelor's degree or equivalent relevant experience.",
     ],
-    applyUrl: "https://www.linkedin.com/jobs/view/4488028038/",
   },
 ];
 
@@ -76,8 +80,8 @@ export default function Careers() {
                     <h3 className="sq-h3">{r.title}</h3>
                     <p className="sq-small">{r.team} · {r.location}</p>
                     <p className="sq-body">{r.summary}</p>
-                    <a className="sq-btn sq-btn-primary car-apply" href={r.applyUrl} target="_blank" rel="noopener noreferrer">
-                      Apply on LinkedIn
+                    <a className="sq-btn sq-btn-primary car-apply" href={applyHref(r.title)}>
+                      Apply by email
                     </a>
                   </div>
                   <details className="car-details">
@@ -92,8 +96,13 @@ export default function Careers() {
                       <ul className="sq-body car-points">
                         {r.qualifications.map((x) => <li key={x}>{x}</li>)}
                       </ul>
-                      <a className="sq-btn sq-btn-primary" href={r.applyUrl} target="_blank" rel="noopener noreferrer">
-                        Apply on LinkedIn
+                      <p className="sq-body">
+                        To apply, email your resume to{" "}
+                        <a className="sq-link" href={applyHref(r.title)}>{APPLY_EMAIL}</a>{" "}
+                        with "{r.title}" in the subject line.
+                      </p>
+                      <a className="sq-btn sq-btn-primary" href={applyHref(r.title)}>
+                        Apply by email
                       </a>
                     </div>
                   </details>
